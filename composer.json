@@ -1,0 +1,20 @@
+{
+  "name": "ubnetdef/ie2",
+  "description": "Inject Engine v2.0 - Make Competitions Great Again",
+  "homepage" : "https://ubnetdef.org",
+  "license" : "MIT",
+  "require" : {
+    "php": ">=5.4",
+    "ext-mcrypt": "*",
+    "composer/installers" : "~1.0",
+    "cakephp/cakephp" : "2.*",
+    "josegonzalez/dotenv": "1.*",
+    "ad7six/dsn": "0.3.*"
+  },
+  "require-dev": {
+    "cakephp/debug_kit" : "2.2.*"
+  },
+  "config": {
+    "preferred-install": "dist"
+  }
+}
