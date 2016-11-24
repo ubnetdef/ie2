@@ -18,10 +18,7 @@ if (!env('APP_NAME')) {
 	// That means the code can assume appropriate env config always exists
 	// Don't trap this incase there's some other fundamental error
 	josegonzalez\Dotenv\Loader::load([
-		'filepath' => [
-			__DIR__ . DS . '.env',
-			__DIR__ . DS . '.env.default',
-		],
+		'filepath' => ROOT . DS . '.env',
 		'toServer' => false,
 		'skipExisting' => ['toServer'],
 		'raiseExceptions' => true

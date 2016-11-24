@@ -1,36 +1,20 @@
-<?php
-/**
- *
- * PHP 5
- *
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- *
- * Licensed under The MIT License
- * For full copyright and license information, please see the LICENSE.txt
- * Redistributions of files must retain the above copyright notice.
- *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
- * @package       app.View.Layouts
- * @since         CakePHP(tm) v 0.10.0.1076
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
- */
-
-$cakeDescription = __d('cake_dev', 'CakePHP: the rapid development php framework');
-?>
 <!DOCTYPE html>
 <html>
 <head>
-	<?php echo $this->Html->charset(); ?>
-	<title>
-		<?php echo $cakeDescription ?>:
-		<?php echo $title_for_layout; ?>
-	</title>
+	<?= $this->Html->charset(); ?>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+	<title><?= env('COMPETITION_NAME'); ?>: Inject Engine</title>
 	<?php
 		echo $this->Html->meta('icon');
 
-		echo $this->Html->css('cake.generic');
+		echo $this->Html->css('bootstrap.min');
+		echo $this->Html->css('style');
+
+		echo $this->Html->script('jquery.min');
+		echo $this->Html->script('bootstrap.min');
 
 		echo $this->fetch('meta');
 		echo $this->fetch('css');
@@ -38,24 +22,107 @@ $cakeDescription = __d('cake_dev', 'CakePHP: the rapid development php framework
 	?>
 </head>
 <body>
-	<div id="container">
-		<div id="header">
-			<h1><?php echo $this->Html->link($cakeDescription, 'http://cakephp.org'); ?></h1>
-		</div>
-		<div id="content">
+<?php if ( $emulating ): ?>
+<div class="alert alert-danger" style="margin-bottom: 0px;">
+	You are currently emulating a user's account! <?= $this->Html->link('EXIT', '/user/emulate_clear', array('class' => 'btn btn-sm btn-info pull-right')); ?>
+</div>
+<?php endif; ?>
 
-			<?php echo $this->Session->flash(); ?>
+<nav class="navbar navbar-default<?= env('COMPETITION_LOGO') != false ? ' navbar-with-logo' : ''; ?>">
+	<div class="container">
+		<div class="navbar-header">
+			<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+				<span class="sr-only">Toggle navigation</span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+			</button>
+			<a class="navbar-brand" href="<?php echo $this->Html->url('/'); ?>">
+				<?php if ( env('COMPETITION_LOGO') != false ): ?>
+				
+				<img src="<?= $this->Html->url(env('COMPETITION_LOGO')); ?>"/>
+				
+				<?php else: ?>
 
-			<?php echo $this->fetch('content'); ?>
+				<?= env('COMPETITION_NAME'); ?>
+				
+				<?php endif; ?>
+			</a>
 		</div>
-		<div id="footer">
-			<?php echo $this->Html->link(
-					$this->Html->image('cake.power.gif', ['alt' => $cakeDescription, 'border' => '0']),
-					'http://www.cakephp.org/',
-					['target' => '_blank', 'escape' => false]
-				);
-			?>
+		<div class="navbar-collapse collapse">
+			<ul class="nav navbar-nav">
+				<li class="<?= isset($at_home) ? 'active' : ''; ?>"><a href="<?= $this->Html->url('/'); ?>">Home</a></li>
+
+				<?php if ( !empty($userinfo) ): ?>
+				<li class="<?= isset($at_injects) ? 'active' : ''; ?>"><a href="<?= $this->Html->url('/injects'); ?>">Injects</a></li>
+				<?php endif; ?>
+
+				<li class="<?= isset($at_scoreboard) ? 'active' : ''; ?>"><a href="<?= $this->Html->url('/scoreboard'); ?>">Scoreboard</a></li>
+			</ul>
+			
+			<ul class="nav navbar-nav navbar-right">
+				<?php if ( !empty($userinfo) ): ?>
+
+				<li class="<?= isset($at_teampanel) ? 'active' : ''; ?>"><a href="<?= $this->Html->url('/team'); ?>">Team Panel</a></li>
+
+				<li class="dropdown<?= isset($at_dashboard) ? ' active' : ''; ?>">
+					<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button">
+						Dashboards <span class="caret"></span>
+					</a>
+					<ul class="dropdown-menu">
+						<li class=""><a href="<?= $this->Html->url('/dashboard/overview'); ?>">Overview</a></li>
+						<li class=""><a href="<?= $this->Html->url('/dashboard/timeline'); ?>">Inject Completion Timeline</a></li>
+						<li class=""><a href="<?= $this->Html->url('/dashboard/personal'); ?>">Personalized</a></li>
+					</ul>
+				</li>
+
+				<li class="dropdown<?= isset($at_backendpanel) ? ' active' : ''; ?>">
+					<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button">
+						Backend Panel <span class="caret"></span>
+					</a>
+					<ul class="dropdown-menu">
+						<li class=""><a href="<?= $this->Html->url('/backend/user'); ?>">User Manager</a></li>
+						<li class=""><a href="<?= $this->Html->url('/backend/injects'); ?>">Inject Manager</a></li>
+						<li class=""><a href="<?= $this->Html->url('/backend/service'); ?>">Service Manager</a></li>
+						<li class=""><a href="<?= $this->Html->url('/backend/logs'); ?>">Log Manager</a></li>
+					</ul>
+				</li>
+
+				<li class="dropdown">
+					<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button">
+						<?= $userinfo['username']; ?> <span class="caret"></span>
+					</a>
+					<ul class="dropdown-menu">
+						<li class=""><a href="<?= $this->Html->url('/user/profile'); ?>">My Profile</a></li>
+						<li class=""><a href="<?= $this->Html->url('/user/logout'); ?>">Logout</a></li>
+					</ul>
+				</li>
+
+				<?php else: ?>
+				<li class="<?= isset($at_login) ? 'active' : ''; ?>"><a href="<?= $this->Html->url('/user/login'); ?>">Login</a></li>
+				<?php endif; ?>
+			</ul>
 		</div>
 	</div>
+</nav>
+
+<div class="container">
+	<?= $this->Session->flash(); ?>
+
+	<div class="row">
+		<div class="col-md-8 col-md-offset-2">
+			<?= $this->fetch('content'); ?>
+		</div>
+	</div>
+</div>
+
+<footer class="footer">
+	<div class="container">
+		<p class="text-muted pull-right">
+			ie<sup>2</sup> <abbr title="DEV">DEV</abbr>
+		</p>
+	</div>
+</footer>
+
 </body>
 </html>

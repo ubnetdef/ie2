@@ -78,6 +78,15 @@ App::build(
  */
 if (php_sapi_name() !== 'cli' && Configure::read('debug') && in_array('DebugKit', App::objects('plugin'))) {
 	CakePlugin::load('DebugKit');
+	
+	App::uses('CakeEventManager', 'Event');
+	CakeEventManager::instance()->attach(function ($event) {
+		$controller = $event->subject();
+
+		$controller->Toolbar = $controller->Components->load(
+			'DebugKit.Toolbar'
+		);
+	}, 'Controller.initialize');
 }
 
 /**
