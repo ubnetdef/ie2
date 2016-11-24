@@ -1,14 +1,21 @@
 <?php
 App::uses('AppShell', 'Console/Command');
 
+/**
+ * (Inject)Engine Shell
+ *
+ * Command line interface for doing limited actions
+ * for the InjectEngine.  Here be (some) dragons.
+ */
 class EngineShell extends AppShell {
 	public $uses = ['Group', 'User'];
 
-	public function startup() {
-		parent::startup();
-		$this->stdout->styles('header', array('underline' => true));
-	}
-
+	/**
+	 * Engine Command: Install
+	 *
+	 * Wipe's the current InjectEngine install, and re-initializes
+	 * the database, as well as users.
+	 */
 	public function install() {
 		$this->out('Installing ie2');
 		$this->hr();
@@ -41,6 +48,11 @@ class EngineShell extends AppShell {
 		$this->out('Password: admin');
 	}
 
+	/**
+	 * Engine Command: Create User
+	 *
+	 * Create's a user.  Nothing more, nothing less.
+	 */
 	public function create_user() {
 		list($user, $group) = $this->args;
 		$yes = (isset($this->params['yes']) && !empty($this->params['yes']));
@@ -81,6 +93,11 @@ class EngineShell extends AppShell {
 		}
 	}
 
+	/**
+	 * Engine Command: Create Group
+	 *
+	 * Create's a group.  Nothing more, nothing less.
+	 */
 	public function create_group() {
 		list($parent, $group) = $this->args;
 		$yes = (isset($this->params['yes']) && !empty($this->params['yes']));
@@ -119,6 +136,18 @@ class EngineShell extends AppShell {
 
 			$this->out(sprintf('Group (%s) created!', $group));
 		}
+	}
+
+	/*
+	 * ========================================
+	 * The following are required for CakePHP,
+	 * but are undocumented. Sorry.
+	 * ========================================
+	 */
+
+	public function startup() {
+		parent::startup();
+		$this->stdout->styles('header', array('underline' => true));
 	}
 
 	public function getOptionParser() {

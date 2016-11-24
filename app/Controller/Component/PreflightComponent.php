@@ -4,12 +4,27 @@ App::uses('Component', 'Controller');
 App::uses('Security', 'Utility');
 
 class PreflightComponent extends Component {
+	/**
+	 * Saved error message from a check
+	 */
 	protected $errorMessage = null;
+
+	/**
+	 * Array of all the checks that should
+	 * be ran.
+	 */
 	protected $checks = [
 		'verifySecurityKeys', 'checkDatabaseConnection',
 		'checkGroupMappings',
 	];
 
+	/**
+	 * PreflightComponent Initialize Hook
+	 * 
+	 * This will only be ran once per hour.
+	 * It will run through the application, ensuring
+	 * it has been configured properly.
+	 */
 	public function initialize(Controller $controller) {
 		if ( Cache::read('preflight_check') == true ) return;
 
@@ -25,6 +40,13 @@ class PreflightComponent extends Component {
 		Cache::write('preflight_check', true);
 	}
 
+	/**
+	 * Verify Security Keys
+	 * 
+	 * Ensures 'Security.salt' and 'Security.cipherSeed' are both non-empty and
+	 * non-default values.
+	 * @return boolean If the check passed
+	 */
 	public function verifySecurityKeys() {
 		// Pls no defaults
 		if (empty(Configure::read('Security.salt')) OR Configure::read('Security.salt') === 'DYhG93b0qyJfIxfs2guVoUubWwvniR2G0FgaC9mi') {
@@ -39,6 +61,13 @@ class PreflightComponent extends Component {
 		return true;
 	}
 
+	/**
+	 * Check Database Connection
+	 * 
+	 * Ensures the database connection to the InjectEngine
+	 * is working
+	 * @return boolean If the check passed
+	 */
 	public function checkDatabaseConnection() {
 		App::uses('ConnectionManager', 'Model');
 
@@ -52,6 +81,13 @@ class PreflightComponent extends Component {
 		return true;
 	}
 
+	/**
+	 * Check Group Mappings
+	 * 
+	 * Ensures 'GROUP_STAFF', 'GROUP_BLUE', 'GROUP_ADMINS', and 'GROUP_WHITE'
+	 * have valid group mappings.
+	 * @return boolean If the check passed
+	 */
 	public function checkGroupMappings() {
 		$GroupModel = ClassRegistry::init('Group');
 

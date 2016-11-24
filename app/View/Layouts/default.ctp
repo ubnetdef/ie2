@@ -24,7 +24,7 @@
 <body>
 <?php if ( $emulating ): ?>
 <div class="alert alert-danger" style="margin-bottom: 0px;">
-	You are currently emulating a user's account! <?= $this->Html->link('EXIT', '/user/emulate_clear', array('class' => 'btn btn-sm btn-info pull-right')); ?>
+	You are currently emulating a user's account! <?= $this->Html->link('EXIT', '/user/emulate_clear', ['class' => 'btn btn-sm btn-info pull-right']); ?>
 </div>
 <?php endif; ?>
 

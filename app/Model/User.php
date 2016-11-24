@@ -25,6 +25,13 @@ class User extends AppModel {
 		],
 	];
 
+	/**
+	 * Before Save Hook
+	 *
+	 * Ensures if the "password" key is set, we hash it correctly (using bcrypt)
+	 * @param $options Unknown
+	 * @return boolean If the operation we're doing worked
+	 */
 	public function beforeSave($options = array()) {
 		if ( !empty($this->data['User']['password']) ) {
 			$this->data['User']['password'] = Security::hash($this->data['User']['password'], 'blowfish');

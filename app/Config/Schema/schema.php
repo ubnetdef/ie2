@@ -1,9 +1,7 @@
 <?php
 App::uses('ClassRegistry', 'Utility');
-App::uses('Security', 'Utility');
 
 class AppSchema extends CakeSchema {
-
 	public $config = [
 		'id' => [
 			'type' => 'integer',

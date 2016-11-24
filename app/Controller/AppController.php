@@ -18,6 +18,12 @@ class AppController extends Controller {
 		'Preflight',
 	];
 
+	/**
+	 * Before Filter Hook
+	 * 
+	 * Hook ran before ANY request. Currently
+	 * sets some template variables depending on user state.
+	 */
 	public function beforeFilter() {
 		parent::beforeFilter();
 
