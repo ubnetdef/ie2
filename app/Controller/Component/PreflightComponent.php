@@ -5,17 +5,12 @@ App::uses('Security', 'Utility');
 
 class PreflightComponent extends Component {
 	/**
-	 * Saved error message from a check
-	 */
-	protected $errorMessage = null;
-
-	/**
 	 * Array of all the checks that should
 	 * be ran.
 	 */
 	protected $checks = [
 		'verifySecurityKeys', 'checkDatabaseConnection',
-		'checkGroupMappings',
+		'checkGroupMappings', 'checkInjectTypes',
 	];
 
 	/**
@@ -26,18 +21,22 @@ class PreflightComponent extends Component {
 	 * it has been configured properly.
 	 */
 	public function initialize(Controller $controller) {
-		if ( Cache::read('preflight_check') == true ) return;
+		if ( env('DEBUG') == 0 && Cache::read('preflight_check') == true ) {
+			return;
+		}
 
 		foreach ( $this->checks AS $check ) {
-			$passed = $this->$check();
+			$passedOrErrorMessage = $this->$check();
 
-			if ( !$passed ) {
-				throw new RuntimeException('Preflight Error: '.$this->errorMessage);
+			if ( $passedOrErrorMessage !== true ) {
+				throw new RuntimeException('Preflight Error: '.$passedOrErrorMessage);
 			}
 		}
 
 		// If we got here, we can save and cache the result
-		Cache::write('preflight_check', true);
+		if ( env('DEBUG') == 0 ) {
+			Cache::write('preflight_check', true);
+		}
 	}
 
 	/**
@@ -50,12 +49,10 @@ class PreflightComponent extends Component {
 	public function verifySecurityKeys() {
 		// Pls no defaults
 		if (empty(Configure::read('Security.salt')) OR Configure::read('Security.salt') === 'DYhG93b0qyJfIxfs2guVoUubWwvniR2G0FgaC9mi') {
-			$this->errorMessage = 'Please update the Security.salt config value';
-			return false;
+			return 'Please update the Security.salt config value';
 		}
 		if (empty(Configure::read('Security.cipherSeed')) OR Configure::read('Security.cipherSeed') === '76859309657453542496749683645') {
-			$this->errorMessage = 'Please update the Security.cipherSeed config value.';
-			return false;
+			return 'Please update the Security.cipherSeed config value.';
 		}
 
 		return true;
@@ -74,8 +71,7 @@ class PreflightComponent extends Component {
 		// Check database connection for the InjectEngine
 		$conn = ConnectionManager::getDataSource('default');
 		if ( !$conn->isConnected() ) {
-			$this->errorMessage = 'Unable to connect to the InjectEngine Database';
-			return false;
+			return 'Unable to connect to the InjectEngine Database';
 		}
 
 		return true;
@@ -96,13 +92,41 @@ class PreflightComponent extends Component {
 			$gid = env($group);
 
 			if ( empty($gid) ) {
-				$this->errorMessage = 'Please setup a group mapping for '.$group;
-				return false;
+				return 'Please setup a group mapping for '.$group;
 			}
 
 			if ( empty($GroupModel->findById($gid))  ) {
-				$this->errorMessage = sprintf('Invalid GID mapping for %s (GID: %d)', $group, $gid);
-				return false;
+				return sprintf('Invalid GID mapping for %s (GID: %d)', $group, $gid);
+			}
+		}
+
+		return true;
+	}
+
+	/**
+	 * Check Inject Types
+	 *
+	 * Verifies that all the inject types listed in 'engine.inject_types'
+	 * exist and are callable.
+	 */
+	public function checkInjectTypes() {
+		$ConfigModel = ClassRegistry::init('Config');
+		$injectTypes = json_decode($ConfigModel->getKey('engine.inject_types'));
+
+		if ( json_last_error() != JSON_ERROR_NONE ) {
+			return sprintf('JSON Error decoding "engine.inject_types": ', json_last_error_msg());
+		}
+
+		// Should this be a warning?
+		if ( empty($injectTypes) ) {
+			return 'No inject types are configured (See config key: engine.inject_types)';
+		}
+
+		foreach ( $injectTypes AS $type ) {
+			$className = sprintf('InjectTypes\\%s', $type);
+
+			if ( !class_exists($className) ) {
+				return sprintf('Unknown inject type "%s" - does this file exist in "app/Vendor/InjectTypes"?', $type);
 			}
 		}
 

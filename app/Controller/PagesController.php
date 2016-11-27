@@ -11,6 +11,8 @@ class PagesController extends AppController {
 	 * @url /pages/index
 	 */
 	public function index() {
+		$this->set('at_home', true);
+		
 		$this->set('title', $this->Config->getKey('homepage.title'));
 		$this->set('body', $this->Config->getKey('homepage.body'));
 	}

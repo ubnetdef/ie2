@@ -8,21 +8,21 @@
 
 	<title><?= env('COMPETITION_NAME'); ?>: Inject Engine</title>
 	<?php
-		echo $this->Html->meta('icon');
+	echo $this->Html->meta('icon');
 
-		echo $this->Html->css('bootstrap.min');
-		echo $this->Html->css('style');
+	echo $this->Html->css('bootstrap.min');
+	echo $this->Html->css('style');
 
-		echo $this->Html->script('jquery.min');
-		echo $this->Html->script('bootstrap.min');
+	echo $this->Html->script('jquery.min');
+	echo $this->Html->script('bootstrap.min');
 
-		echo $this->fetch('meta');
-		echo $this->fetch('css');
-		echo $this->fetch('script');
+	echo $this->fetch('meta');
+	echo $this->fetch('css');
+	echo $this->fetch('script');
 	?>
 </head>
 <body>
-<?php if ( $emulating ): ?>
+<?php if ( isset($emulating) && $emulating ): ?>
 <div class="alert alert-danger" style="margin-bottom: 0px;">
 	You are currently emulating a user's account! <?= $this->Html->link('EXIT', '/user/emulate_clear', ['class' => 'btn btn-sm btn-info pull-right']); ?>
 </div>
@@ -31,13 +31,13 @@
 <nav class="navbar navbar-default<?= env('COMPETITION_LOGO') != false ? ' navbar-with-logo' : ''; ?>">
 	<div class="container">
 		<div class="navbar-header">
-			<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+			<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#main-nav">
 				<span class="sr-only">Toggle navigation</span>
 				<span class="icon-bar"></span>
 				<span class="icon-bar"></span>
 				<span class="icon-bar"></span>
 			</button>
-			<a class="navbar-brand" href="<?php echo $this->Html->url('/'); ?>">
+			<a class="navbar-brand" href="<?= $this->Html->url('/'); ?>">
 				<?php if ( env('COMPETITION_LOGO') != false ): ?>
 				
 				<img src="<?= $this->Html->url(env('COMPETITION_LOGO')); ?>"/>
@@ -49,58 +49,52 @@
 				<?php endif; ?>
 			</a>
 		</div>
-		<div class="navbar-collapse collapse">
+		<div class="navbar-collapse collapse" id="main-nav">
 			<ul class="nav navbar-nav">
-				<li class="<?= isset($at_home) ? 'active' : ''; ?>"><a href="<?= $this->Html->url('/'); ?>">Home</a></li>
+				<?php
+				echo $this->Misc->navbarItem('Home', '/', isset($at_home));
+				
+				if ( $this->Auth->loggedIn() ) {
+					echo $this->Misc->navbarItem('Injects', '/injects', isset($at_injects));
+				}
 
-				<?php if ( !empty($userinfo) ): ?>
-				<li class="<?= isset($at_injects) ? 'active' : ''; ?>"><a href="<?= $this->Html->url('/injects'); ?>">Injects</a></li>
-				<?php endif; ?>
-
-				<li class="<?= isset($at_scoreboard) ? 'active' : ''; ?>"><a href="<?= $this->Html->url('/scoreboard'); ?>">Scoreboard</a></li>
+				echo $this->Misc->navbarItem('Scoreboard', '/scoreboard', isset($at_scoreboard));
+				?>
 			</ul>
 			
 			<ul class="nav navbar-nav navbar-right">
-				<?php if ( !empty($userinfo) ): ?>
+				<?php
+				if ( $this->Auth->loggedIn() ) {
+					if ( $this->Auth->isBlueTeam() ) {
+						echo $this->Misc->navbarItem('Team Panel', '/team', isset($at_teampanel));
+					}
 
-				<li class="<?= isset($at_teampanel) ? 'active' : ''; ?>"><a href="<?= $this->Html->url('/team'); ?>">Team Panel</a></li>
+					if ( $this->Auth->isStaff() ) {
+						echo $this->Misc->navbarDropdown('Competition Central', isset($at_staff), [
+							$this->Misc->navbarItem('Competition Overview', '/staff'),
+							'<li role="separator" class="divider"></li>',
+							$this->Misc->navbarItem('Grader Island', '/staff/graders'),
+							$this->Misc->navbarItem('Scheduler', '/staff/scheduler'),
+						]);
+					}
 
-				<li class="dropdown<?= isset($at_dashboard) ? ' active' : ''; ?>">
-					<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button">
-						Dashboards <span class="caret"></span>
-					</a>
-					<ul class="dropdown-menu">
-						<li class=""><a href="<?= $this->Html->url('/dashboard/overview'); ?>">Overview</a></li>
-						<li class=""><a href="<?= $this->Html->url('/dashboard/timeline'); ?>">Inject Completion Timeline</a></li>
-						<li class=""><a href="<?= $this->Html->url('/dashboard/personal'); ?>">Personalized</a></li>
-					</ul>
-				</li>
+					if ( $this->Auth->isAdmin() ) {
+						echo $this->Misc->navbarDropdown('Backend', isset($at_backend), [
+							$this->Misc->navbarItem('User Manager', '/backend/user'),
+							$this->Misc->navbarItem('Inject Manager', '/backend/inject'),
+							$this->Misc->navbarItem('Service Manager', '/backend/service'),
+							$this->Misc->navbarItem('Log Manager', '/backend/log'),
+						]);
+					}
 
-				<li class="dropdown<?= isset($at_backendpanel) ? ' active' : ''; ?>">
-					<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button">
-						Backend Panel <span class="caret"></span>
-					</a>
-					<ul class="dropdown-menu">
-						<li class=""><a href="<?= $this->Html->url('/backend/user'); ?>">User Manager</a></li>
-						<li class=""><a href="<?= $this->Html->url('/backend/injects'); ?>">Inject Manager</a></li>
-						<li class=""><a href="<?= $this->Html->url('/backend/service'); ?>">Service Manager</a></li>
-						<li class=""><a href="<?= $this->Html->url('/backend/logs'); ?>">Log Manager</a></li>
-					</ul>
-				</li>
-
-				<li class="dropdown">
-					<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button">
-						<?= $userinfo['username']; ?> <span class="caret"></span>
-					</a>
-					<ul class="dropdown-menu">
-						<li class=""><a href="<?= $this->Html->url('/user/profile'); ?>">My Profile</a></li>
-						<li class=""><a href="<?= $this->Html->url('/user/logout'); ?>">Logout</a></li>
-					</ul>
-				</li>
-
-				<?php else: ?>
-				<li class="<?= isset($at_login) ? 'active' : ''; ?>"><a href="<?= $this->Html->url('/user/login'); ?>">Login</a></li>
-				<?php endif; ?>
+					echo $this->Misc->navbarDropdown($this->Auth->user('username'), isset($at_profile), [
+						$this->Misc->navbarItem('My Profile', '/user/profile'),
+						$this->Misc->navbarItem('Logout', '/user/logout'),
+					]);
+				} else {
+					echo $this->Misc->navbarItem('Login', '/user/login', isset($at_login));
+				}
+				?>
 			</ul>
 		</div>
 	</div>
@@ -109,11 +103,7 @@
 <div class="container">
 	<?= $this->Session->flash(); ?>
 
-	<div class="row">
-		<div class="col-md-8 col-md-offset-2">
-			<?= $this->fetch('content'); ?>
-		</div>
-	</div>
+	<?= $this->fetch('content'); ?>
 </div>
 
 <footer class="footer">

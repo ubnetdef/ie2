@@ -18,6 +18,9 @@ class AppController extends Controller {
 		'Preflight',
 	];
 
+	public $uses = ['Config'];
+	public $helpers = ['Auth', 'Misc'];
+
 	/**
 	 * Before Filter Hook
 	 * 
@@ -27,10 +30,41 @@ class AppController extends Controller {
 	public function beforeFilter() {
 		parent::beforeFilter();
 
-		if ( $this->Auth->loggedIn() ) {
-			$this->set('userinfo', $this->Auth->user());
+		// Setup a constant for the competition start
+		if ( !defined('COMPETITION_START') ) {
+			define('COMPETITION_START', $this->Config->getKey('competition.start'));
 		}
 
 		$this->set('emulating', ($this->Auth->item('emulating') == true));
+	}
+
+	/**
+	 * Before Render Hook
+	 *
+	 * Basically sets up the AuthHelper (which is a proxy)
+	 */
+	public function beforeRender() {
+		parent::beforeRender();
+
+		$this->helpers['Auth'] = [
+			'auth' => $this->Auth,
+		];
+	}
+
+	/**
+	 * After Filter Hook
+	 *
+	 * Compress all the html!
+	 */
+	public function afterFilter() {
+		parent::afterFilter();
+
+		if ( env('DEBUG') == 0 ) {
+			$parser = \WyriHaximus\HtmlCompress\Factory::construct();
+			$compressedHtml = $parser->compress($this->response->body());
+
+			$this->response->compress();
+			$this->response->body($compressedHtml);
+		}
 	}
 }

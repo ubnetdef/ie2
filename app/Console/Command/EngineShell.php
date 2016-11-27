@@ -11,6 +11,44 @@ class EngineShell extends AppShell {
 	public $uses = ['Group', 'User'];
 
 	/**
+	 * Default groups to create on
+	 * a fresh install
+	 */
+	private $groups = [
+		[
+			'parent' => 'root',
+			'name'   => 'Staff',
+		],
+		[
+			'parent' => 'root',
+			'name'   => 'Blue Teams',
+		],
+		[
+			'parent' => 'Staff',
+			'name'   => 'Administrative Team',
+		],
+		[
+			'parent' => 'Staff',
+			'name'   => 'White Team',
+		],
+	];
+
+	/**
+	 * Default users to create on
+	 * a fresh install
+	 */
+	private $users = [
+		[
+			'userpass' => 'admin',
+			'group'    => 'Administrative Team',
+		],
+		[
+			'userpass' => 'team0',
+			'group'    => 'Team 0',
+		]
+	];
+
+	/**
 	 * Engine Command: Install
 	 *
 	 * Wipe's the current InjectEngine install, and re-initializes
@@ -26,26 +64,31 @@ class EngineShell extends AppShell {
 		$this->dispatchShell('schema', 'create', '--yes', '--quiet');
 
 		// Create the basic groups
-		$this->dispatchShell('engine', 'create_group', 'root', 'Staff', '--quiet', '--yes');
-		$this->dispatchShell('engine', 'create_group', 'root', 'Blue Teams', '--quiet', '--yes');
-
-		$this->dispatchShell('engine', 'create_group', 'Staff', 'Administrative Team', '--quiet', '--yes');
-		$this->dispatchShell('engine', 'create_group', 'Staff', 'White Team', '--quiet', '--yes');
-
+		foreach ( $this->groups AS $g ) {
+			$this->dispatchShell('engine', 'create_group', $g['parent'], $g['name'], '--quiet', '--yes');
+		}
+		$this->dispatchShell('engine', 'create_group', 'Blue Teams', 'Team 0', '--quiet', '--yes', '-t', '0');
+		
 		// DB initialized
 		$this->out('DONE!');
 
-		// Create the first user
-		$this->out('Creating the initial user...', 0);
-		$this->dispatchShell('engine', 'create_user', 'admin', 'Administrative Team', '--quiet', '--yes', '--password', 'admin');
+		// Create some users
+		$this->out('Creating the initial users..', 0);
+		foreach ( $this->users AS $u ) {
+			$this->dispatchShell('engine', 'create_user', $u['userpass'], $u['group'], '--quiet', '--yes', '--password', $u['userpass']);
+		}
 		$this->out('DONE!');
 
 		// Done!
 		$this->out('Installation completed!');
 		$this->hr();
-		$this->out('<header>Administrator Credentials</header>');
-		$this->out('Username: admin');
-		$this->out('Password: admin');
+
+		$this->out('<header>User Credentials</header>');
+		foreach ( $this->users AS $u ) {
+			$this->out('Username: '.$u['userpass']);
+			$this->out('Password: '.$u['userpass']);
+			$this->out();
+		}
 	}
 
 	/**
@@ -130,8 +173,9 @@ class EngineShell extends AppShell {
 			$this->out('Creating the group...');
 			$this->Group->create();
 			$this->Group->save([
-				'name'      => $group,
-				'parent_id' => $parent_id,
+				'name'        => $group,
+				'team_number' => (isset($this->params['team_number']) ? $this->params['team_number'] : null),
+				'parent_id'   => $parent_id,
 			]);
 
 			$this->out(sprintf('Group (%s) created!', $group));
@@ -202,6 +246,10 @@ class EngineShell extends AppShell {
 							'short' => 'y',
 							'boolean' => true,
 							'help' => 'Do not prompt for confirmation. Be careful!',
+						],
+						'team_number' => [
+							'short' => 't',
+							'help' => 'Associate a team number with this group.',
 						],
 					],
 				],
