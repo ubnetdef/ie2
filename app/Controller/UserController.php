@@ -49,7 +49,9 @@ class UserController extends AppController {
 	public function profile() {
 		$this->Auth->protect();
 
-		if ( $this->request->is('post') ) {
+		$canChangePassword = ($this->Auth->isBlueTeam() ? (bool)env('FEATURE_BLUE_PASSWORD_CHANGES') : true);
+
+		if ( $this->request->is('post') && $canChangePassword ) {
 			// Update Password
 			$old_password  = $this->request->data['old_password'];
 			$new_password  = $this->request->data['new_password'];
@@ -81,6 +83,7 @@ class UserController extends AppController {
 		}
 
 		$this->set('at_profile', true);
+		$this->set('password_change_enabled', $canChangePassword);
 		$this->set('group_path', $this->Group->getGroupPath($this->Auth->group('id')));
 	}
 

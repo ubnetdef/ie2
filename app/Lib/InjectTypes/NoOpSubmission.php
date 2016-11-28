@@ -11,6 +11,10 @@ class NoOpSubmission extends InjectSubmissionBase {
 		return 'No submission actions available for this inject.';
 	}
 
+	public function getSubmittedTemplate($submissions) {
+		return 'TODO';
+	}
+
 	public function validateSubmission($inject, $submission) {
 		return false;
 	}

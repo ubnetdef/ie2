@@ -11,7 +11,7 @@ class Schedule extends AppModel {
 	public $recursive = 1;
 
 	/**
-	 * Get Active Injects
+	 * Get Active Injects (RAW)
 	 *
 	 * Okay, this is the monster in the room.
 	 * I'm sorry. It'll grab injects based on
@@ -21,10 +21,10 @@ class Schedule extends AppModel {
 	 * @param $groups The groups to check for injects in
 	 * @return array All the active injects
 	 */
-	public function getInjects($groups) {
+	public function getInjectsRaw($groups) {
 		$now = time();
 
-		$data = $this->find('all', [
+		return $this->find('all', [
 			'fields' => [
 				'Inject.*', 'Schedule.*', 'COUNT(Submission.id) AS submission_count',
 			],
@@ -69,17 +69,10 @@ class Schedule extends AppModel {
 				'Inject.id',
 			],
 		]);
-
-		$rtn = [];
-		foreach ( $data AS $d ) {
-			$rtn[] = new InjectAbstraction($d);
-		}
-
-		return $rtn;
 	}
 
 	/**
-	 * Get (an) Inject
+	 * Get (an) Inject (RAW)
 	 *
 	 * A little nicer than getInjects...but still we have dragons :(
 	 *
@@ -89,7 +82,7 @@ class Schedule extends AppModel {
 	 * if it's expired
 	 * @return array The inject (if it's active/exists)
 	 */
-	public function getInject($id, $groups, $show_expired=false) {
+	public function getInjectRaw($id, $groups, $show_expired=false) {
 		$conditions = [
 			'Schedule.id' => $id,
 			'Schedule.group_id' => $groups,
@@ -111,11 +104,7 @@ class Schedule extends AppModel {
 			];
 		}
 
-		// Make 'submission_count' a virtual field of schedule, so
-		// it'll show up and not be super weird in the final output
-		//$this->virtualFields['submission_count'] = 0;
-
-		$data = $this->find('first', [
+		return $this->find('first', [
 			'fields' => [
 				'Inject.*', 'Schedule.*', 'COUNT(Submission.id) AS submission_count',
 			],
@@ -132,7 +121,45 @@ class Schedule extends AppModel {
 
 			'conditions' => $conditions,
 		]);
+	}
 
-		return empty($data) ? null : new InjectAbstraction($data);
+	/**
+	 * Get Active Injects (and wrap them)
+	 *
+	 * This function uses the raw data from
+	 * `getInjectsRaw` and wraps every inject
+	 * inside an InjectAbstraction class
+	 *
+	 * @param $groups The groups to check for injects in
+	 * @return array All the active injects
+	 */
+	public function getInjects($groups) {
+		$rtn = [];
+
+		foreach ( $this->getInjectsRaw($groups) AS $inject ) {
+			$rtn[] = new InjectAbstraction($inject);
+		}
+
+		return $rtn;
+	}
+
+	/**
+	 * Get (an) Inject (and wrap it)
+	 *
+	 * This function uses the raw data from
+	 * `getInjectRaw` and wraps the inject
+	 * inside an InjectAbstraction class
+	 *
+	 * @param $id The schedule ID of the inject
+	 * @param $groups The groups the current user is in
+	 * @param $show_expired [Optional] Still return the inject, even
+	 * if it's expired
+	 * @return array The inject (if it's active/exists)
+	 */
+	public function getInject($id, $groups, $show_expired=false) {
+		$inject = $this->getInjectRaw($id, $groups, $show_expired);
+		
+		if ( !empty($inject) ) $inject = new InjectAbstraction($inject);
+		return $inject;
 	}
 }

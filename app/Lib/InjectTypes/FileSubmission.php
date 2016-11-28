@@ -19,6 +19,10 @@ class FileSubmission extends InjectSubmissionBase {
 TEMPLATE;
 	}
 
+	public function getSubmittedTemplate($submissions) {
+		return 'TODO';
+	}
+
 	public function validateSubmission($inject, $submission) {
 		return false;
 	}

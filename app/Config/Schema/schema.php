@@ -287,6 +287,32 @@ class AppSchema extends CakeSchema {
 		],
 	];
 
+	public $announcements = [
+		'id' => [
+			'type' => 'integer',
+			'null' => false,
+			'key'  => 'primary',
+		],
+		'content' => [
+			'type' => 'text',
+			'null' => false,
+		],
+		'active' => [
+			'type'    => 'boolean',
+			'null'    => false,
+			'default' => false,
+		],
+		'expiration' => [
+			'type'    => 'integer',
+			'null'    => false,
+			'default' => 0,
+		],
+
+		'indexes' => [
+			'PRIMARY' => ['column' => 'id', 'unqiue' => true],
+		],
+	];
+
 	// ================================
 
 	public function before($event = array()) {
@@ -306,7 +332,7 @@ class AppSchema extends CakeSchema {
 				]);
 				$this->_create('Config', [
 					'key' => 'homepage.body',
-					'value' => 'It works!',
+					'value' => '<p>It works!</p>',
 				]);
 
 				$this->_create('Config', [
@@ -321,7 +347,7 @@ class AppSchema extends CakeSchema {
 
 				// Default inject types built in.
 				// THIS MUST MAP TO A FILE INSIDE:
-				// app/Vendor/InjectTypes/<name>.php
+				// app/Lib/InjectTypes/<name>.php
 				$this->_create('Config', [
 					'key' => 'engine.inject_types',
 					'value' => json_encode(
@@ -337,6 +363,7 @@ class AppSchema extends CakeSchema {
 				$content = <<<'INJECT_TEXT'
 <p>Hey Team,</p><p>On behalf of Catflix, I'd like to welcome you to our IT Operations and Security team!  In addition to keeping our cute cat videos secure and working, you will be responsible for our daily IT Operations.  This includes paying our hourly server bill, as well as processing the cutest cat videos to upload to our website.</p><p>To pay for the servers, please go to our bank website, and transfer the money to a specific account number (3141592653).  I believe our bill is due every hour, on the hour.</p><p>In addition to paying the bill, please monitor the email account "newvideos@catflix#TEAM_NUMBER_PADDED#.cat".  You will occasionally receive emails to this account.  You must upload the video within 15 minutes to our Plex server.  Failure to do this will result in financial deductions to your budget.</p><p>Regards,<br>Kevin Cleary<br>CIO</p>
 INJECT_TEXT;
+
 				$this->_create('Inject', [
 					'title'         => 'Learn about the InjectEngine',
 					'content'       => '<p>Maybe check the wiki?</p>',
@@ -384,6 +411,14 @@ INJECT_TEXT;
 					'group_id'      => env('GROUP_BLUE'),
 					'active'        => true,
 				]);
+			break;
+
+			case 'announcements':
+				$this->_create('Announcement', array(
+					'content'    => 'ie<sup>2</sup> was just installed. Go configure it!',
+					'active'     => true,
+					'expiration' => 0,
+				));
 			break;
 
 			case 'logs_TODO':

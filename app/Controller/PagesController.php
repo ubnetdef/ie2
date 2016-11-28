@@ -16,4 +16,5 @@ class PagesController extends AppController {
 		$this->set('title', $this->Config->getKey('homepage.title'));
 		$this->set('body', $this->Config->getKey('homepage.body'));
 	}
+
 }

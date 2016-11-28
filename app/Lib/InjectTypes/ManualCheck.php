@@ -11,6 +11,10 @@ class ManualCheck extends InjectSubmissionBase {
 		return 'TODO.';
 	}
 
+	public function getSubmittedTemplate($submissions) {
+		return 'TODO';
+	}
+
 	public function validateSubmission($inject, $submission) {
 		return false;
 	}

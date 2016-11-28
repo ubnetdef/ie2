@@ -24,7 +24,8 @@
 <body>
 <?php if ( isset($emulating) && $emulating ): ?>
 <div class="alert alert-danger" style="margin-bottom: 0px;">
-	You are currently emulating a user's account! <?= $this->Html->link('EXIT', '/user/emulate_clear', ['class' => 'btn btn-sm btn-info pull-right']); ?>
+	You are currently emulating a user's account!
+	<?= $this->Html->link('EXIT', '/user/emulate_clear', ['class' => 'btn btn-sm btn-info pull-right']); ?>
 </div>
 <?php endif; ?>
 
@@ -80,10 +81,11 @@
 
 					if ( $this->Auth->isAdmin() ) {
 						echo $this->Misc->navbarDropdown('Backend', isset($at_backend), [
-							$this->Misc->navbarItem('User Manager', '/backend/user'),
-							$this->Misc->navbarItem('Inject Manager', '/backend/inject'),
-							$this->Misc->navbarItem('Service Manager', '/backend/service'),
-							$this->Misc->navbarItem('Log Manager', '/backend/log'),
+							$this->Misc->navbarItem('Config Manager', '/admin/pages'),
+							$this->Misc->navbarItem('User Manager', '/admin/user'),
+							$this->Misc->navbarItem('Inject Manager', '/admin/inject'),
+							$this->Misc->navbarItem('Service Manager', '/admin/service'),
+							$this->Misc->navbarItem('Log Manager', '/admin/log'),
 						]);
 					}
 
@@ -101,6 +103,13 @@
 </nav>
 
 <div class="container">
+	<?php foreach ( $announcements AS $a ): ?>
+	<div class="alert alert-info alert-dismissible" role="alert" data-id="<?= $a['Announcement']['id']; ?>">
+		<button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span></button>
+		<p><?= $a['Announcement']['content']; ?></p>
+	</div>
+	<?php endforeach; ?>
+
 	<?= $this->Session->flash(); ?>
 
 	<?= $this->fetch('content'); ?>

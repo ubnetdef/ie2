@@ -1,0 +1,126 @@
+<?php
+App::uses('AppHelper', 'View/Helper');
+
+class InjectStylerHelper extends AppHelper {
+	public $helpers = ['Html'];
+
+	/**
+	 * Instance of \InjectTypes\Manager
+	 */
+	private $typeManager;
+
+	/**
+	 * Instance of InjectAbstraction
+	 */
+	private $inject;
+
+	/**
+	 * Constructor for the InjectHelper
+	 *
+	 * Basically initializes the InjectTypes manager
+	 */
+	public function __construct(View $view, $settings = array()) {
+		parent::__construct($view, $settings);
+
+		if ( !isset($settings['types']) || !isset($settings['inject']) ) {
+			throw new RuntimeException('InjectStyler is missing types/inject settings');
+		}
+
+		$this->typeManager = new InjectTypes\Manager($settings['types']);
+		$this->inject = $settings['inject'];
+	}
+
+	/**
+	 * Set the current inject
+	 *
+	 * @param $inject The InjectAbstraction object
+	 * @return void
+	 */
+	public function setInject($inject) {
+		$this->inject = $inject;
+	}
+
+	/**
+	 * Time output
+	 *
+	 * This will be the inject page's "start/end/duration"
+	 * area.
+	 *
+	 * @param $inject The inject
+	 * @return string The time content
+	 */
+	public function timeOutput($inject) {
+		$template = '<strong>Time</strong>: %s<br /><strong>Due</strong>: %s<br /><strong>Duration</strong>: %s Minutes';
+
+		// Duration infinite fix
+		$duration = $inject->getDuration();
+		if ( $duration == 0 ) $duration = '&infin;';
+
+		return sprintf($template, $inject->getStartString(), $inject->getEndString(), $duration);
+	}
+
+	/**
+	 * Content Output
+	 *
+	 * Basically replaces some variables
+	 * with actual content. Woah!
+	 *
+	 * @param $data The inject content
+	 * @param $userdata Current user information
+	 * @return string The inject content
+	 */
+	public function contentOutput($data, $userdata) {
+		if ( $userdata['Group']['team_number'] == null ) {
+			$team = '<strong>X</strong>';
+			$team_pad = '<strong>XX</strong>';
+		} else {
+			$team = $userdata['Group']['team_number'];
+			$team_pad = str_pad($team, 2, '0');
+		}
+
+		$find = ['#TEAM_NUMBER#', '#TEAM_NUMBER_PADDED#'];
+		$replace = [$team, $team_pad];
+
+		return str_replace($find, $replace, $data);
+	}
+
+	/**
+	 * Inject Type Submission Output
+	 *
+	 * @param $id Inject Type ID
+	 * @return string The template
+	 */
+	public function typeOutput($id) {
+		$injectType = $this->typeManager->get($id);
+
+		if ( $this->inject->isAcceptingSubmissions() ) {
+			$tpl = '<form method="post" action="'.$this->Html->url('/injects/submit').'">';
+			$tpl .= '<input type="hidden" name="id" value="'.$this->inject->getInjectID().'" />';
+			$tpl .= $injectType->getTemplate();
+			$tpl .= '</form>';
+			
+			return $tpl;
+		}
+
+		if ( $this->inject->isExpired() ) {
+			return 'Inject Expired';
+		}
+
+		if ( $this->inject->getSubmissionCount() >= $this->inject->getMaxSubmissions() ) {
+			return ($this->inject->getMaxSubmissions() > 1
+				? 'Max submissions reached.' : 'This inject has already been submitted.');
+		}
+
+		return 'Unknown error';
+	}
+
+	/**
+	 * Inject Type Submitted Output
+	 *
+	 * @param $id Inject Type ID
+	 * @return string The template
+	 */
+	public function submittedOutput($id, $submissions) {
+		return $this->typeManager->get($id)->getSubmittedTemplate($submissions);
+	}
+}

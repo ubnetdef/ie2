@@ -38,7 +38,7 @@ class InjectAbstraction {
 	 * @return bool If the inject has expired
 	 */
 	public function isExpired() {
-		return ($this->getEnd() <= time());
+		return ($this->getEnd() > 0 ? $this->getEnd() <= time() : false);
 	}
 
 	/**
@@ -48,6 +48,15 @@ class InjectAbstraction {
 	 */
 	public function isFuzzy() {
 		return $this->data['Schedule']['fuzzy'];
+	}
+
+	/**
+	 * Is Accepting Submissions
+	 *
+	 * @return bool If the inject can be submitted
+	 */
+	public function isAcceptingSubmissions() {
+		return (!$this->isExpired() && $this->getSubmissionCount() < $this->getMaxSubmissions());
 	}
 
 	/**
@@ -79,7 +88,7 @@ class InjectAbstraction {
 	public function getEnd() {
 		$end = $this->data['Schedule']['end'];
 
-		if ( $this->isFuzzy() ) {
+		if ( $this->isFuzzy() && $end > 0 ) {
 			$end += COMPETITION_START;
 		}
 
@@ -88,6 +97,23 @@ class InjectAbstraction {
 	public function getEndString() {
 		return ($this->getEnd() > 0
 			? date(self::DATE_FORMAT, $this->getEnd()) : 'Never');
+	}
+
+	/**
+	 * Inject Duration Accessor
+	 *
+	 * @return int The inject duration in the
+	 * form of minutes
+	 */
+	public function getDuration() {
+		if ( $this->getEnd() == 0 ) return 0;
+
+		$duration = ($this->getEnd() - $this->getStart());
+		if ( $this->isFuzzy() ) {
+			$duration -= COMPETITION_START;
+		}
+
+		return round($duration / 60);
 	}
 
 	/**

@@ -18,7 +18,7 @@ class AppController extends Controller {
 		'Preflight',
 	];
 
-	public $uses = ['Config'];
+	public $uses = ['Announcement', 'Config'];
 	public $helpers = ['Auth', 'Misc'];
 
 	/**
@@ -35,6 +35,7 @@ class AppController extends Controller {
 			define('COMPETITION_START', $this->Config->getKey('competition.start'));
 		}
 
+		$this->set('announcements', $this->Announcement->getAll());
 		$this->set('emulating', ($this->Auth->item('emulating') == true));
 	}
 

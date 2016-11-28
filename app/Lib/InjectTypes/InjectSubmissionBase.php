@@ -26,6 +26,19 @@ abstract class InjectSubmissionBase {
 	abstract public function getTemplate();
 
 	/**
+	 * Get Submitted Template
+	 *
+	 * Returns the template for the
+	 * inject submission type that blue
+	 * teams will see when viewing their
+	 * submitted injects
+	 *
+	 * @param $submission The submissions
+	 * @return string The template
+	 */
+	abstract public function getSubmittedTemplate($submission);
+
+	/**
 	 * Validate Submission
 	 *
 	 * Validates a submission if

@@ -15,6 +15,7 @@
 		</div>
 	</div>
 
+	<?php if ( $password_change_enabled ): ?>
 	<div class="form-group">
 		<label for="old_password" class="col-sm-3 control-label">Current Password</label>
 		<div class="col-sm-9">
@@ -41,4 +42,5 @@
 			<button type="submit" class="btn btn-default">Update Profile</button>
 		</div>
 	</div>
+	<?php endif; ?>
 </form>

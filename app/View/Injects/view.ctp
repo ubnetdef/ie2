@@ -20,14 +20,17 @@
 			</p>
 
 			<p class="injectinfo">
-				<?= $this->Inject->timeOutput($inject); ?>
+				<?= $this->InjectStyler->timeOutput($inject); ?>
 			</p>
 		</div>
 		<div class="col-md-2">
-			<!--
+			<?php if ( (bool)env('FEATURE_HINT_SUBSYSTEM') ): ?>
 			<p><a herf="#" class="btn btn-info btn-block">HINTS</a></p>
+			<?php endif; ?>
+
+			<?php if ( (bool)env('FEATURE_HELP_SUBSYSTEM') ): ?>
 			<p><a href="#" class="btn btn-info btn-block">REQUEST HELP</a></p>
-			-->
+			<?php endif; ?>
 
 			<?php if ( $inject->getSubmissionCount() > 0 ): ?>
 			<p><span class="btn btn-success btn-block disabled">SUBMITTED</span></p>
@@ -41,9 +44,25 @@
 
 	<hr />
 
-	<?= $this->Inject->contentOutput($inject->getContent(), $this->Auth->item()); ?>
+	<?= $this->InjectStyler->contentOutput($inject->getContent(), $this->Auth->item()); ?>
 
 	<hr />
 
-	<?= $this->Inject->typeOutput($inject->getType()); ?>
+	<ul class="nav nav-tabs">
+		<li class="<?= $inject->isAcceptingSubmissions() ? ' active in' : ''; ?>">
+			<a href="#submit" role="tab" data-toggle="tab">Submit</a>
+		</li>
+		<li class="<?= !$inject->isAcceptingSubmissions() ? ' active in' : ''; ?>">
+			<a href="#view" role="tab" data-toggle="tab">View Submission<?= $inject->getMaxSubmissions() > 1 ? 's' : ''; ?></a>
+		</li>
+	</ul>
+
+	<div class="tab-content">
+		<div class="tab-pane fade<?= $inject->isAcceptingSubmissions() ? ' active in' : ''; ?>" id="submit">
+			<?= $this->InjectStyler->typeOutput($inject->getType()); ?>
+		</div>
+		<div class="tab-pane fade<?= !$inject->isAcceptingSubmissions() ? ' active in' : ''; ?>" id="view">
+			<?= $this->InjectStyler->submittedOutput($inject->getType(), $submissions); ?>
+		</div>
+	</div>
 </div>

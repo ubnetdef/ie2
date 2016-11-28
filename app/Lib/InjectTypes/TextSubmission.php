@@ -8,7 +8,31 @@ class TextSubmission extends InjectSubmissionBase {
 	}
 
 	public function getTemplate() {
-		return 'TODO';
+		return <<<'TEMPLATE'
+<textarea class="form-control" rows="10" name="content"></textarea>
+
+<p></p>
+
+<div class="row">
+	<div class="col-sm-4 col-sm-offset-4">
+		<input type="submit" class="btn btn-success btn-block" value="Submit!" />
+	</div>
+</div>
+TEMPLATE;
+	}
+
+	public function getSubmittedTemplate($submissions) {
+		$tpl = '<ul class="list-group">';
+
+		foreach ( $submissions AS $s ) {
+			$tpl .= '<li class="list-group-item">'.
+						'<h4 class="list-group-item-heading">Submission on '.$s['Submission']['created'].'</h4>'.
+						'<p class="list-group-item-text">'.nl2br($s['Submission']['data']).'</p>'.
+					'</li>';
+		}
+
+		$tpl .= '</ul>';
+		return $tpl;
 	}
 
 	public function validateSubmission($inject, $submission) {
