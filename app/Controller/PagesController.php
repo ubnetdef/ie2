@@ -17,6 +17,21 @@ class PagesController extends AppController {
 		$this->set('body', $this->Config->getKey('homepage.body'));
 	}
 
+	/**
+	 * Announcement Read Endpoint 
+	 *
+	 * @url /pages/announcement_read
+	 */
+	public function announcement_read($aid=false) {
+		if ( $aid == false || !is_numeric($aid) ) return $this->ajaxResponse(null);
+
+		$read = $this->Session->consume('read_announcements');
+		$read[] = $aid;
+		$this->Session->write('read_announcements', $read);
+		
+		return $this->ajaxResponse(null);
+	}
+
 	public function scoreboard() {
 		$this->set('at_scoreboard', true);
 	}

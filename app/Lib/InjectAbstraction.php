@@ -22,14 +22,11 @@ class InjectAbstraction implements JsonSerializable {
 	 * Inject Constructor
 	 *
 	 * @param $data Data returned from the model
+	 * @param $submissionCount Count of how many submissions
 	 */
-	public function __construct($data) {
+	public function __construct($data, $submissionCount) {
 		$this->data = $data;
-
-		// Clean up some stuff like submission_count
-		if ( isset($data[0]['submission_count']) ) {
-			$this->data['Schedule']['submission_count'] = $data[0]['submission_count'];
-		}
+		$this->data['Schedule']['submission_count'] = $submissionCount;
 	}
 
 	/**
@@ -161,7 +158,7 @@ class InjectAbstraction implements JsonSerializable {
 	 */
 	public function jsonSerialize() {
 		return [
-			'id'        => $this->getInjectID(),
+			'id'        => $this->getScheduleID(),
 			'title'     => $this->getTitle(),
 			'start'     => $this->getStartString(),
 			'end'       => $this->getEndString(),

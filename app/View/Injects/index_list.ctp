@@ -48,6 +48,6 @@ echo $this->Html->script('injectengine', array('inline' => false));
 
 <script>
 $(document).ready(function() {
-	InjectEngine.init('<?php echo $this->Html->url('/injects'); ?>');
+	InjectEngine.init();
 });
 </script>

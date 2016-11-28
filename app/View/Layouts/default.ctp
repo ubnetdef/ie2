@@ -15,6 +15,9 @@
 
 	echo $this->Html->script('vendor/jquery.min');
 	echo $this->Html->script('vendor/bootstrap.min');
+	echo $this->Html->script('site');
+
+	echo $this->Html->scriptBlock('window.BASE = "'.$this->Html->url('/').'";', ['safe' => false]);
 
 	echo $this->fetch('meta');
 	echo $this->fetch('css');
@@ -81,9 +84,10 @@
 
 					if ( $this->Auth->isAdmin() ) {
 						echo $this->Misc->navbarDropdown('Backend', isset($at_backend), [
-							$this->Misc->navbarItem('Config Manager', '/site/config'),
-							$this->Misc->navbarItem('User Manager', '/'),
-							$this->Misc->navbarItem('Inject Manager', '/'),
+							$this->Misc->navbarItem('Site Manager', '/site'),
+							'<li role="separator" class="divider"></li>',
+							$this->Misc->navbarItem('User Manager', '/site/users'),
+							$this->Misc->navbarItem('Inject Manager', '/site/injects'),
 							//$this->Misc->navbarItem('Service Manager', '/admin/service'),
 							$this->Misc->navbarItem('Log Manager', '/logs'),
 						]);
@@ -103,8 +107,11 @@
 </nav>
 
 <div class="container">
-	<?php foreach ( $announcements AS $a ): ?>
-	<div class="alert alert-info alert-dismissible" role="alert" data-id="<?= $a['Announcement']['id']; ?>">
+	<?php
+	foreach ( $announcements AS $a ):
+	if ( in_array($a['Announcement']['id'], $this->Session->read('read_announcements')) ) continue;
+	?>
+	<div class="alert alert-info alert-dismissible alert-announcement" role="alert" data-aid="<?= $a['Announcement']['id']; ?>">
 		<button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span></button>
 		<p><?= $a['Announcement']['content']; ?></p>
 	</div>

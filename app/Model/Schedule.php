@@ -24,21 +24,7 @@ class Schedule extends AppModel {
 	public function getInjectsRaw($groups) {
 		$now = time();
 
-		return $this->find('all', [
-			'fields' => [
-				'Inject.*', 'Schedule.*', 'COUNT(Submission.id) AS submission_count',
-			],
-			'joins' => [
-				[
-					'type'  => 'LEFT',
-					'table' => 'submissions',
-					'alias' => 'Submission',
-					'conditions' => [
-						'Submission.inject_id = Inject.id',
-					],
-				],
-			],
-
+		$injects = $this->find('all', [
 			'conditions' => [
 				'Schedule.group_id' => $groups,
 				'Schedule.active' => true,
@@ -64,11 +50,41 @@ class Schedule extends AppModel {
 				'(Schedule.end > 0) DESC',
 				'Schedule.end ASC',
 			],
-
-			'group' => [
-				'Inject.id',
-			],
 		]);
+
+		// Now remove any duplicates
+		$cache = [];
+		foreach ( $injects AS $k => $v ) {
+			$injectID = $v['Inject']['id'];
+			$newEnd   = $v['Schedule']['end'];
+
+			if ( !isset($cache[$injectID]) ) {
+				$cache[$injectID] = [
+					'end' => $newEnd,
+					'key' => $k,
+				];
+
+				continue;
+			}
+
+			$oldEnd = $cache[$injectID]['end'];
+			$oldKey = $cache[$injectID]['key'];
+
+			// So we're going to prefer an inject
+			// with the latest end time
+			if ( ($newEnd == 0 && $oldEnd > 0) || ($oldEnd > 0 && $newEnd > $oldEnd) ) {
+				unset($injects[$oldKey]);
+
+				$cache[$injectID] = [
+					'end' => $newEnd,
+					'key' => $k,
+				];
+			} else {
+				unset($injects[$k]);
+			}
+		}
+
+		return $injects;
 	}
 
 	/**
@@ -105,20 +121,6 @@ class Schedule extends AppModel {
 		}
 
 		return $this->find('first', [
-			'fields' => [
-				'Inject.*', 'Schedule.*', 'COUNT(Submission.id) AS submission_count',
-			],
-			'joins' => [
-				[
-					'type'  => 'LEFT',
-					'table' => 'submissions',
-					'alias' => 'Submission',
-					'conditions' => [
-						'Submission.inject_id = Inject.id',
-					],
-				],
-			],
-
 			'conditions' => $conditions,
 		]);
 	}
@@ -137,7 +139,8 @@ class Schedule extends AppModel {
 		$rtn = [];
 
 		foreach ( $this->getInjectsRaw($groups) AS $inject ) {
-			$rtn[] = new InjectAbstraction($inject);
+			$submissionCount = ClassRegistry::init('Submission')->getCount($inject['Inject']['id'], $groups);
+			$rtn[] = new InjectAbstraction($inject, $submissionCount);
 		}
 
 		return $rtn;
@@ -159,7 +162,11 @@ class Schedule extends AppModel {
 	public function getInject($id, $groups, $show_expired=false) {
 		$inject = $this->getInjectRaw($id, $groups, $show_expired);
 		
-		if ( !empty($inject) ) $inject = new InjectAbstraction($inject);
+		if ( !empty($inject) ) {
+			$submissionCount = ClassRegistry::init('Submission')->getCount($id, $groups);
+			$inject = new InjectAbstraction($inject, $submissionCount);
+		}
+
 		return $inject;
 	}
 }

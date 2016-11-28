@@ -14,6 +14,9 @@ class InjectStylerHelper extends AppHelper {
 	 */
 	private $inject;
 
+	const TYPE_OUTPUT_TPL = '<ul class="list-group"><li class="list-group-item">'.
+				'<h4 class="list-group-item-heading">%s</h4></li></ul>';
+
 	/**
 	 * Constructor for the InjectHelper
 	 *
@@ -27,7 +30,7 @@ class InjectStylerHelper extends AppHelper {
 		}
 
 		$this->typeManager = new InjectTypes\Manager($settings['types']);
-		$this->inject = $settings['inject'];
+		$this->setInject($settings['inject']);
 	}
 
 	/**
@@ -103,12 +106,13 @@ class InjectStylerHelper extends AppHelper {
 		}
 
 		if ( $this->inject->isExpired() ) {
-			return 'Inject Expired';
+			return sprintf(self::TYPE_OUTPUT_TPL, 'Submission for this inject has expired.');
 		}
 
 		if ( $this->inject->getSubmissionCount() >= $this->inject->getMaxSubmissions() ) {
 			return ($this->inject->getMaxSubmissions() > 1
-				? 'Max submissions reached.' : 'This inject has already been submitted.');
+				? sprintf(self::TYPE_OUTPUT_TPL, 'Max submissions reached.')
+				: sprintf(self::TYPE_OUTPUT_TPL, 'This inject has already been submitted.'));
 		}
 
 		return 'Unknown error';

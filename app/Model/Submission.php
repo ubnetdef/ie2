@@ -30,4 +30,18 @@ class Submission extends AppModel {
 			],
 		]);
 	}
+
+	/**
+	 * Get Submissions Count
+	 *
+	 * Basically wraps count around `getSubmissions`
+	 *
+	 * @param $id The inject ID
+	 * @param $group The group ID
+	 * @return int The number of the submissions done by
+	 * this group for this inject
+	 */
+	public function getCount($id, $group) {
+		return count($this->getSubmissions($id, $group));
+	}
 }

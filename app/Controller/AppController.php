@@ -19,7 +19,7 @@ class AppController extends Controller {
 	];
 
 	public $uses = ['Announcement', 'Config'];
-	public $helpers = ['Auth', 'Misc'];
+	public $helpers = ['Auth', 'Misc', 'Session'];
 
 	/**
 	 * Before Filter Hook
@@ -29,6 +29,11 @@ class AppController extends Controller {
 	 */
 	public function beforeFilter() {
 		parent::beforeFilter();
+
+		// Setup the read announcements
+		if ( !$this->Session->check('read_announcements') ) {
+			$this->Session->write('read_announcements', []);
+		}
 
 		// Setup a constant for the competition start
 		if ( !defined('COMPETITION_START') ) {

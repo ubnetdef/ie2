@@ -1,16 +1,12 @@
 var InjectEngine = InjectEngine || {};
 
 InjectEngine = {
-	_injectURL: null,
 	_updateInterval: null,
 
 	_tpl: null,
 
-	init: function(injectURL) {
+	init: function() {
 		console.log('InjectEngine-JS: Init');
-
-		// Setup the inject URL
-		this._injectURL = injectURL;
 
 		// Setup the template
 		src = $("#inject-list-tpl").html();
@@ -22,7 +18,7 @@ InjectEngine = {
 	},
 
 	update: function() {
-		injectURL = this._injectURL;
+		injectURL = window.BASE+"injects";
 		tpl = this._tpl;
 
 		$.getJSON(injectURL+"/api", function(data) {
