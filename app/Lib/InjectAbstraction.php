@@ -6,7 +6,7 @@ App::uses('Inflector', 'Utility');
  *
  * This represents a specific inject
  */
-class InjectAbstraction {
+class InjectAbstraction implements JsonSerializable {
 	/**
 	 * Copy of the data returned from the
 	 * Schedule model
@@ -109,10 +109,6 @@ class InjectAbstraction {
 		if ( $this->getEnd() == 0 ) return 0;
 
 		$duration = ($this->getEnd() - $this->getStart());
-		if ( $this->isFuzzy() ) {
-			$duration -= COMPETITION_START;
-		}
-
 		return round($duration / 60);
 	}
 
@@ -153,5 +149,24 @@ class InjectAbstraction {
 				return $this->data[$m][$key];
 			}
 		}
+	}
+
+	/**
+	 * JSON Serialize Method
+	 *
+	 * This method gets called when we
+	 * json_encode this object
+	 *
+	 * @return array Data to be serialized
+	 */
+	public function jsonSerialize() {
+		return [
+			'id'        => $this->getInjectID(),
+			'title'     => $this->getTitle(),
+			'start'     => $this->getStartString(),
+			'end'       => $this->getEndString(),
+			'expired'   => $this->isExpired(),
+			'submitted' => ($this->getSubmissionCount() > 0),
+		];
 	}
 }

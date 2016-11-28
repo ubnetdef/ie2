@@ -31,6 +31,12 @@ TEMPLATE;
 					'</li>';
 		}
 
+		if ( empty($submissions) ) {
+			$tpl .= '<li class="list-group-item">'.
+						'<h4 class="list-group-item-heading">No submissions</h4>'.
+					'</li>';
+		}
+
 		$tpl .= '</ul>';
 		return $tpl;
 	}

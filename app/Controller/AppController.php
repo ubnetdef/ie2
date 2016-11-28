@@ -68,4 +68,20 @@ class AppController extends Controller {
 			$this->response->body($compressedHtml);
 		}
 	}
+
+	/**
+	 * Ajax Response
+	 *
+	 * @param $data The output
+	 * @param $status The HTTP status code
+	 * @return CakeResponse
+	 */
+	protected function ajaxResponse($data, $status=200) {
+		$this->layout = 'ajax';
+
+		return new CakeResponse([
+			'body'   => (is_array($data) ? json_encode($data) : $data),
+			'status' => $status,
+		]);
+	}
 }

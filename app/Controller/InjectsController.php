@@ -29,8 +29,6 @@ class InjectsController extends AppController {
 	 * @url /injects/index
 	 */
 	public function index() {
-		$this->set('injects', $this->Schedule->getInjects($this->groups));
-
 		if ( (bool)env('INJECT_INBOX_STREAM_VIEW') ) {
 			// Load + setup the InjectStyler helper
 			$this->helpers[] = 'InjectStyler';
@@ -39,10 +37,25 @@ class InjectsController extends AppController {
 				'inject' => new stdClass(), // Nothing...for now
 			];
 
+			$this->set('injects', $this->Schedule->getInjects($this->groups));
 			return $this->render('index_stream');
 		} else {
 			return $this->render('index_list');
 		}
+	}
+
+	/**
+	 * API Endpoint for Injects
+	 *
+	 * The Inject Inbox Page will call
+	 * this endpoint every xx seconds.
+	 *
+	 * @url /injects/api
+	 */
+	public function api() {
+		return $this->ajaxResponse([
+			'injects' => $this->Schedule->getInjects($this->groups),
+		]);
 	}
 
 	/**

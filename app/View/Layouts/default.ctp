@@ -13,8 +13,8 @@
 	echo $this->Html->css('bootstrap.min');
 	echo $this->Html->css('style');
 
-	echo $this->Html->script('jquery.min');
-	echo $this->Html->script('bootstrap.min');
+	echo $this->Html->script('vendor/jquery.min');
+	echo $this->Html->script('vendor/bootstrap.min');
 
 	echo $this->fetch('meta');
 	echo $this->fetch('css');
@@ -59,7 +59,7 @@
 					echo $this->Misc->navbarItem('Injects', '/injects', isset($at_injects));
 				}
 
-				echo $this->Misc->navbarItem('Scoreboard', '/scoreboard', isset($at_scoreboard));
+				echo $this->Misc->navbarItem('Scoreboard', '/pages/scoreboard', isset($at_scoreboard));
 				?>
 			</ul>
 			
@@ -74,18 +74,18 @@
 						echo $this->Misc->navbarDropdown('Competition Central', isset($at_staff), [
 							$this->Misc->navbarItem('Competition Overview', '/staff'),
 							'<li role="separator" class="divider"></li>',
-							$this->Misc->navbarItem('Grader Island', '/staff/graders'),
-							$this->Misc->navbarItem('Scheduler', '/staff/scheduler'),
+							$this->Misc->navbarItem('Grader Island', '/staff/grader'),
+							$this->Misc->navbarItem('Scheduler', '/scheduler'),
 						]);
 					}
 
 					if ( $this->Auth->isAdmin() ) {
 						echo $this->Misc->navbarDropdown('Backend', isset($at_backend), [
-							$this->Misc->navbarItem('Config Manager', '/admin/pages'),
-							$this->Misc->navbarItem('User Manager', '/admin/user'),
-							$this->Misc->navbarItem('Inject Manager', '/admin/inject'),
-							$this->Misc->navbarItem('Service Manager', '/admin/service'),
-							$this->Misc->navbarItem('Log Manager', '/admin/log'),
+							$this->Misc->navbarItem('Config Manager', '/site/config'),
+							$this->Misc->navbarItem('User Manager', '/'),
+							$this->Misc->navbarItem('Inject Manager', '/'),
+							//$this->Misc->navbarItem('Service Manager', '/admin/service'),
+							$this->Misc->navbarItem('Log Manager', '/logs'),
 						]);
 					}
 

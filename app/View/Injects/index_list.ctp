@@ -1,12 +1,6 @@
 <?php
-//echo $this->Html->script('injectengine', array('inline' => false));
-//$this->Inject->setup($injects);
-
-$map = [
-	1 => ['class' => 'btn-danger', 'text' => 'EXPIRED'],
-	2 => ['class' => 'btn-success', 'text' => 'COMPLETED'],
-	3 => ['class' =>'btn-info', 'text' => 'ACTIVE'],
-]
+echo $this->Html->script('vendor/handlebars', array('inline' => false));
+echo $this->Html->script('injectengine', array('inline' => false));
 ?>
 
 <div class="row">
@@ -19,45 +13,41 @@ $map = [
 		</ul>
 
 		<div class="tab-content">
-			<div class="tab-pane fade" id="all_injects">
+			<div class="tab-pane fade in active" id="active_injects">
 				<div class="list-group">
-					<?php foreach ( $injects AS $inject ): ?>
-					<a href="<?= $this->Html->url('/injects/view/'.$inject->getScheduleID()); ?>" class="list-group-item">
-						<span class="btn <?= $map[$inject->getInjectID()]['class']; ?> pull-right"><?= $map[$inject->getInjectID()]['text']; ?></span>
-						<h4 class="list-group-item-heading"><?= $inject->getTitle(); ?></h4>
-						<p class="text-muted">
-							Start: <?= $inject->getStartString(); ?><br />
-							End: <?= $inject->getEndString(); ?>
-						</p>
-					</a>
-					<?php endforeach; ?>
-					<?php foreach ( $injects AS $inject ): ?>
-					<a href="<?= $this->Html->url('/injects/view/'.$inject->getScheduleID()); ?>" class="list-group-item">
-						<span class="btn btn-info pull-right">ACTIVE</span>
-						<h4 class="list-group-item-heading"><?= $inject->getTitle(); ?></h4>
-						<p class="text-muted">
-							Start: <?= $inject->getStartString(); ?><br />
-							End: <?= $inject->getEndString(); ?>
-						</p>
-					</a>
-					<?php endforeach; ?>
 				</div>
 			</div>
 
-			<div class="tab-pane fade in active" id="active_injects">
+			<div class="tab-pane fade" id="all_injects">
 				<div class="list-group">
-					<?php foreach ( $injects AS $inject ): ?>
-					<a href="<?= $this->Html->url('/injects/view/'.$inject->getScheduleID()); ?>" class="list-group-item">
-						<span class="btn btn-info pull-right">ACTIVE</span>
-						<h4 class="list-group-item-heading"><?= $inject->getTitle(); ?></h4>
-						<p class="text-muted">
-							Start: <?= $inject->getStartString(); ?><br />
-							End: <?= $inject->getEndString(); ?>
-						</p>
-					</a>
-					<?php endforeach; ?>
 				</div>
 			</div>
 		</div>
 	</div>
 </div>
+
+<script id="inject-list-tpl" type="text/x-handlebars-template">
+<a href="{{ injectURL }}/view/{{ id }}" class="list-group-item">
+	{{#if submitted}}
+	<span class="btn btn-success pull-right">COMPLETED</span>
+	{{/if}}
+
+	{{#if expired}}
+	<span class="btn btn-danger pull-right">EXPIRED</span>
+	{{else}}
+	<span class="btn btn-info pull-right">ACTIVE</span>
+	{{/if}}
+	
+	<h4 class="list-group-item-heading">{{ title }}</h4>
+	<p class="text-muted">
+		Start: {{ start }}<br />
+		End: {{ end }}
+	</p>
+</a>
+</script>
+
+<script>
+$(document).ready(function() {
+	InjectEngine.init('<?php echo $this->Html->url('/injects'); ?>');
+});
+</script>

@@ -17,4 +17,7 @@ class PagesController extends AppController {
 		$this->set('body', $this->Config->getKey('homepage.body'));
 	}
 
+	public function scoreboard() {
+		$this->set('at_scoreboard', true);
+	}
 }
