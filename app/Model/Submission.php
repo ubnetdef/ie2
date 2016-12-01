@@ -7,7 +7,99 @@ App::uses('AppModel', 'Model');
  */
 class Submission extends AppModel {
 	public $belongsTo = ['Inject', 'User', 'Group'];
+	public $hasOne = ['Grade'];
 	public $recursive = 1;
+
+	/**
+	 * Get All Submissions
+	 *
+	 * This retrieves the submissions done by
+	 * a group.
+	 *
+	 * @param $group The group ID
+	 * @param $noDeleted Discard deleted submissions
+	 * @return array The submissions done by this group
+	 */
+	public function getAllSubmissions($group=false, $noDeleted=false) {
+		$conditions = [];
+
+		if ( $group !== false ) {
+			$conditions['Group.id'] = $group;
+		}
+		if ( $noDeleted ) {
+			$conditions['Submission.deleted'] = false;
+		}
+
+		return $this->find('all', [
+			'fields' => [
+				'Submission.id', 'Submission.created', 'Submission.deleted',
+				'Inject.id', 'Inject.title', 'Inject.sequence', 'Inject.type',
+				'User.username', 'Group.name', 'Group.team_number',
+				'Grade.created', 'Grade.grade', 'Grade.comments',
+				'Grader.username',
+			],
+
+			'joins' => [
+				[
+					'table'      => 'users',
+					'alias'      => 'Grader',
+					'type'       => 'LEFT',
+					'conditions' => [
+						'Grader.id = Grade.grader_id',
+					],
+				]
+			],
+
+			'conditions' => $conditions,
+
+			'order' => [
+				'Grade.created DESC',
+				'Submission.created DESC',
+			],
+		]);
+	}
+
+	/**
+	 * Get Submission
+	 *
+	 * This retrieves the submission done by
+	 * a group.
+	 *
+	 * @param $sid The submission ID
+	 * @return array The submissions done by this group
+	 */
+	public function getSubmission($sid, $group=false, $noDeleted=false) {
+		$conditions = [
+			'Submission.id' => $sid,
+		];
+
+		if ( $group !== false ) {
+			$conditions['Group.id'] = $group;
+		}
+		if ( $noDeleted ) {
+			$conditions['Submission.deleted'] = false;
+		}
+
+		return $this->find('first', [
+			'fields' => [
+				'Submission.*', 'Inject.*', 'User.*',
+				'Group.*', 'Grade.*', 'Grader.*',
+			],
+
+			'joins' => [
+				[
+					'table'      => 'users',
+					'alias'      => 'Grader',
+					'type'       => 'LEFT',
+					'conditions' => [
+						'Grader.id = Grade.grader_id',
+					],
+				]
+			],
+
+			'conditions' => $conditions,
+		]);
+	}
 
 	/**
 	 * Get Submissions
@@ -34,7 +126,7 @@ class Submission extends AppModel {
 	/**
 	 * Get Submissions Count
 	 *
-	 * Basically wraps count around `getSubmissions`
+	 * Basically `getSubmissions`
 	 *
 	 * @param $id The inject ID
 	 * @param $group The group ID
@@ -42,6 +134,12 @@ class Submission extends AppModel {
 	 * this group for this inject
 	 */
 	public function getCount($id, $group) {
-		return count($this->getSubmissions($id, $group));
+		return $this->find('count', [
+			'conditions' => [
+				'Inject.id'          => $id,
+				'Group.id'           => $group,
+				'Submission.deleted' => false,
+			],
+		]);
 	}
 }

@@ -25,6 +25,21 @@ class Group extends AppModel {
 	}
 
 	/**
+	 * Gets the children of a group
+	 *
+	 * @param $id The ID of the group you are getting children for
+	 * @return array An array containing the children
+	 */
+	public function getChildren($id) {
+		$children = [];
+		foreach ( $this->children($id) AS $c ) {
+			$children[] = $c['Group']['id'];
+		}
+
+		return $children;
+	}
+
+	/**
 	 * Gets the 'pretty' version of the group
 	 * Example: Staff/White Team
 	 *

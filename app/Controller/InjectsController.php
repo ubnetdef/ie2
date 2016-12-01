@@ -20,6 +20,13 @@ class InjectsController extends AppController {
 		if ( $this->Auth->isStaff() ) {
 			$this->groups[] = env('GROUP_BLUE');
 		}
+
+		// Load + setup the InjectStyler helper
+		$this->helpers[] = 'InjectStyler';
+		$this->helpers['InjectStyler'] = [
+			'types'  => $this->Config->getInjectTypes(),
+			'inject' => new stdClass(), // Nothing...for now
+		];
 	}
 
 	/**
@@ -30,13 +37,6 @@ class InjectsController extends AppController {
 	 */
 	public function index() {
 		if ( (bool)env('INJECT_INBOX_STREAM_VIEW') ) {
-			// Load + setup the InjectStyler helper
-			$this->helpers[] = 'InjectStyler';
-			$this->helpers['InjectStyler'] = [
-				'types'  => $this->Config->getInjectTypes(),
-				'inject' => new stdClass(), // Nothing...for now
-			];
-
 			$this->set('injects', $this->Schedule->getInjects($this->groups));
 			return $this->render('index_stream');
 		} else {
@@ -75,12 +75,8 @@ class InjectsController extends AppController {
 
 		$submissions = $this->Submission->getSubmissions($inject->getInjectID(), $this->Auth->group('id'));
 
-		// Load + setup the InjectStyler helper
-		$this->helpers[] = 'InjectStyler';
-		$this->helpers['InjectStyler'] = [
-			'types'  => $this->Config->getInjectTypes(),
-			'inject' => $inject,
-		];
+		// Setup the InjectStyler helper with the latest inject
+		$this->helpers['InjectStyler']['inject'] = $inject;
 
 		$this->set('inject', $inject);
 		$this->set('submissions', $submissions);
@@ -96,16 +92,15 @@ class InjectsController extends AppController {
 			throw new BadMethodCallException('Unauthorized');
 		}
 
-		if ( !isset($this->request->data['id']) || !isset($this->request->data['content']) ) {
-			throw new BadMethodCallException('Missing id/content');
+		if ( !isset($this->request->data['id']) ) {
+			throw new BadMethodCallException('Missing id');
 		}
 
 		$inject = $this->Schedule->getInject($this->request->data['id'], $this->groups);
 		if ( empty($inject) ) {
 			throw new BadRequestException('Unknown inject.');
 		}
-
-		if ( $inject->isAcceptingSubmissions() ) {
+		if ( !$inject->isAcceptingSubmissions() ) {
 			throw new BadRequestException('Inject is no longer accepting submissions!');
 		}
 
@@ -127,7 +122,81 @@ class InjectsController extends AppController {
 			'data'      => $injectType->handleSubmission($inject, $this->request->data),
 		]);
 
+		$this->logMessage(
+			'submission',
+			sprintf('Created submission for Inject #%d', $inject->getSequence()),
+			[],
+			$this->Submission->id
+		);
 		$this->Flash->success('Successfully submitted!');
 		return $this->redirect('/injects/view/'.$inject->getScheduleID());
+	}
+
+	/**
+	 * Delete Inject Submission
+	 *
+	 * @url /injects/delete/<sid>
+	 */
+	public function delete($sid=false) {
+		if ( $sid === false || !is_numeric($sid) ) {
+			throw new BadRequestException();
+		}
+
+		$submission = $this->Submission->findById($sid);
+		if ( empty($submission) || !in_array($submission['Group']['id'], $this->groups) ) {
+			throw new BadRequestException('Unknown submission.');
+		}
+
+		$this->Submission->id = $submission['Submission']['id'];
+		$this->Submission->save([
+			'deleted' => true,
+		]);
+
+		$this->logMessage(
+			'submission',
+			sprintf('Deleted submission #%d on Inject #%d', $sid, $submission['Inject']['sequence']),
+			[
+				'user' => $this->Auth->user('username'),
+			],
+			$sid
+		);
+		$this->Flash->success('Successfully deleted the submission!');
+		$this->redirect($this->referer());
+	}
+
+	/**
+	 * View (download) Submission
+	 *
+	 * @url /staff/submission/<sid>
+	 */
+	public function submission($sid=false) {
+		if ( $sid === false || !is_numeric($sid) ) {
+			return $this->redirect('/staff/graders');
+		}
+
+		$submission = $this->Submission->getSubmission($sid, $this->groups, true);
+		if ( empty($submission) ) {
+			throw new BadRequestException('Unknown submission.');
+		}
+
+		$data = json_decode($submission['Submission']['data'], true);
+		$download = (isset($this->params['url']['download']) && $this->params['url']['download'] == true);
+
+		// Let's verify our data is correct
+		if ( md5(base64_decode($data['data'])) !== $data['hash'] ) {
+			throw new RuntimeException('Data storage failure.');
+		}
+
+		// Create the new response for the data
+		$response = new CakeResponse();
+		$response->type($data['extension']);
+		$response->body(base64_decode($data['data']));
+		$response->disableCache();
+
+		$type = ($download ? 'attachment' : 'inline');
+		$filename = $data['filename'];
+		$response->header('Content-Disposition', $type.'; filename="'.$filename.'"');
+
+		return $response;
 	}
 }

@@ -7,11 +7,19 @@ class FlagSubmission extends InjectSubmissionBase {
 		return 'flag';
 	}
 
+	public function getName() {
+		return 'Flag Submission (TODO)';
+	}
+
 	public function getTemplate() {
 		return 'TODO.';
 	}
 
 	public function getSubmittedTemplate($submissions) {
+		return 'TODO';
+	}
+
+	public function getGraderTemplate($submissions) {
 		return 'TODO';
 	}
 

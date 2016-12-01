@@ -62,7 +62,13 @@
 					echo $this->Misc->navbarItem('Injects', '/injects', isset($at_injects));
 				}
 
-				echo $this->Misc->navbarItem('Scoreboard', '/pages/scoreboard', isset($at_scoreboard));
+				if ( (bool)env('FEATURE_BANKWEB') ) {
+					echo $this->Misc->navbarItem('Bank', '/bank', isset($at_bank));
+				}
+
+				if ( (bool)env('FEATURE_SCOREENGINE') ) {
+					echo $this->Misc->navbarItem('Scoreboard', '/scoreboard', isset($at_scoreboard));
+				}
 				?>
 			</ul>
 			
@@ -77,7 +83,8 @@
 						echo $this->Misc->navbarDropdown('Competition Central', isset($at_staff), [
 							$this->Misc->navbarItem('Competition Overview', '/staff'),
 							'<li role="separator" class="divider"></li>',
-							$this->Misc->navbarItem('Grader Island', '/staff/grader'),
+							$this->Misc->navbarItem('Grader Island', '/staff/graders'),
+							$this->Misc->navbarItem('Grading Export', '/staff/export'),
 							$this->Misc->navbarItem('Scheduler', '/scheduler'),
 						]);
 					}
@@ -108,6 +115,7 @@
 
 <div class="container">
 	<?php
+	if ( isset($announcements) ):
 	foreach ( $announcements AS $a ):
 	if ( in_array($a['Announcement']['id'], $this->Session->read('read_announcements')) ) continue;
 	?>
@@ -115,7 +123,7 @@
 		<button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span></button>
 		<p><?= $a['Announcement']['content']; ?></p>
 	</div>
-	<?php endforeach; ?>
+	<?php endforeach; endif; ?>
 
 	<?= $this->Session->flash(); ?>
 

@@ -2,8 +2,6 @@
 App::uses('AppHelper', 'View/Helper');
 
 class InjectStylerHelper extends AppHelper {
-	public $helpers = ['Html'];
-
 	/**
 	 * Instance of \InjectTypes\Manager
 	 */
@@ -97,8 +95,8 @@ class InjectStylerHelper extends AppHelper {
 		$injectType = $this->typeManager->get($id);
 
 		if ( $this->inject->isAcceptingSubmissions() ) {
-			$tpl = '<form method="post" action="'.$this->Html->url('/injects/submit').'">';
-			$tpl .= '<input type="hidden" name="id" value="'.$this->inject->getInjectID().'" />';
+			$tpl = '<form method="post" action="'.$this->url('/injects/submit').'" enctype="multipart/form-data">';
+			$tpl .= '<input type="hidden" name="id" value="'.$this->inject->getScheduleID().'" />';
 			$tpl .= $injectType->getTemplate();
 			$tpl .= '</form>';
 			
@@ -126,5 +124,25 @@ class InjectStylerHelper extends AppHelper {
 	 */
 	public function submittedOutput($id, $submissions) {
 		return $this->typeManager->get($id)->getSubmittedTemplate($submissions);
+	}
+
+	/**
+	 * Inject Type Grader Output
+	 *
+	 * @param $id Inject Type ID
+	 * @return string The template
+	 */
+	public function graderOutput($id, $submission) {
+		return $this->typeManager->get($id)->getGraderTemplate($submission);
+	}
+
+	/**
+	 * Get Inject Type Name
+	 *
+	 * @param $id Inject Type ID
+	 * @return string The name
+	 */
+	public function getName($id) {
+		return $this->typeManager->get($id)->getName();
 	}
 }

@@ -19,6 +19,18 @@ class InjectAbstraction implements JsonSerializable {
 	const DATE_FORMAT = 'F j, Y \a\t g:iA';
 
 	/**
+	 * The time for an active inject
+	 * to be considered 'recent'
+	 */
+	const ACTIVE_RECENT = 5 * 60;
+
+	/**
+	 * The time for an expired inject
+	 * to be considered 'recent'
+	 */
+	const EXPIRED_RECENT = 30 * 60;
+
+	/**
 	 * Inject Constructor
 	 *
 	 * @param $data Data returned from the model
@@ -27,6 +39,19 @@ class InjectAbstraction implements JsonSerializable {
 	public function __construct($data, $submissionCount) {
 		$this->data = $data;
 		$this->data['Schedule']['submission_count'] = $submissionCount;
+	}
+
+	/**
+	 * Is Recent Accessor
+	 *
+	 * @return bool If the inject is 'recent'
+	 */
+	public function isRecent() {
+		$time = ($this->isExpired() ? $this->getEnd() : $this->getStart());
+		$recent = ($this->isExpired() ? self::EXPIRED_RECENT : self::ACTIVE_RECENT);
+		$howLongAgo = (time() - $time);
+		
+		return ($time > 0 && $recent >= $howLongAgo);
 	}
 
 	/**
@@ -53,7 +78,7 @@ class InjectAbstraction implements JsonSerializable {
 	 * @return bool If the inject can be submitted
 	 */
 	public function isAcceptingSubmissions() {
-		return (!$this->isExpired() && $this->getSubmissionCount() < $this->getMaxSubmissions());
+		return ($this->isExpired() == false && $this->getSubmissionCount() < $this->getMaxSubmissions());
 	}
 
 	/**

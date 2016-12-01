@@ -18,7 +18,7 @@ class AppController extends Controller {
 		'Preflight',
 	];
 
-	public $uses = ['Announcement', 'Config'];
+	public $uses = ['Announcement', 'Config', 'Log'];
 	public $helpers = ['Auth', 'Misc', 'Session'];
 
 	/**
@@ -85,8 +85,31 @@ class AppController extends Controller {
 		$this->layout = 'ajax';
 
 		return new CakeResponse([
+			'type' => 'txt',
 			'body'   => (is_array($data) ? json_encode($data) : $data),
 			'status' => $status,
+		]);
+	}
+
+	/**
+	 * Log Message
+	 *
+	 * @param $type The log type
+	 * @param $message The message
+	 * @param $data [Optional] Extra data to log
+	 * @param $related [Optional] Related ID of this message
+	 * @return void
+	 */
+	public function logMessage($type, $message, $data=[], $related=0) {
+		$this->Log->create();
+		$this->Log->save([
+			'time'       => time(),
+			'type'       => $type,
+			'user_id'    => ($this->Auth->loggedIn() ? $this->Auth->user('id') : NULL),
+			'related_id' => ($related > 0 ? $related : NULL),
+			'data'       => json_encode($data),
+			'ip'         => $this->request->clientIp(),
+			'message'    => $message,
 		]);
 	}
 }

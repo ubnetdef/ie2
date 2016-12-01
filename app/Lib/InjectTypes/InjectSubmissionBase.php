@@ -1,5 +1,6 @@
 <?php
 namespace InjectTypes;
+\App::uses('Router', 'Routing');
 
 abstract class InjectSubmissionBase {
 	
@@ -14,6 +15,17 @@ abstract class InjectSubmissionBase {
 	 */
 	abstract public function getID();
 	
+	/**
+	 * Get Name
+	 *
+	 *
+	 * Returns the unique name for this
+	 * inject submission type
+	 *
+	 * @return string The name
+	 */
+	abstract public function getName();
+
 	/**
 	 * Get Template
 	 *
@@ -37,6 +49,19 @@ abstract class InjectSubmissionBase {
 	 * @return string The template
 	 */
 	abstract public function getSubmittedTemplate($submission);
+
+	/**
+	 * Get Grader Template
+	 *
+	 * Returns the template for the
+	 * inject submission type that the
+	 * graders will see when viewing a
+	 * submitted injects
+	 *
+	 * @param $submission The submissions
+	 * @return string The template
+	 */
+	abstract public function getGraderTemplate($submission);
 
 	/**
 	 * Validate Submission
@@ -65,4 +90,24 @@ abstract class InjectSubmissionBase {
 	 * specific submission
 	 */
 	abstract public function handleSubmission($inject, $submission);
+
+	/**
+	 * Generate URL
+	 *
+	 * @param $url The url
+	 * @return string The full url
+	 */
+	protected function _url($url) {
+		return \Router::url($url);
+	}
+
+	/**
+	 * Generate Date
+	 *
+	 * @param $timestamp The timestamp
+	 * @return string The date
+	 */
+	protected function _date($timestamp) {
+		return date('F j, Y \a\t g:iA', $timestamp);
+	}
 }

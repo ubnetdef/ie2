@@ -25,6 +25,11 @@ class PreflightComponent extends Component {
 			return;
 		}
 
+		// If BankWeb is enabled, we have some more checks...
+		if ( (bool)env('FEATURE_BANKWEB') ) {
+			$this->checks[] = 'checkBankWeb';
+		}
+
 		foreach ( $this->checks AS $check ) {
 			$passedOrErrorMessage = $this->$check();
 
@@ -114,7 +119,7 @@ class PreflightComponent extends Component {
 		$injectTypes = json_decode($ConfigModel->getKey('engine.inject_types'));
 
 		if ( json_last_error() != JSON_ERROR_NONE ) {
-			return sprintf('JSON Error decoding "engine.inject_types": ', json_last_error_msg());
+			return sprintf('JSON Error decoding "engine.inject_types": %s', json_last_error_msg());
 		}
 
 		// Should this be a warning?
@@ -128,6 +133,31 @@ class PreflightComponent extends Component {
 			if ( !class_exists($className) ) {
 				return sprintf('Unknown inject type "%s" - does this file exist in "app/Vendor/InjectTypes"?', $type);
 			}
+		}
+
+		return true;
+	}
+
+	/**
+	 * Check BankWeb
+	 *
+	 * Verifies some env variables are set, and that 'BANKWEB_PRODUCTS' exists
+	 */
+	public function checkBankWeb() {
+		foreach ( ['BANKAPI_SERVER', 'BANKAPI_TIMEOUT', 'BANKWEB_PRODUCTS'] AS $key ) {
+			if ( empty(env($key)) ) {
+				return sprintf('Please setup the variable "%s" to use the BankWeb Feature.', $key);
+			}
+		}
+
+		$products = ROOT . DS . env('BANKWEB_PRODUCTS');
+		if ( !file_exists($products) ) {
+			return sprintf('Please make sure the file "%s" exists (as set in "BANKWEB_PRODUCTS"', $products);
+		}
+
+		$contents = json_decode(file_get_contents($products));
+		if ( json_last_error() != JSON_ERROR_NONE ) {
+			return sprintf('JSON Error with "BANKWEB_PRODUCTS" - %s', json_last_error_msg());
 		}
 
 		return true;

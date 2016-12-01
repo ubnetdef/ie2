@@ -76,10 +76,12 @@ App::build(
  * CakePlugin::load('DebugKit'); //Loads a single plugin named DebugKit
  *
  */
-if (php_sapi_name() !== 'cli' && Configure::read('debug') && in_array('DebugKit', App::objects('plugin'))) {
+App::uses('CakeEventManager', 'Event');
+
+if (php_sapi_name() !== 'cli' && Configure::read('debug') > 0 && in_array('DebugKit', App::objects('plugin'))) {
 	CakePlugin::load('DebugKit');
-	
-	App::uses('CakeEventManager', 'Event');
+
+	// Auto attack DebugKit's toolbar on every controller
 	CakeEventManager::instance()->attach(function ($event) {
 		$controller = $event->subject();
 
@@ -87,6 +89,22 @@ if (php_sapi_name() !== 'cli' && Configure::read('debug') && in_array('DebugKit'
 			'DebugKit.Toolbar'
 		);
 	}, 'Controller.initialize');
+}
+
+// Dynamically load ScoreEngine/BankWeb plugins
+if ( Configure::read('ie.feature.scoreengine') ) {
+	CakePlugin::load('ScoreEngine', ['routes' => true]);
+
+	// Auto attach "EngineOutputter" on every controller
+	CakeEventManager::instance()->attach(function ($event) {
+		$controller = $event->subject();
+
+		$controller->helpers[] = 'ScoreEngine.EngineOutputter';
+	}, 'Controller.initialize');
+}
+
+if ( Configure::read('ie.feature.bankweb') ) {
+	CakePlugin::load('BankWeb');
 }
 
 /**

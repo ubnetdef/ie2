@@ -26,6 +26,18 @@ if (!env('APP_NAME')) {
 }
 
 /**
+ * Feature config
+ *
+ * This is only really used in `bootstrap.php`, as that file does not
+ * have the `env` function loaded at that time.
+ */
+	Configure::write('ie.feature.scoreengine', (bool)env('FEATURE_SCOREENGINE'));
+	Configure::write('ie.feature.bankweb', (bool)env('FEATURE_BANKWEB'));
+	Configure::write('ie.feature.bluepass', (bool)env('FEATURE_BLUE_PASSWORD_CHANGES'));
+	Configure::write('ie.feature.help', (bool)env('FEATURE_HELP_SUBSYSTEM'));
+	Configure::write('ie.feature.hint', (bool)env('FEATURE_HINT_SUBSYSTEM'));
+
+/**
  * CakePHP Debug Level:
  *
  * Production Mode:
@@ -126,7 +138,7 @@ if (!env('APP_NAME')) {
  *	`manager_index()` and `/manager/controller/index`
  *
  */
-	Configure::write('Routing.prefixes', ['admin', 'staff']);
+	//Configure::write('Routing.prefixes', ['admin', 'staff']);
 
 /**
  * Turn off all caching application-wide.

@@ -163,10 +163,71 @@ class Schedule extends AppModel {
 		$inject = $this->getInjectRaw($id, $groups, $show_expired);
 		
 		if ( !empty($inject) ) {
-			$submissionCount = ClassRegistry::init('Submission')->getCount($id, $groups);
+			$submissionCount = ClassRegistry::init('Submission')->getCount($inject['Inject']['id'], $groups);
 			$inject = new InjectAbstraction($inject, $submissionCount);
 		}
 
 		return $inject;
+	}
+
+	/**
+	 * Get all active injects
+	 *
+	 * @param $groups The groups to check for injects in
+	 * @return array All the active injects
+	 */
+	public function getActiveInjects($groups) {
+		$rtn = [];
+
+		foreach ( $this->getInjects($groups) AS $inject ) {
+			if ( !$inject->isExpired() ) {
+				$rtn[] = $inject;
+			}
+		}
+
+		return $rtn;
+	}
+
+	/**
+	 * Get recently expired injects
+	 *
+	 * This function uses the raw data from
+	 * `getInjectsRaw` and wraps every inject
+	 * inside an InjectAbstraction class
+	 *
+	 * @param $groups The groups to check for injects in
+	 * @param $howRecent How recent the injects have expired
+	 * @return array All the active injects
+	 */
+	public function getRecentExpired($groups, $howRecent=(90 * 60)) {
+		$now = time();
+		$nowCS = ($now - COMPETITION_START);
+
+		$data = $this->find('all', [
+			'conditions' => [
+				'Schedule.active'   => true,
+				'Schedule.group_id' => $groups,
+				'Schedule.end !='   => 0,
+				'OR' => [
+					[
+						'Schedule.fuzzy'  => true, 
+						'Schedule.end <'  => $nowCS,
+						'Schedule.end >=' => ($nowCS - $howRecent),
+					],
+					[
+						'Schedule.fuzzy'  => false,
+						'Schedule.end <'  => $now,
+						'Schedule.end >=' => ($now - $howRecent),
+					]
+				],
+			],
+		]);
+
+		$rtn = [];
+		foreach ( $data AS $d ) {
+			$rtn[] = new InjectAbstraction($d, 0);
+		}
+
+		return $rtn;
 	}
 }

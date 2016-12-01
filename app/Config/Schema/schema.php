@@ -97,6 +97,11 @@ class AppSchema extends CakeSchema {
 			'null' => false,
 			'key'  => 'primary',
 		],
+		'sequence' => [
+			'type'    => 'integer',
+			'null'    => false,
+			'default' => 0,
+		],
 		'title' => [
 			'type' => 'string',
 			'null' => false,
@@ -313,6 +318,43 @@ class AppSchema extends CakeSchema {
 		],
 	];
 
+	public $logs = [
+		'id' => [
+			'type' => 'integer',
+			'null' => false,
+			'key'  => 'primary',
+		],
+		'time' => [
+			'type' => 'integer',
+			'null' => false,
+		],
+		'type' => [
+			'type' => 'string',
+			'null' => false,
+		],
+		'user_id' => [
+			'type' => 'integer',
+		],
+		'related_id' => [
+			'type' => 'integer',
+		],
+		'data' => [
+			'type' => 'text',
+		],
+		'ip' => [
+			'type'   => 'string',
+			'length' => 15,
+		],
+		'message' => [
+			'type' => 'string',
+			'null' => false,
+		],
+
+		'indexes' => [
+			'PRIMARY' => ['column' => 'id', 'unqiue' => true],
+		],
+	];
+
 	// ================================
 
 	public function before($event = array()) {
@@ -421,16 +463,20 @@ INJECT_TEXT;
 				));
 			break;
 
-			case 'logs_TODO':
-				$this->_create('Log', array(
-					'time'       => time(),
-					'type'       => 1,
-					'user_id'    => 1,
-					'related_id' => 0,
-					'extra_data' => json_encode(array()),
-					'ip'         => '127.0.0.1',
-					'message'    => 'InjectEngine was just installed.',
-				));
+			case 'submissions':
+				// We have to change BLOB -> LONGBLOB
+				ClassRegistry::init('submissions')->query('ALTER TABLE submissions MODIFY data LONGBLOB');
+			break;
+
+			case 'logs':
+				$this->_create('Log', [
+					'time'    => time(),
+					'type'    => 'general',
+					'user_id' => 1,
+					'data'    => json_encode([]),
+					'ip'      => '127.0.0.1',
+					'message' => 'InjectEngine was just installed.',
+				]);
 			break;
 		}
 	}

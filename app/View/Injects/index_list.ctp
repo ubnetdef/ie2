@@ -30,12 +30,12 @@ echo $this->Html->script('injectengine', array('inline' => false));
 <a href="{{ injectURL }}/view/{{ id }}" class="list-group-item">
 	{{#if submitted}}
 	<span class="btn btn-success pull-right">COMPLETED</span>
-	{{/if}}
-
-	{{#if expired}}
-	<span class="btn btn-danger pull-right">EXPIRED</span>
 	{{else}}
-	<span class="btn btn-info pull-right">ACTIVE</span>
+		{{#if expired}}
+		<span class="btn btn-danger pull-right">EXPIRED</span>
+		{{else}}
+		<span class="btn btn-info pull-right">ACTIVE</span>
+		{{/if}}
 	{{/if}}
 	
 	<h4 class="list-group-item-heading">{{ title }}</h4>
