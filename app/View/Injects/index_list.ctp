@@ -1,5 +1,5 @@
 <?php
-echo $this->Html->script('vendor/handlebars', array('inline' => false));
+echo $this->Html->script('/vendor/handlebars', array('inline' => false));
 echo $this->Html->script('injectengine', array('inline' => false));
 ?>
 

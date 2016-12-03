@@ -96,7 +96,7 @@ class InjectStylerHelper extends AppHelper {
 
 		if ( $this->inject->isAcceptingSubmissions() ) {
 			$tpl = '<form method="post" action="'.$this->url('/injects/submit').'" enctype="multipart/form-data">';
-			$tpl .= '<input type="hidden" name="id" value="'.$this->inject->getScheduleID().'" />';
+			$tpl .= '<input type="hidden" name="id" value="'.$this->inject->getScheduleId().'" />';
 			$tpl .= $injectType->getTemplate();
 			$tpl .= '</form>';
 			

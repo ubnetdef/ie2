@@ -31,6 +31,18 @@ class InjectAbstraction implements JsonSerializable {
 	const EXPIRED_RECENT = 30 * 60;
 
 	/**
+	 * String used when an inject
+	 * starts immediately
+	 */
+	const STR_IMMEDIATELY = 'Immediately';
+
+	/**
+	 * String used when an inject
+	 * never ends
+	 */
+	const STR_NEVER = 'Never';
+
+	/**
 	 * Inject Constructor
 	 *
 	 * @param $data Data returned from the model
@@ -69,7 +81,7 @@ class InjectAbstraction implements JsonSerializable {
 	 * @return bool If the inject is fuzzy scheduled
 	 */
 	public function isFuzzy() {
-		return $this->data['Schedule']['fuzzy'];
+		return $this->getScheduleFuzzy();
 	}
 
 	/**
@@ -78,7 +90,16 @@ class InjectAbstraction implements JsonSerializable {
 	 * @return bool If the inject can be submitted
 	 */
 	public function isAcceptingSubmissions() {
-		return ($this->isExpired() == false && $this->getSubmissionCount() < $this->getMaxSubmissions());
+		return ($this->isExpired() == false && $this->getRemainingSubmissions() > 0);
+	}
+
+	/**
+	 * Remaining Submissions Accessor
+	 *
+	 * @return int The number of remaining submissions
+	 */
+	public function getRemainingSubmissions() {
+		return $this->getMaxSubmissions() - $this->getSubmissionCount();
 	}
 
 	/**
@@ -88,9 +109,9 @@ class InjectAbstraction implements JsonSerializable {
 	 * of this inject.
 	 */
 	public function getStart() {
-		$start = $this->data['Schedule']['start'];
+		$start = $this->getScheduleStart();
 
-		if ( $this->isFuzzy() ) {
+		if ( $this->isFuzzy() && $start > 0 ) {
 			$start += COMPETITION_START;
 		}
 
@@ -98,7 +119,12 @@ class InjectAbstraction implements JsonSerializable {
 	}
 	public function getStartString() {
 		return ($this->getStart() > 0
-			? date(self::DATE_FORMAT, $this->getStart()) : 'Immediately');
+			? date(self::DATE_FORMAT, $this->getStart()) : self::STR_IMMEDIATELY);
+	}
+	public function getManagerStartString() {
+		if ( !$this->isFuzzy() || $this->getStart() == 0 ) return $this->getStartString();
+
+		return '+'.($this->getScheduleStart() / 60).' minutes';
 	}
 
 	/**
@@ -108,7 +134,7 @@ class InjectAbstraction implements JsonSerializable {
 	 * of this inject.
 	 */
 	public function getEnd() {
-		$end = $this->data['Schedule']['end'];
+		$end = $this->getScheduleEnd();
 
 		if ( $this->isFuzzy() && $end > 0 ) {
 			$end += COMPETITION_START;
@@ -118,7 +144,12 @@ class InjectAbstraction implements JsonSerializable {
 	}
 	public function getEndString() {
 		return ($this->getEnd() > 0
-			? date(self::DATE_FORMAT, $this->getEnd()) : 'Never');
+			? date(self::DATE_FORMAT, $this->getEnd()) : self::STR_NEVER);
+	}
+	public function getManagerEndString() {
+		if ( !$this->isFuzzy() || $this->getEnd() == 0 ) return $this->getEndString();
+
+		return '+'.($this->getScheduleEnd() / 60).' minutes';
 	}
 
 	/**
@@ -135,24 +166,6 @@ class InjectAbstraction implements JsonSerializable {
 	}
 
 	/**
-	 * Inject ID Accessor
-	 *
-	 * @return int The inject ID
-	 */
-	public function getInjectID() {
-		return $this->data['Inject']['id'];
-	}
-
-	/**
-	 * Schedule ID Accessor
-	 *
-	 * @return int The schedule ID
-	 */
-	public function getScheduleID() {
-		return $this->data['Schedule']['id'];
-	}
-
-	/**
 	 * Generic accessor method
 	 *
 	 * This method will capture all "getSOMETHING"
@@ -166,11 +179,25 @@ class InjectAbstraction implements JsonSerializable {
 
 		$key = Inflector::underscore(substr($name, 3));
 
-		foreach ( ['Inject', 'Schedule'] AS $m ) {
-			if ( isset($this->data[$m][$key]) ) {
-				return $this->data[$m][$key];
+		// Deal with a possible call that includes the
+		// group (ex: getGroupName -> ['Group']['name'])
+		if ( ($pos = strpos($key, '_')) !== false ) {
+			$grp = ucfirst(substr($key, 0, $pos));
+			$subkey = substr($key, $pos+1);
+
+			if ( isset($this->data[$grp][$subkey]) ) {
+				return $this->data[$grp][$subkey];
 			}
 		}
+
+		// Fallback to matching everything
+		foreach ( $this->data AS $m => $data ) {
+			if ( isset($data[$key]) ) {
+				return $data[$key];
+			}
+		}
+
+		return null;
 	}
 
 	/**
@@ -183,7 +210,7 @@ class InjectAbstraction implements JsonSerializable {
 	 */
 	public function jsonSerialize() {
 		return [
-			'id'        => $this->getScheduleID(),
+			'id'        => $this->getScheduleId(),
 			'title'     => $this->getTitle(),
 			'start'     => $this->getStartString(),
 			'end'       => $this->getEndString(),

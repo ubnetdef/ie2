@@ -15,7 +15,7 @@ $col_subrows = ((bool)env('FEATURE_SCOREENGINE') ? 'col-md-3' : 'col-md-6');
 		<h3>Active Injects</h3>
 		<div class="list-group">
 			<?php foreach ( $active_injects AS $i ): ?>
-			<a href="<?= $this->Html->url('/staff/inject/'.$i->getInjectID()); ?>" class="list-group-item<?= $i->isRecent() ? ' list-group-item-info' : ''; ?>"><?= $i->getTitle(); ?></a>
+			<a href="<?= $this->Html->url('/staff/inject/'.$i->getInjectId()); ?>" class="list-group-item<?= $i->isRecent() ? ' list-group-item-info' : ''; ?>"><?= $i->getTitle(); ?></a>
 			<?php endforeach; ?>
 
 			<?php if ( empty($active_injects) ): ?>
@@ -28,7 +28,7 @@ $col_subrows = ((bool)env('FEATURE_SCOREENGINE') ? 'col-md-3' : 'col-md-6');
 		<h3>Recently Expired</h3>
 		<div class="list-group">
 			<?php foreach ( $recent_expired AS $i ): ?>
-			<a href="<?= $this->Html->url('/staff/inject/'.$i->getInjectID()); ?>" class="list-group-item<?= $i->isRecent() ? ' list-group-item-warning' : ''; ?>"><?= $i->getTitle(); ?></a>
+			<a href="<?= $this->Html->url('/staff/inject/'.$i->getInjectId()); ?>" class="list-group-item<?= $i->isRecent() ? ' list-group-item-warning' : ''; ?>"><?= $i->getTitle(); ?></a>
 			<?php endforeach; ?>
 
 			<?php if ( empty($recent_expired) ): ?>

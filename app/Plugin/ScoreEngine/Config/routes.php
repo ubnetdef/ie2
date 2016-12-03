@@ -9,4 +9,5 @@
 Router::connect('/scoreboard', ['plugin' => 'ScoreEngine', 'controller' => 'scoreboard', 'action' => 'index']);
 
 // Team Panel mapping
-Router::connect('/team/engine', ['plugin' => 'ScoreEngine', 'controller' => 'team', 'action' => 'index']);
+Router::connect('/team', ['plugin' => 'ScoreEngine', 'controller' => 'team']);
+Router::connect('/team/:action', ['plugin' => 'ScoreEngine', 'controller' => 'team', 'action' => 'index']);

@@ -23,22 +23,23 @@ class Schedule extends AppModel {
 	 */
 	public function getInjectsRaw($groups) {
 		$now = time();
-
-		$injects = $this->find('all', [
-			'conditions' => [
-				'Schedule.group_id' => $groups,
-				'Schedule.active' => true,
-				'OR' => [
-					[
-						'Schedule.fuzzy' => false,
-						'Schedule.start <=' => $now,
-					],
-					[
-						'Schedule.fuzzy' => true,
-						'Schedule.start <=' => ($now - COMPETITION_START)
-					],
+		$conditions = [
+			'Schedule.group_id' => $groups,
+			'Schedule.active'   => true,
+			'OR' => [
+				[
+					'Schedule.fuzzy' => false,
+					'Schedule.start <=' => $now,
+				],
+				[
+					'Schedule.fuzzy' => true,
+					'Schedule.start <=' => ($now - COMPETITION_START)
 				],
 			],
+		];
+
+		$injects = $this->find('all', [
+			'conditions' => $conditions,
 
 			// Ordering is hard. Sorry.
 			// We'll do base ordering on the order.
@@ -220,6 +221,31 @@ class Schedule extends AppModel {
 						'Schedule.end >=' => ($now - $howRecent),
 					]
 				],
+			],
+		]);
+
+		$rtn = [];
+		foreach ( $data AS $d ) {
+			$rtn[] = new InjectAbstraction($d, 0);
+		}
+
+		return $rtn;
+	}
+
+	/**
+	 * Get _ALL_ Schedules
+	 *
+	 * @param $activeOnly [Optional] Only show active
+	 * @return array All the [active] schedules
+	 */
+	public function getAllSchedules($activeOnly=true) {
+		$this->bindModel([
+			'belongsTo' => ['Group'],
+		]);
+
+		$data = $this->find('all', [
+			'conditions' => [
+				'Schedule.active' => ($activeOnly ? true : [true,false]),
 			],
 		]);
 

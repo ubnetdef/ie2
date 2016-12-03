@@ -21,6 +21,9 @@
 
 			<p class="injectinfo">
 				<?= $this->InjectStyler->timeOutput($inject); ?>
+				<?php if ( $inject->getRemainingSubmissions() > 1 ): ?>
+				<br /><strong>Remaining Submissions</strong>: <?= $inject->getRemainingSubmissions(); ?>
+				<?php endif; ?>
 			</p>
 		</div>
 		<div class="col-md-2">

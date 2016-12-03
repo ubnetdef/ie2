@@ -73,7 +73,7 @@ class InjectsController extends AppController {
 			throw new BadRequestException('Unknown inject.');
 		}
 
-		$submissions = $this->Submission->getSubmissions($inject->getInjectID(), $this->Auth->group('id'));
+		$submissions = $this->Submission->getSubmissions($inject->getInjectId(), $this->Auth->group('id'));
 
 		// Setup the InjectStyler helper with the latest inject
 		$this->helpers['InjectStyler']['inject'] = $inject;
@@ -115,7 +115,7 @@ class InjectsController extends AppController {
 		// We're good! Save it!
 		$this->Submission->create();
 		$this->Submission->save([
-			'inject_id' => $inject->getInjectID(),
+			'inject_id' => $inject->getInjectId(),
 			'user_id'   => $this->Auth->user('id'),
 			'group_id'  => $this->Auth->group('id'),
 			'created'   => time(),
@@ -129,7 +129,7 @@ class InjectsController extends AppController {
 			$this->Submission->id
 		);
 		$this->Flash->success('Successfully submitted!');
-		return $this->redirect('/injects/view/'.$inject->getScheduleID());
+		return $this->redirect('/injects/view/'.$inject->getScheduleId());
 	}
 
 	/**

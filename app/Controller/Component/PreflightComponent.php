@@ -25,7 +25,13 @@ class PreflightComponent extends Component {
 			return;
 		}
 
-		// If BankWeb is enabled, we have some more checks...
+		// Additional checks for ScoreEngine
+		if ( (bool)env('FEATURE_SCOREENGINE') ) {
+			$this->checks[] = 'checkScoringDB';
+			$this->checks[] = 'checkScoreEngine';
+		}
+
+		// Additional checks for BankWeb
 		if ( (bool)env('FEATURE_BANKWEB') ) {
 			$this->checks[] = 'checkBankWeb';
 		}
@@ -135,6 +141,32 @@ class PreflightComponent extends Component {
 			}
 		}
 
+		return true;
+	}
+
+	/**
+	 * Check ScoreEngine DB
+	 *
+	 * Verifies the ScoreEngine DB is setup correctly
+	 */
+	public function checkScoringDB() {
+		App::uses('ConnectionManager', 'Model');
+
+		// Check database connection for the InjectEngine
+		$conn = ConnectionManager::getDataSource('scoreengine');
+		if ( !$conn->isConnected() ) {
+			return 'Unable to connect to the ScoreEngine Database';
+		}
+
+		return true;
+	}
+
+	/**
+	 * Check ScoreEngine
+	 *
+	 * Verifies the ScoreEngine is setup correctly
+	 */
+	public function checkScoreEngine() {
 		return true;
 	}
 

@@ -16,6 +16,9 @@ class StaffController extends AppController {
 			'types'  => $this->Config->getInjectTypes(),
 			'inject' => new stdClass(), // Nothing...for now
 		];
+
+		// We're at the staff page
+		$this->set('at_staff', true);
 	}
 
 	/**

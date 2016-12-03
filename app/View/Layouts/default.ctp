@@ -10,11 +10,11 @@
 	<?php
 	echo $this->Html->meta('icon');
 
-	echo $this->Html->css('bootstrap.min');
+	echo $this->Html->css('/vendor/bootswatch/css/bootstrap.min');
 	echo $this->Html->css('style');
 
-	echo $this->Html->script('vendor/jquery.min');
-	echo $this->Html->script('vendor/bootstrap.min');
+	echo $this->Html->script('/vendor/jquery/jquery.min');
+	echo $this->Html->script('/vendor/bootswatch/js/bootstrap.min');
 	echo $this->Html->script('site');
 
 	echo $this->Html->scriptBlock('window.BASE = "'.$this->Html->url('/').'";', ['safe' => false]);
@@ -85,7 +85,7 @@
 							'<li role="separator" class="divider"></li>',
 							$this->Misc->navbarItem('Grader Island', '/staff/graders'),
 							$this->Misc->navbarItem('Grading Export', '/staff/export'),
-							$this->Misc->navbarItem('Scheduler', '/scheduler'),
+							$this->Misc->navbarItem('Scheduler', '/schedule'),
 						]);
 					}
 

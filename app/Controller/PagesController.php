@@ -31,8 +31,4 @@ class PagesController extends AppController {
 		
 		return $this->ajaxResponse(null);
 	}
-
-	public function scoreboard() {
-		$this->set('at_scoreboard', true);
-	}
 }

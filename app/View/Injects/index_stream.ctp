@@ -7,12 +7,12 @@
 			<div class="panel panel-default">
 				<div class="panel-heading" role="tab">
 					<h4 class="panel-title">
-						<a role="button" data-toggle="collapse" href="#inject-<?= $inject->getInjectID(); ?>">
+						<a role="button" data-toggle="collapse" href="#inject-<?= $inject->getInjectId(); ?>">
 							<?= $inject->getTitle(); ?>
 						</a>
 					</h4>
 				</div>
-				<div id="inject-<?= $inject->getInjectID(); ?>" class="panel-collapse collapse<?= $inject->isAcceptingSubmissions() ? ' in': ''; ?>" role="tabpanel">
+				<div id="inject-<?= $inject->getInjectId(); ?>" class="panel-collapse collapse<?= $inject->isAcceptingSubmissions() ? ' in': ''; ?>" role="tabpanel">
 					<div class="panel-body">
 						<div class="row">
 							<div class="col-sm-10">
