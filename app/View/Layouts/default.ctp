@@ -63,7 +63,7 @@
 				}
 
 				if ( (bool)env('FEATURE_BANKWEB') ) {
-					echo $this->Misc->navbarItem('Bank', '/bank', isset($at_bank));
+					echo $this->Misc->navbarItem('Bank', '/bank/products', isset($at_bank));
 				}
 
 				if ( (bool)env('FEATURE_SCOREENGINE') ) {
@@ -75,9 +75,11 @@
 			<ul class="nav navbar-nav navbar-right">
 				<?php
 				if ( $this->Auth->loggedIn() ) {
-					if ( $this->Auth->isBlueTeam() ) {
-						echo $this->Misc->navbarItem('Team Panel', '/team', isset($at_teampanel));
-					}
+					echo $this->Misc->navbarDropdown('Team Central', isset($at_team), [
+						($this->Auth->isBlueTeam() ? $this->Misc->navbarItem('Team Panel', '/team', false) : ''),
+						((bool)env('FEATURE_BANKWEB') ? $this->Misc->navbarItem('Bank Accounts', '/bank/account', false) : ''),
+						((bool)env('FEATURE_BANKWEB') && (bool)env('BANKWEB_PUBLIC_APIINFO') ? $this->Misc->navbarItem('Bank API', '/bank/info', false) : ''),
+					]);
 
 					if ( $this->Auth->isStaff() ) {
 						echo $this->Misc->navbarDropdown('Competition Central', isset($at_staff), [

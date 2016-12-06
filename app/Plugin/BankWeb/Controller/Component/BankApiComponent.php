@@ -16,7 +16,7 @@ class BankApiComponent extends Component {
 	 */
 	public function initialize(Controller $controller) {
 		$this->server = env('BANKAPI_SERVER');
-		$this->timeout = (empty(env('BANKAPI_TIMEOUT')) ? 15 : env('BANKAPI_TIMEOUT'));
+		$this->timeout = env('BANKAPI_TIMEOUT');
 	}
 
 	/**
@@ -74,7 +74,7 @@ class BankApiComponent extends Component {
 			'session' => $this->session,
 			'src'     => $src,
 			'dst'     => $dst,
-			'amt'     => $amt,
+			'amount'  => $amt,
 			'pin'     => $pin,
 		]);
 
@@ -201,6 +201,10 @@ class BankApiComponent extends Component {
 		$result = curl_exec($ch);
 
 		curl_close($ch);
+
+		if ( $result === false ) {
+			throw new RuntimeException('Failed to contact the BankAPI Server. Please try again later.');
+		}
 
 		return json_decode($result, true);
 	}

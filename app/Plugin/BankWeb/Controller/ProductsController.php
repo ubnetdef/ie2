@@ -2,8 +2,65 @@
 App::uses('BankWebAppController', 'BankWeb.Controller');
 
 class ProductsController extends BankWebAppController {
-	
+	/**
+	 * Array of products loaded from the
+	 * env variable 'BANKWEB_PRODUCTS'
+	 */
+	private $products = [];
+
 	public function beforeFilter() {
-		
+		parent::beforeFilter();
+
+		// Load the products
+		$filename = ROOT . DS . env('BANKWEB_PRODUCTS');
+		$this->products = json_decode(file_get_contents($filename), true);
+	}
+
+	/**
+	 * Product List Page
+	 *
+	 * @url /bank
+	 * @url /bank/products
+	 * @url /bank/products/index
+	 */
+	public function index() {
+		$this->set('products', $this->products);
+	}
+
+	/**
+	 * Product Purchase Confirmation
+	 *
+	 * @url /bank/products//confirm/<id>
+	 */
+	public function confirm($id=false) {
+		if ( $id === false || !isset($this->products[$id]) ) {
+			throw new NotFoundException('Unknown product!');
+		}
+
+		$product = $this->products[$id];
+		if ( !$product['enabled'] ) {
+			throw new NotFoundException('Unknown product!');
+		}
+
+		if (
+			$this->request->is('post') &&
+			isset($this->request->data['srcAcc']) &&
+			is_numeric($this->request->data['srcAcc']) &&
+			isset($this->request->data['pin']) &&
+			is_numeric($this->request->data['pin'])
+		) {
+			$res = $this->BankApi->transfer($_POST['srcAcc'], env('BANKWEB_WHITETEAM_ACCOUNT'), $product['cost'], $_POST['pin']);
+
+			if ( $res !== true ) {
+				$this->Flash->danger('Bank Error: '.$res);
+			} else {
+				$this->Flash->success($product['on_purchase']);
+			}
+
+			return $this->redirect(['plugin' => 'bank_web', 'controller' => 'products', 'action' => 'index']);
+		}
+
+		$this->set('item', $product);
+		$this->set('accounts', $this->BankApi->accounts());
 	}
 }

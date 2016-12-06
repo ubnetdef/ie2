@@ -104,7 +104,7 @@ if ( Configure::read('ie.feature.scoreengine') ) {
 }
 
 if ( Configure::read('ie.feature.bankweb') ) {
-	CakePlugin::load('BankWeb');
+	CakePlugin::load('BankWeb', ['routes' => true]);
 }
 
 /**
