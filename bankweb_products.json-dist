@@ -1,0 +1,9 @@
+[
+   {
+      "enabled": true,
+      "name": "Bank Item #1",
+      "desc": "Some silly description",
+      "cost": 100,
+      "on_purchase": "Purchased!"
+   }
+]
