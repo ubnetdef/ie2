@@ -23,10 +23,13 @@ class AccountController extends BankWebAppController {
 			throw new BadRequestException('Please ensure your PIN is numeric!');
 		}
 
-		$res = $this->BankApi->newAccount($_POST['pin']);
-		if ( $res !== true ) {
-			$this->Flash->danger('Bank Error: '.$res);
-		} else {
+		try {
+			$res = $this->BankApi->newAccount($_POST['pin']);
+		} catch ( Exception $e ) {
+			$this->Flash->danger($e->getMessage());
+		}
+		
+		if ( $res === true ) {
 			$this->Flash->success('Created new account!');
 		}
 
@@ -54,11 +57,13 @@ class AccountController extends BankWebAppController {
 			isset($this->request->data['pin']) &&
 			is_numeric($this->request->data['pin'])
 		) {
-			$res = $this->BankApi->transfer($_POST['srcAcc'], $_POST['dstAcc'], $_POST['amount'], $_POST['pin']);
+			try {
+				$res = $this->BankApi->transfer($_POST['srcAcc'], $_POST['dstAcc'], $_POST['amount'], $_POST['pin']);
+			} catch ( Exception $e ) {
+				$this->Flash->danger($e->getMessage());
+			}
 
-			if ( $res !== true ) {
-				$this->Flash->danger('Bank Error: '.$res);
-			} else {
+			if ( $res === true ) {
 				$this->Flash->success('Successfully transferred money!');
 			}
 
@@ -99,11 +104,13 @@ class AccountController extends BankWebAppController {
 			isset($this->request->data['newpin']) &&
 			is_numeric($this->request->data['newpin'])
 		) {
-			$res = $this->BankApi->changePin($id, $_POST['pin'], $_POST['newpin']);
+			try {
+				$res = $this->BankApi->changePin($id, $_POST['pin'], $_POST['newpin']);
+			} catch ( Exception $e ) {
+				$this->Flash->danger($e->getMessage());
+			}
 
-			if ( $res !== true ) {
-				$this->Flash->danger('Bank Error: '.$res);
-			} else {
+			if ( $res === true ) {
 				$this->Flash->success('Successfully updated pin!');
 			}
 

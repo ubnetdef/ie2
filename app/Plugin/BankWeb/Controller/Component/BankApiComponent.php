@@ -46,7 +46,7 @@ class BankApiComponent extends Component {
 		$result = $this->request('login', ['username' => $this->username, 'password' => $this->password]);
 
 		if ( $result['code'] != 200 ) {
-			return $result['message'];
+			throw new BankException('Bank Error: '.$result['message']);
 		}
 
 		$this->session = $result['session'];
@@ -65,9 +65,7 @@ class BankApiComponent extends Component {
 	 */
 	public function transfer($src, $dst, $amt, $pin) {
 		if ( $this->session == null ) {
-			if ( ($err = $this->login()) !== true ) {
-				return $err;
-			}
+			$this->login();
 		}
 
 		$result = $this->request('transfer', [
@@ -78,7 +76,10 @@ class BankApiComponent extends Component {
 			'pin'     => $pin,
 		]);
 
-		return ($result['code'] == 200 ? true : $result['message']);
+		if ( $result['code'] != 200 ) {
+			throw new BankException('Bank Error: '.$result['message']);
+		}
+		return true;
 	}
 
 	/**
@@ -91,9 +92,7 @@ class BankApiComponent extends Component {
 	 */
 	public function transfers($account) {
 		if ( $this->session == null ) {
-			if ( ($err = $this->login()) !== true ) {
-				return $err;
-			}
+			$this->login();
 		}
 
 		$result = $this->request('transfers', [
@@ -101,7 +100,10 @@ class BankApiComponent extends Component {
 			'account' => $account,
 		]);
 
-		return ($result['code'] == 200 ? $result['transactions'] : $result['message']);
+		if ( $result['code'] != 200 ) {
+			throw new BankException('Bank Error: '.$result['message']);
+		}
+		return $result['transactions'];
 	}
 
 	/**
@@ -115,9 +117,7 @@ class BankApiComponent extends Component {
 	 */
 	public function changePin($account, $oldPin, $newPin) {
 		if ( $this->session == null ) {
-			if ( ($err = $this->login()) !== true ) {
-				return $err;
-			}
+			$this->login();
 		}
 
 		$result = $this->request('changePin', [
@@ -127,7 +127,10 @@ class BankApiComponent extends Component {
 			'newpin'  => $newPin,
 		]);
 
-		return ($result['code'] == 200 ? true : $result['message']);
+		if ( $result['code'] != 200 ) {
+			throw new BankException('Bank Error: '.$result['message']);
+		}
+		return true;
 	}
 
 	/**
@@ -138,16 +141,17 @@ class BankApiComponent extends Component {
 	 */
 	public function accounts() {
 		if ( $this->session == null ) {
-			if ( ($err = $this->login()) !== true ) {
-				return $err;
-			}
+			$this->login();
 		}
 
 		$result = $this->request('accounts', [
 			'session' => $this->session,
 		]);
 
-		return ($result['code'] == 200 ? $result['accounts'] : $result['message']);
+		if ( $result['code'] != 200 ) {
+			throw new BankException('Bank Error: '.$result['message']);
+		}
+		return $result['accounts'];
 	}
 
 	/**
@@ -159,9 +163,7 @@ class BankApiComponent extends Component {
 	 */
 	public function newAccount($pin) {
 		if ( $this->session == null ) {
-			if ( ($err = $this->login()) !== true ) {
-				return $err;
-			}
+			$this->login();
 		}
 
 		$result = $this->request('newAccount', [
@@ -169,7 +171,10 @@ class BankApiComponent extends Component {
 			'pin'     => $pin,
 		]);
 
-		return ($result['code'] == 200 ? true : $result['message']);
+		if ( $result['code'] != 200 ) {
+			throw new BankException('Bank Error: '.$result['message']);
+		}
+		return true;
 	}
 
 
@@ -209,3 +214,5 @@ class BankApiComponent extends Component {
 		return json_decode($result, true);
 	}
 }
+
+class BankException extends Exception { }
