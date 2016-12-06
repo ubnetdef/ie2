@@ -1,6 +1,8 @@
 <h2>Team Panel</h2>
 <h4><?= $this->Auth->group('name'); ?></h4>
 
+<?= $this->element('navbar', ['at_overview' => true]); ?>
+
 <p>&nbsp;</p>
 
 <?php foreach ( $data AS $d ): ?>

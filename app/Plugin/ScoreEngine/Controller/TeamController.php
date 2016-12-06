@@ -2,7 +2,7 @@
 App::uses('ScoreEngineAppController', 'ScoreEngine.Controller');
 
 class TeamController extends ScoreEngineAppController {
-	public $uses = ['ScoreEngine.Check'];
+	public $uses = ['ScoreEngine.Check', 'ScoreEngine.TeamService'];
 
 	/**
 	 * The current user's team number
@@ -54,5 +54,57 @@ class TeamController extends ScoreEngineAppController {
 			'limit' => 20,
 			'order' => 'time DESC',
 		]));
+	}
+
+	/**
+	 * Config Edit Page
+	 *
+	 * @url /team/edit
+	 * @url /score_engine/team/edit
+	 */
+	public function config() {
+		$data = $this->TeamService->getData($this->team);
+
+		$canEdit = function($id) use($data) {
+			foreach ( $data AS $group => $options ) {
+				foreach ( $options AS $opt ) {
+					if ( $opt['id'] == $id ) {
+						return $opt['edit'];
+					}
+				}
+			}
+
+			return false;
+		};
+
+		$updateOpt = function($id, $value) use(&$data) {
+			foreach ( $data AS $group => &$options ) {
+				foreach ( $options AS &$opt ) {
+					if ( $opt['id'] == $id ) {
+						$opt['value'] = $value;
+					}
+				}
+			}
+
+			return false;
+		};
+
+		if ( $this->request->is('post') ) {
+			foreach ( $this->request->data AS $opt => $value ) {
+				$opt = (int) str_replace('opt', '', $opt);
+				if ( $opt < 0 || !is_numeric($opt) ) continue;
+
+				if ( $canEdit($opt) ) {
+					$this->TeamService->updateConfig($opt, $value);
+
+					$updateOpt($opt, $value);
+				}
+			}
+
+			// Message
+			$this->Flash->success('Updated Score Engine Config!');
+		}
+
+		$this->set('data', $data);
 	}
 }

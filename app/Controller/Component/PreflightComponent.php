@@ -185,7 +185,7 @@ class PreflightComponent extends Component {
 
 		$products = ROOT . DS . env('BANKWEB_PRODUCTS');
 		if ( !file_exists($products) ) {
-			return sprintf('Please make sure the file "%s" exists (as set in "BANKWEB_PRODUCTS"', $products);
+			return sprintf('Please make sure the file "%s" exists (as set in "BANKWEB_PRODUCTS")', $products);
 		}
 
 		$contents = json_decode(file_get_contents($products));

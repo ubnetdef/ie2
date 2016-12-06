@@ -2,7 +2,8 @@
 App::uses('ScoreEngineAppModel', 'ScoreEngine.Model');
 
 class TeamService extends ScoreEngineAppModel {
-	public $belongsTo = ['Team', 'Service'];
+	public $useTable = 'team_service';
+	public $belongsTo = ['ScoreEngine.Team', 'ScoreEngine.Service'];
 	public $recursive = 1;
 
 	public function getData($tid) {
@@ -23,7 +24,7 @@ class TeamService extends ScoreEngineAppModel {
 				$rtn[$d['Service']['name']] = [];
 			}
 
-			$rtn[$d['Service']['name']] = $d['TeamService'];
+			$rtn[$d['Service']['name']][] = $d['TeamService'];
 		}
 
 		return $rtn;
