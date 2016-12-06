@@ -34,6 +34,7 @@ class PreflightComponent extends Component {
 		// Additional checks for BankWeb
 		if ( (bool)env('FEATURE_BANKWEB') ) {
 			$this->checks[] = 'checkBankWeb';
+			$this->checks[] = 'checkBankWebTable';
 		}
 
 		foreach ( $this->checks AS $check ) {
@@ -176,7 +177,7 @@ class PreflightComponent extends Component {
 	 * Verifies some env variables are set, and that 'BANKWEB_PRODUCTS' exists
 	 */
 	public function checkBankWeb() {
-		foreach ( ['BANKAPI_SERVER', 'BANKAPI_TIMEOUT', 'BANKWEB_PRODUCTS'] AS $key ) {
+		foreach ( ['BANKAPI_SERVER', 'BANKAPI_TIMEOUT', 'BANKWEB_PRODUCTS', 'BANKWEB_WHITETEAM_ACCOUNT', 'BANKWEB_PUBLIC_APIINFO'] AS $key ) {
 			if ( empty(env($key)) ) {
 				return sprintf('Please setup the variable "%s" to use the BankWeb Feature.', $key);
 			}
@@ -190,6 +191,23 @@ class PreflightComponent extends Component {
 		$contents = json_decode(file_get_contents($products));
 		if ( json_last_error() != JSON_ERROR_NONE ) {
 			return sprintf('JSON Error with "BANKWEB_PRODUCTS" - %s', json_last_error_msg());
+		}
+
+		return true;
+	}
+
+	/**
+	 * Check BankWeb Table
+	 *
+	 * That the BankWeb Table (account_mappings) exists
+	 */
+	public function checkBankWebTable() {
+		$table = ClassRegistry::init('BankWeb.AccountMapping');
+
+		try {
+			$table->find('all');
+		} catch ( Exception $e ) {
+			return 'BankWeb plugin is not setup - please run `./cake engine install_bankweb`';
 		}
 
 		return true;

@@ -58,7 +58,7 @@ class EngineShell extends AppShell {
 		$this->out('Installing ie2');
 		$this->hr();
 
-		$this->out('Initializing the database...', 0);
+		$this->out('Initializing the database.......', 0);
 
 		// Initialize our database
 		$this->dispatchShell('schema', 'create', '--yes', '--quiet');
@@ -72,8 +72,16 @@ class EngineShell extends AppShell {
 		// DB initialized
 		$this->out('DONE!');
 
+		if ( (bool)env('FEATURE_BANKWEB') ) {
+			$this->out('Initializing BankWeb database...', 0);
+
+			$this->dispatchShell('engine', 'install_bankweb', '--quiet');
+
+			$this->out('DONE!');
+		}
+
 		// Create some users
-		$this->out('Creating the initial users..', 0);
+		$this->out('Creating the initial users......', 0);
 		foreach ( $this->users AS $u ) {
 			$this->dispatchShell('engine', 'create_user', $u['userpass'], $u['group'], '--quiet', '--yes', '--password', $u['userpass']);
 		}
@@ -89,6 +97,28 @@ class EngineShell extends AppShell {
 			$this->out('Password: '.$u['userpass']);
 			$this->out();
 		}
+	}
+
+	/**
+	 * Engine Command: Install BankWeb
+	 *
+	 * Basically runs schema create for the BankWeb
+	 * plugin. Pretty wrapper.
+	 */
+	public function install_bankweb() {
+		$this->out('Installing BankWeb');
+		$this->hr();
+
+		$this->out('Initializing the database...', 0);
+
+		// Initialize our database
+		$this->dispatchShell('schema', 'create', '--plugin', 'BankWeb', '--yes', '--quiet');
+
+		// DB initialized
+		$this->out('DONE!');
+
+		// Done!
+		$this->out('Installation completed!');
 	}
 
 	/**
@@ -201,6 +231,9 @@ class EngineShell extends AppShell {
 			->description('A console tool to manage ie2')
 			->addSubCommand('install', [
 				'help' => 'Installs ie2',
+			])
+			->addSubCommand('install_bankweb', [
+				'help' => 'Installs the BankWeb plugin',
 			])
 			->addSubCommand('create_user', [
 				'help' => 'Create a user for ie2',

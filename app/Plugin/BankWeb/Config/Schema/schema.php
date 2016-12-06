@@ -44,8 +44,8 @@ class BankWebSchema extends CakeSchema {
 				$this->_create('AccountMapping', [
 					'object'    => 'Group',
 					'object_id' => env('GROUP_STAFF'),
-					'username'  => 'staff',
-					'password'  => 'lockdownstaffpw',
+					'username'  => 'admin',
+					'password'  => 'admin',
 				]);
 			break;
 		}
