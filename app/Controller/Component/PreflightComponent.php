@@ -205,7 +205,7 @@ class PreflightComponent extends Component {
 		$table = ClassRegistry::init('BankWeb.AccountMapping');
 
 		try {
-			$table->find('all');
+			$table->find('first');
 		} catch ( Exception $e ) {
 			return 'BankWeb plugin is not setup - please run `./cake engine install_bankweb`';
 		}
