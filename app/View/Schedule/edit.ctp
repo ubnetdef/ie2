@@ -1,9 +1,3 @@
-<style>
-.injectinfo {
-	font-size: 16px;
-}
-</style>
-
 <ol class="breadcrumb">
 	<li><a href="<?= $this->Html->url('/schedule'); ?>">Scheduler</a></li>
 	<li><a href="<?= $this->Html->url('/schedule/manager'); ?>">Schedule Manager</a></li>

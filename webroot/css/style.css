@@ -35,13 +35,8 @@ body {
 	content:"\e080";
 }
 
-#teamStatus .panel-body .row .col-sm-4 {
-	margin-bottom: 15px;
-}
-
-.table-vertalign tbody>tr>td{
-		vertical-align: middle;
-		text-align: center;
+.injectinfo {
+	font-size: 16px;
 }
 
 .footer {

@@ -25,8 +25,59 @@ class ScheduleController extends AppController {
 	 * @url /schedule
 	 * @url /schedule/index
 	 */
-	public function index() {		
-		$this->set('injects', $this->Schedule->getAllSchedules());
+	public function index() {
+		$bounds = $this->Schedule->getScheduleBounds();
+
+		$this->set('start', $bounds['min']);
+		$this->set('end', $bounds['max']);
+	}
+
+	/**
+	 * Overview API Page
+	 *
+	 * @url /schedule/api
+	 */
+	public function api() {
+		if (
+			$this->request->is('post') &&
+			isset($this->request->data['changes']) &&
+			is_array($this->request->data['changes'])
+		) {
+			foreach ( $this->request->data['changes'] AS $c ) {
+				$schedule = $this->Schedule->findById($c['id']);
+				if ( empty($schedule) ) continue;
+
+				$start = ($schedule['Schedule']['fuzzy'] ? $c['start'] - COMPETITION_START : $c['start']);
+				$end = ($schedule['Schedule']['fuzzy'] ? $c['end'] - COMPETITION_START : $c['end']);
+
+				$this->Schedule->id = $c['id'];
+				$this->Schedule->save([
+					'start' => $start,
+					'end'   => $end,
+				]);
+			}
+
+			return $this->ajaxResponse(true);
+		}
+		$out = ['data' => []];
+
+		$schedules = $this->Schedule->getAllSchedules();
+		$bounds = $this->Schedule->getScheduleBounds();
+
+		foreach ( $schedules AS $s ) {
+			$out['data'][] = [
+				'id'         => $s->getScheduleId(),
+				'inject_id'  => $s->getInjectId(),
+				'text'       => $s->getTitle().' ('.$s->getGroupName().')',
+				'group'      => $s->getGroupName(),
+				'start_date' => date('d-m-Y G:i:s', $s->getStart() > 0 ? $s->getStart() : $bounds['min']),
+				'start_ts'   => $s->getStart(),
+				'end_date'   => date('d-m-Y G:i:s', $s->getEnd() > 0 ? $s->getEnd() : $bounds['max']),
+				'end_ts'     => $s->getEnd(),
+			];
+		}
+
+		return $this->ajaxResponse($out);
 	}
 
 	/**
@@ -138,7 +189,7 @@ class ScheduleController extends AppController {
 			'types'  => $this->Config->getInjectTypes(),
 			'inject' => new stdClass(), // Nothing...for now
 		];
-		
+
 		$this->set('schedule', $schedule);
 	}
 }

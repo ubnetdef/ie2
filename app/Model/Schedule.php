@@ -256,4 +256,54 @@ class Schedule extends AppModel {
 
 		return $rtn;
 	}
+
+	/**
+	 * Get Schedule Bounds
+	 *
+	 * Returns an array containing the min and
+	 * max times for the schedule list
+	 *
+	 * @param $round Should we round the times
+	 * @return array The min/max times
+	 */
+	public function getScheduleBounds($round=true) {
+		$this->virtualFields['min'] = 'IF(Schedule.fuzzy = 1, Schedule.start + '.COMPETITION_START.', Schedule.start)';
+		$this->virtualFields['max'] = 'IF(Schedule.fuzzy = 1 AND Schedule.end > 0, Schedule.end + '.COMPETITION_START.', Schedule.end)';
+
+		$min = $this->find('first', [
+			'fields' => [
+				'Schedule.min'
+			],
+			'order' => [
+				'Schedule.min DESC'
+			],
+		]);
+
+		$max = $this->find('first', [
+			'fields' => [
+				'Schedule.max'
+			],
+			'order' => [
+				'Schedule.max DESC'
+			],
+		]);
+
+		$bounds = [
+			'min' => $min['Schedule']['min'],
+			'max' => $max['Schedule']['max'],
+		];
+
+		// Now round them
+		if ( $round ) {
+			$min = DateTime::createFromFormat('Y-m-d H:00:00', date('Y-m-d H:00:00', $bounds['min']));
+			$max = DateTime::createFromFormat('Y-m-d H:00:00', date('Y-m-d H:00:00', $bounds['max']));
+			$min->modify('-1 hour');
+			$max->modify('+1 hour');
+
+			$bounds['min'] = $min->getTimestamp();
+			$bounds['max'] = $max->getTimestamp();
+		}
+
+		return $bounds;
+	}
 }
