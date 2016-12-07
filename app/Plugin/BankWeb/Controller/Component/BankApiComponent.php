@@ -215,4 +215,4 @@ class BankApiComponent extends Component {
 	}
 }
 
-class BankException extends Exception { }
+class BankException extends InternalErrorException { }

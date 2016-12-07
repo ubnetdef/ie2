@@ -24,7 +24,7 @@ class InjectStylerHelper extends AppHelper {
 		parent::__construct($view, $settings);
 
 		if ( !isset($settings['types']) || !isset($settings['inject']) ) {
-			throw new RuntimeException('InjectStyler is missing types/inject settings');
+			throw new InternalErrorException('InjectStyler is missing types/inject settings');
 		}
 
 		$this->typeManager = new InjectTypes\Manager($settings['types']);

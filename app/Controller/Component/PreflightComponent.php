@@ -41,7 +41,7 @@ class PreflightComponent extends Component {
 			$passedOrErrorMessage = $this->$check();
 
 			if ( $passedOrErrorMessage !== true ) {
-				throw new RuntimeException('Preflight Error: '.$passedOrErrorMessage);
+				throw new InternalErrorException('Preflight Error: '.$passedOrErrorMessage);
 			}
 		}
 

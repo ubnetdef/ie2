@@ -66,7 +66,7 @@ class StaffController extends AppController {
 
 		$submission = $this->Submission->getSubmission($sid);
 		if ( empty($submission) ) {
-			throw new BadRequestException('Unknown submission.');
+			throw new NotFoundException('Unknown submission.');
 		}
 
 		if ( $this->request->is('post') ) {
@@ -135,7 +135,7 @@ class StaffController extends AppController {
 
 		$submission = $this->Submission->getSubmission($sid);
 		if ( empty($submission) ) {
-			throw new BadRequestException('Unknown submission.');
+			throw new NotFoundException('Unknown submission.');
 		}
 
 		$data = json_decode($submission['Submission']['data'], true);
@@ -143,7 +143,7 @@ class StaffController extends AppController {
 
 		// Let's verify our data is correct
 		if ( md5(base64_decode($data['data'])) !== $data['hash'] ) {
-			throw new RuntimeException('Data storage failure.');
+			throw new InternalErrorException('Data storage failure.');
 		}
 
 		// Create the new response for the data

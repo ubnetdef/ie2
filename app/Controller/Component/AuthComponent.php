@@ -147,7 +147,7 @@ class AuthComponent extends Component {
 		$user = $UserModel->findByUsername($username);
 
 		if ( empty($user) ) {
-			throw new RuntimeException('Unknown username!');
+			throw new InternalErrorException('Unknown username!');
 		}
 
 		$oldSession = $this->Session->consume(self::SESSION_PREFIX);
@@ -167,7 +167,7 @@ class AuthComponent extends Component {
 	 */
 	public function emulateExit() {
 		if ( $this->item('emulating') != true ) {
-			throw new RuntimeException('A valid emulation session is not present!');
+			throw new InternalErrorException('A valid emulation session is not present!');
 		}
 
 		$newSession = $this->Session->comsume(self::SESSION_PREFIX.'.oldSession');

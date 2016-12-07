@@ -65,12 +65,12 @@ class InjectsController extends AppController {
 	 */
 	public function view($sid=false) {
 		if ( $sid === false || !is_numeric($sid) ) {
-			throw new BadRequestException('Stop trying to be a smartass.');
+			throw new MethodNotAllowedException();
 		}
 
 		$inject = $this->Schedule->getInject($sid, $this->groups);
 		if ( empty($inject) ) {
-			throw new BadRequestException('Unknown inject.');
+			throw new NotFoundException('Unknown inject.');
 		}
 
 		$submissions = $this->Submission->getSubmissions($inject->getInjectId(), $this->Auth->group('id'));
@@ -89,19 +89,19 @@ class InjectsController extends AppController {
 	 */
 	public function submit() {
 		if ( !$this->request->is('post') ) {
-			throw new BadMethodCallException('Unauthorized');
+			throw new MethodNotAllowedException('Unauthorized');
 		}
 
 		if ( !isset($this->request->data['id']) ) {
-			throw new BadMethodCallException('Missing id');
+			throw new MethodNotAllowedException('Missing id');
 		}
 
 		$inject = $this->Schedule->getInject($this->request->data['id'], $this->groups);
 		if ( empty($inject) ) {
-			throw new BadRequestException('Unknown inject.');
+			throw new NotFoundException('Unknown inject.');
 		}
 		if ( !$inject->isAcceptingSubmissions() ) {
-			throw new BadRequestException('Inject is no longer accepting submissions!');
+			throw new UnauthorizedException('Inject is no longer accepting submissions!');
 		}
 
 		// Create a new InjectType Manager
@@ -139,12 +139,12 @@ class InjectsController extends AppController {
 	 */
 	public function delete($sid=false) {
 		if ( $sid === false || !is_numeric($sid) ) {
-			throw new BadRequestException();
+			throw new MethodNotAllowedException();
 		}
 
 		$submission = $this->Submission->findById($sid);
 		if ( empty($submission) || !in_array($submission['Group']['id'], $this->groups) ) {
-			throw new BadRequestException('Unknown submission.');
+			throw new NotFoundException('Unknown submission.');
 		}
 
 		$this->Submission->id = $submission['Submission']['id'];
@@ -176,7 +176,7 @@ class InjectsController extends AppController {
 
 		$submission = $this->Submission->getSubmission($sid, $this->groups, true);
 		if ( empty($submission) ) {
-			throw new BadRequestException('Unknown submission.');
+			throw new NotFoundException('Unknown submission.');
 		}
 
 		$data = json_decode($submission['Submission']['data'], true);
@@ -184,7 +184,7 @@ class InjectsController extends AppController {
 
 		// Let's verify our data is correct
 		if ( md5(base64_decode($data['data'])) !== $data['hash'] ) {
-			throw new RuntimeException('Data storage failure.');
+			throw new InternalErrorException('Data storage failure.');
 		}
 
 		// Create the new response for the data
