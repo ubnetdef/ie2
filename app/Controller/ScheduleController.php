@@ -1,5 +1,6 @@
 <?php
 App::uses('AppController', 'Controller');
+App::uses('InjectAbstraction', 'Lib');
 
 class ScheduleController extends AppController {
 	public $uses = ['Config', 'Inject', 'Group', 'Schedule'];
@@ -93,6 +94,73 @@ class ScheduleController extends AppController {
 	}
 
 	/**
+	 * Create a schedule.
+	 *
+	 * @url /schedule/create
+	 * @url /schedule/create/<sid>
+	 */
+	public function create($sid=false) {
+		if ( $this->request->is('post') ) {
+			// Fix dependency_id to be NULL if the ID is 0
+			if ( isset($this->request->data['dependency_id']) && $this->request->data['dependency_id'] == 0 ) {
+				$this->request->data['dependency_id'] = NULL;
+			}
+
+			$create = [];
+			$missing = [];
+			foreach ( array_keys($this->Schedule->schema()) AS $key ) {
+				if ( !isset($this->request->data[$key]) ) {
+					$missing[] = $key;
+					continue;
+				}
+
+				$create[$key] = $this->request->data[$key];
+			}
+
+			if ( empty($missing) ) {
+				$this->Schedule->create();
+				$this->Schedule->save($create);
+
+				$msg = sprintf('Created schedule #%d', $this->Schedule->id);
+
+				$this->logMessage(
+					'schedule',
+					$msg,
+					[
+						'schedule' => $create,
+					],
+					$sid
+				);
+
+				$this->Flash->success($msg.'!');
+				return $this->redirect('/schedule/manager');
+			} else {
+				$this->Flash->danger(sprintf('You are missing %s!', implode(', ', $missing)));
+				return $this->redirect('/schedule/create');
+			}
+		}
+
+		$this->set('injects', $this->Inject->find('all'));
+		$this->set('groups', $this->Group->generateTreeList(null, null, null, '--'));
+
+		if ( $sid !== false && is_numeric($sid) ) {
+			$schedule = $this->Schedule->findById($sid);
+			if ( empty($schedule) ) {
+				throw new NotFoundException('Unknown Schedule ID.');
+			}
+
+			// Load + setup the InjectStyler helper
+			$this->helpers[] = 'InjectStyler';
+			$this->helpers['InjectStyler'] = [
+				'types'  => $this->Config->getInjectTypes(),
+				'inject' => new stdClass(), // Nothing...for now
+			];
+
+			$this->set('schedule', $schedule);
+		}
+	}
+
+	/**
 	 * Flip the status of a schedule
 	 *
 	 * @url /schedule/flip/<sid>
@@ -122,45 +190,6 @@ class ScheduleController extends AppController {
 		}
 
 		return $this->redirect('/schedule/manager');
-	}
-
-	/**
-	 * Delete a schedule. SPOOKY
-	 *
-	 * @url /schedule/delete/<sid>
-	 */
-	public function delete($sid) {
-		$schedule = $this->Schedule->findById($sid);
-		if ( empty($schedule) ) {
-			throw new NotFoundException('Unknown Schedule ID.');
-		}
-
-		if ( $this->request->is('post') ) {
-			$this->Schedule->delete($sid);
-
-			$msg = sprintf('Deleted schedule #%d', $sid);
-
-			$this->logMessage(
-				'schedule',
-				$msg,
-				[
-					'schedule' => $schedule['Schedule'],
-				],
-				$sid
-			);
-
-			$this->Flash->success($msg);
-			return $this->redirect('/schedule/manager');
-		}
-
-		// Load + setup the InjectStyler helper
-		$this->helpers[] = 'InjectStyler';
-		$this->helpers['InjectStyler'] = [
-			'types'  => $this->Config->getInjectTypes(),
-			'inject' => new stdClass(), // Nothing...for now
-		];
-
-		$this->set('schedule', $schedule);
 	}
 
 	/**
@@ -227,52 +256,41 @@ class ScheduleController extends AppController {
 	}
 
 	/**
-	 * Create a schedule.
+	 * Delete a schedule. SPOOKY
 	 *
-	 * @url /schedule/create
+	 * @url /schedule/delete/<sid>
 	 */
-	public function create() {
-		if ( $this->request->is('post') ) {
-			// Fix dependency_id to be NULL if the ID is 0
-			if ( isset($this->request->data['dependency_id']) && $this->request->data['dependency_id'] == 0 ) {
-				$this->request->data['dependency_id'] = NULL;
-			}
-
-			$create = [];
-			$missing = [];
-			foreach ( array_keys($this->Schedule->schema()) AS $key ) {
-				if ( !isset($this->request->data[$key]) ) {
-					$missing[] = $key;
-					continue;
-				}
-
-				$create[$key] = $this->request->data[$key];
-			}
-
-			if ( empty($missing) ) {
-				$this->Schedule->create();
-				$this->Schedule->save($create);
-
-				$msg = sprintf('Created schedule #%d', $this->Schedule->id);
-
-				$this->logMessage(
-					'schedule',
-					$msg,
-					[
-						'schedule' => $create,
-					],
-					$sid
-				);
-
-				$this->Flash->success($msg.'!');
-				return $this->redirect('/schedule/manager');
-			} else {
-				$this->Flash->danger(sprintf('You are missing %s!', implode(', ', $missing)));
-				return $this->redirect('/schedule/create');
-			}
+	public function delete($sid) {
+		$schedule = $this->Schedule->findById($sid);
+		if ( empty($schedule) ) {
+			throw new NotFoundException('Unknown Schedule ID.');
 		}
 
-		$this->set('injects', $this->Inject->find('all'));
-		$this->set('groups', $this->Group->generateTreeList(null, null, null, '--'));
+		if ( $this->request->is('post') ) {
+			$this->Schedule->delete($sid);
+
+			$msg = sprintf('Deleted schedule #%d', $sid);
+
+			$this->logMessage(
+				'schedule',
+				$msg,
+				[
+					'schedule' => $schedule['Schedule'],
+				],
+				$sid
+			);
+
+			$this->Flash->success($msg);
+			return $this->redirect('/schedule/manager');
+		}
+
+		// Load + setup the InjectStyler helper
+		$this->helpers[] = 'InjectStyler';
+		$this->helpers['InjectStyler'] = [
+			'types'  => $this->Config->getInjectTypes(),
+			'inject' => new stdClass(), // Nothing...for now
+		];
+
+		$this->set('schedule', new InjectAbstraction($schedule, 0));
 	}
 }

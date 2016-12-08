@@ -44,7 +44,7 @@
 				<a href="<?= $this->Html->url('/schedule/edit/'.$i->getScheduleId()); ?>" class="no-underline">
 					<i class="glyphicon glyphicon-edit"></i>
 				</a>
-				<a href="<?= $this->Html->url('/schedule/extend/'.$i->getScheduleId()); ?>" class="no-underline">
+				<a href="<?= $this->Html->url('/schedule/create/'.$i->getScheduleId()); ?>" class="no-underline">
 					<i class="glyphicon glyphicon-share-alt"></i>
 				</a>
 				<a href="<?= $this->Html->url('/schedule/delete/'.$i->getScheduleId()); ?>" class="no-underline">

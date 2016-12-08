@@ -7,18 +7,35 @@
 <?= $this->element('navbar/schedule', ['at_manager' => true]); ?>
 
 <div class="row">
-	<div class="col-md-12">
-		<div class="well">
-			<h2><?= $schedule['Inject']['title']; ?></h2>
+	<div class="col-md-10 col-md-offset-1">
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title">Confirm Deletion</h3>
+			</div>
+			<div class="panel-body">
+				<form class="form-horizontal" method="post">
+					<ul class="list-unstyled">
+						<li><strong>Schedule ID</strong>: <?= $schedule->getScheduleId(); ?></li>
+						<li><strong>Inject Title</strong>: <?= $schedule->getTitle(); ?></li>
+						<li><strong>Submission Type</strong>: <?= $this->InjectStyler->getName($schedule->getType()); ?></li>
+						<li><strong>Max Submissions</strong>: <?= $schedule->getMaxSubmissions(); ?></li>
+						<li><strong>Start</strong>: <?= $schedule->getStartString(); ?></li>
+						<li><strong>End</strong>: <?= $schedule->getEndString(); ?></li>
+					</ul>
 
-			<p class="injectinfo">
-				<strong>Submission Type</strong>: <?= $this->InjectStyler->getName($schedule['Inject']['type']); ?><br />
-				<strong>Max Submissions</strong>: <?= $schedule['Inject']['max_submissions']; ?>
-			</p>
+					<hr />
 
-			<hr />
+					<?= $this->InjectStyler->contentOutput($schedule->getContent(), $this->Auth->item()); ?>
 
-			<?= $this->InjectStyler->contentOutput($schedule['Inject']['content'], $this->Auth->item()); ?>
+					<hr />
+
+					<p>Please confirm you wish to delete this schedule.</p>
+
+					<div class="text-center">
+						<button type="submit" class="btn btn-danger">Delete Schedule</button>
+					</div>
+				</form>
+			</div>
 		</div>
 	</div>
 </div>
