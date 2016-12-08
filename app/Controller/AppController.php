@@ -11,6 +11,7 @@ class AppController extends Controller {
 		'Session',
 		'Paginator' => [
 			'settings' => [
+				'limit' => 20,
 				'paramType' => 'querystring',
 			]
 		],

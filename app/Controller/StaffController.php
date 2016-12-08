@@ -18,8 +18,9 @@ class StaffController extends AppController {
 					'Group.name',
 				]
 			],
-			'limit' => 20,
-			'order' => ['Log.id DESC'],
+			'order' => [
+				'Log.id' => 'DESC'
+			],
 		],
 
 		'OnlyGraded' => [
@@ -30,7 +31,6 @@ class StaffController extends AppController {
 				'Grade.created', 'Grade.grade', 'Grade.comments',
 				'Grader.username',
 			],
-
 			'joins' => [
 				[
 					'table'      => 'users',
@@ -41,18 +41,15 @@ class StaffController extends AppController {
 					],
 				]
 			],
-
 			'conditions' => [
 				'OR' => [
 					'Grade.created IS NOT NULL',
 					'Submission.deleted' => true,
 				],
 			],
-
-			'limit' => 20,
 			'order' => [
-				'Grade.created DESC',
-				'Submission.created DESC',
+				'Grade.created' => 'DESC',
+				'Submission.created' => 'DESC',
 			],
 		],
 	];
@@ -163,7 +160,7 @@ class StaffController extends AppController {
 
 			// Return home, ponyboy
 			$this->Flash->success('Saved!');
-			return $this->redirect('/staff/grade/'.$sid);
+			return $this->redirect('/staff/graders');
 		}
 
 		$this->set('submission', $submission);
