@@ -3,6 +3,13 @@ App::uses('BankWebAppController', 'BankWeb.Controller');
 
 class InfoController extends BankWebAppController {
 
+	public function beforeFilter() {
+		parent::beforeFilter();
+
+		// Set the active menu item
+		$this->set('at_team', true);
+	}
+
 	/**
 	 * Account Information Page
 	 *

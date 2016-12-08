@@ -18,8 +18,5 @@ class BankWebAppController extends AppController {
 			throw new BadRequestException('You do not have a bank account associated with your user/groups!');
 		}
 		$this->BankApi->setCredentials($account['AccountMapping']['username'], $account['AccountMapping']['password']);
-
-		// Set the active menu item
-		$this->set('at_bank', true);
 	}
 }

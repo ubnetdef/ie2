@@ -14,6 +14,9 @@ class ProductsController extends BankWebAppController {
 		// Load the products
 		$filename = ROOT . DS . env('BANKWEB_PRODUCTS');
 		$this->products = json_decode(file_get_contents($filename), true);
+
+		// Set the active menu item
+		$this->set('at_bank', true);
 	}
 
 	/**
