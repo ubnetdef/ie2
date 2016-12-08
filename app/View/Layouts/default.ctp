@@ -93,12 +93,13 @@
 
 					if ( $this->Auth->isAdmin() ) {
 						echo $this->Misc->navbarDropdown('Backend', isset($at_backend), [
-							$this->Misc->navbarItem('Site Manager', '/site'),
+							$this->Misc->navbarItem('Site Manager', '/admin/site'),
 							'<li role="separator" class="divider"></li>',
-							$this->Misc->navbarItem('User Manager', '/site/users'),
-							$this->Misc->navbarItem('Inject Manager', '/site/injects'),
-							//$this->Misc->navbarItem('Service Manager', '/admin/service'),
-							$this->Misc->navbarItem('Log Manager', '/logs'),
+							$this->Misc->navbarItem('User Manager', '/admin/users'),
+							$this->Misc->navbarItem('Group Manager', '/admin/groups'),
+							$this->Misc->navbarItem('Inject Manager', '/admin/injects'),
+							((bool)env('FEATURE_SCOREENGINE') ? $this->Misc->navbarItem('Service Manager', '/admin/services', false) : ''),
+							$this->Misc->navbarItem('Log Manager', '/admin/logs'),
 						]);
 					}
 
@@ -121,7 +122,7 @@
 	foreach ( $announcements AS $a ):
 	if ( in_array($a['Announcement']['id'], $this->Session->read('read_announcements')) ) continue;
 	?>
-	<div class="alert alert-info alert-dismissible alert-announcement" role="alert" data-aid="<?= $a['Announcement']['id']; ?>">
+	<div class="alert alert-info alert-dismissible alert-announcement" data-aid="<?= $a['Announcement']['id']; ?>">
 		<button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span></button>
 		<p><?= $a['Announcement']['content']; ?></p>
 	</div>

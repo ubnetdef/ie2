@@ -28,6 +28,24 @@
  */
 	Router::connect('/', ['controller' => 'pages', 'action' => 'index']);
 
+	App::uses('Folder', 'Utility');
+	foreach ( Configure::read('ie.special_controllers') AS $route ) {
+		$dirname = ROOT . DS . APP_DIR . DS . 'Controller' . DS . $route;
+		$dir = new Folder($dirname);
+		$rtLow = strtolower($route);
+		$files = $dir->read(false, true);
+
+		foreach ( $files[1] AS $file ) {
+			if ( $file == $route.'AppController.php' ) continue;
+
+			$controller = substr($file, 0, strpos($file, 'Controller'));
+			$controllerRt  = strtolower(substr($controller, strlen($route)));
+
+			Router::connect('/'.$rtLow.'/'.$controllerRt, ['controller' => $controller, 'action' => 'index']);
+			Router::connect('/'.$rtLow.'/'.$controllerRt.'/:action/*', ['controller' => $controller]);
+		}
+	}
+
 /**
  * Load all plugin routes. See the CakePlugin documentation on
  * how to customize the loading of plugin routes.

@@ -32,6 +32,18 @@ App::build(
 	App::RESET
 );
 
+// Deal with extra controllers
+$extra_controllers = [];
+foreach ( Configure::read('ie.special_controllers') AS $c ) {
+	$extra_controllers[] = ROOT . DS . APP_DIR . DS . 'Controller' . DS . $c . DS;
+}
+
+App::build([
+	'Controller' => $extra_controllers,
+]);
+
+unset($extra_controllers);
+
 /**
  * The settings below can be used to set additional paths to models, views and controllers.
  *
