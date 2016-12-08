@@ -40,6 +40,30 @@ class AppController extends Controller {
 			define('COMPETITION_START', $this->Config->getKey('competition.start'));
 		}
 
+		// Git version (because it looks cool)
+		if ( Cache::read('version') === false ) {
+			exec('git status', $unused, $status);
+
+			if ( $status === 0 ) {
+				exec('git rev-parse --short HEAD', $version_short);
+				exec('git rev-parse HEAD', $version_long);
+
+				$version_short = trim($version_short[0]);
+				$version_long = trim($version_long[0]);
+			} else {
+				$version_short = 'DEV';
+				$version_long = 'development';
+			}
+
+			Cache::write('version', [$version_short, $version_long]);
+		} else {
+			list($version_short, $version_long) = Cache::read('version');
+		}
+
+		$this->set('version', $version_short);
+		$this->set('version_long', $version_long);
+
+		// Other template stuff
 		$this->set('announcements', $this->Announcement->getAll());
 		$this->set('emulating', ($this->Auth->item('emulating') == true));
 	}

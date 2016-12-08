@@ -136,7 +136,7 @@
 <footer class="footer">
 	<div class="container">
 		<p class="text-muted pull-right">
-			ie<sup>2</sup> <abbr title="DEV">DEV</abbr>
+			ie<sup>2</sup> <abbr title="<?= $version_long; ?>"><?= $version; ?></abbr>
 		</p>
 	</div>
 </footer>
