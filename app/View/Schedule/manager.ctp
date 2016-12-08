@@ -54,7 +54,7 @@
 		</tr>
 		<?php endforeach; ?>
 		<tr>
-			<td colspan="8">
+			<td colspan="9">
 				<a href="<?= $this->Html->url('/schedule/create'); ?>" class="btn btn-info pull-right">Schedule an Inject</a>
 			</td>
 		</tr>

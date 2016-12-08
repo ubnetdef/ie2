@@ -85,7 +85,7 @@ class AppController extends Controller {
 		$this->layout = 'ajax';
 
 		return new CakeResponse([
-			'type' => 'txt',
+			'type' => 'json',
 			'body'   => (is_array($data) ? json_encode($data) : $data),
 			'status' => $status,
 		]);

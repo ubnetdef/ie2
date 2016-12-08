@@ -2,7 +2,7 @@
 App::uses('AppController', 'Controller');
 
 class ScheduleController extends AppController {
-	public $uses = ['Config', 'Schedule'];
+	public $uses = ['Config', 'Inject', 'Group', 'Schedule'];
 
 	/**
 	 * Before Filter Hook
@@ -49,6 +49,9 @@ class ScheduleController extends AppController {
 
 				$start = ($schedule['Schedule']['fuzzy'] ? $c['start'] - COMPETITION_START : $c['start']);
 				$end = ($schedule['Schedule']['fuzzy'] ? $c['end'] - COMPETITION_START : $c['end']);
+
+				// Bad time - we don't want negatives
+				if ( 0 > $start || 0 > $end ) continue;
 
 				$this->Schedule->id = $c['id'];
 				$this->Schedule->save([
@@ -150,6 +153,13 @@ class ScheduleController extends AppController {
 			return $this->redirect('/schedule/manager');
 		}
 
+		// Load + setup the InjectStyler helper
+		$this->helpers[] = 'InjectStyler';
+		$this->helpers['InjectStyler'] = [
+			'types'  => $this->Config->getInjectTypes(),
+			'inject' => new stdClass(), // Nothing...for now
+		];
+
 		$this->set('schedule', $schedule);
 	}
 
@@ -167,19 +177,40 @@ class ScheduleController extends AppController {
 		if ( $this->request->is('post') ) {
 			$this->Schedule->id = $sid;
 
-			$msg = sprintf('Edited schedule #%d', $sid);
+			// Fix dependency_id to be NULL if the ID is 0
+			if ( isset($this->request->data['dependency_id']) && $this->request->data['dependency_id'] == 0 ) {
+				$this->request->data['dependency_id'] = NULL;
+			}
 
-			$this->logMessage(
-				'schedule',
-				$msg,
-				[
-					'old_schedule' => $schedule['Schedule'],
-					'new_schedule' => $this->data,
-				],
-				$sid
-			);
+			$update = [];
+			foreach ( $schedule['Schedule'] AS $k => $v ) {
+				if ( !isset($this->request->data[$k]) ) continue;
+				if ( $this->request->data[$k] == $v ) continue;
 
-			$this->Flash->success($msg.'!');
+				$update[$k] = $this->request->data[$k];
+			}
+
+			if ( !empty($update) ) {
+				$this->Schedule->save($update);
+
+				$msg = sprintf('Edited schedule #%d', $sid);
+
+				$this->logMessage(
+					'schedule',
+					$msg,
+					[
+						'old_schedule' => $schedule['Schedule'],
+						'new_schedule' => $this->request->data,
+						'delta'        => $update,
+					],
+					$sid
+				);
+
+				$this->Flash->success($msg.'!');
+			} else {
+				$this->Flash->danger('There are no changes to save!');
+			}
+
 			return $this->redirect('/schedule/manager');
 		}
 
@@ -190,6 +221,58 @@ class ScheduleController extends AppController {
 			'inject' => new stdClass(), // Nothing...for now
 		];
 
+		$this->set('injects', $this->Inject->find('all'));
+		$this->set('groups', $this->Group->generateTreeList(null, null, null, '--'));
 		$this->set('schedule', $schedule);
+	}
+
+	/**
+	 * Create a schedule.
+	 *
+	 * @url /schedule/create
+	 */
+	public function create() {
+		if ( $this->request->is('post') ) {
+			// Fix dependency_id to be NULL if the ID is 0
+			if ( isset($this->request->data['dependency_id']) && $this->request->data['dependency_id'] == 0 ) {
+				$this->request->data['dependency_id'] = NULL;
+			}
+
+			$create = [];
+			$missing = [];
+			foreach ( array_keys($this->Schedule->schema()) AS $key ) {
+				if ( !isset($this->request->data[$key]) ) {
+					$missing[] = $key;
+					continue;
+				}
+
+				$create[$key] = $this->request->data[$key];
+			}
+
+			if ( empty($missing) ) {
+				$this->Schedule->create();
+				$this->Schedule->save($create);
+
+				$msg = sprintf('Created schedule #%d', $this->Schedule->id);
+
+				$this->logMessage(
+					'schedule',
+					$msg,
+					[
+						'schedule' => $create,
+					],
+					$sid
+				);
+
+				$this->Flash->success($msg.'!');
+				return $this->redirect('/schedule/manager');
+			} else {
+				$this->Flash->danger(sprintf('You are missing %s!', implode(', ', $missing)));
+				return $this->redirect('/schedule/create');
+			}
+		}
+
+		$this->set('injects', $this->Inject->find('all'));
+		$this->set('groups', $this->Group->generateTreeList(null, null, null, '--'));
 	}
 }

@@ -6,8 +6,13 @@
 
 	<div class="well">
 		<h3>BankWEB Configuration</h3>
-		<p><strong>Server</strong>: <?= $api; ?></p>
-		<p><strong>Username</strong>: <?= $username; ?></p>
-		<p><strong>Password</strong>: <?= $password; ?></p>
+		<ul class="list-unstyled">
+			<li><strong>Server</strong>: <?= $api['host']; ?></li>
+			<li><strong>Port</strong>: <?= $api['port']; ?></li>
+			<li><strong>HTTPS</strong>: <?= $api['scheme'] == 'https' ? 'Yes' : 'No'; ?></li>
+			<li><hr /></li>
+			<li><strong>Username</strong>: <?= $username; ?></li>
+			<li><strong>Password</strong>: <?= $password; ?></li>
+		</ul>
 	</div>
 </div>

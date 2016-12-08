@@ -16,7 +16,7 @@ class InfoController extends BankWebAppController {
 
 		$account = $this->AccountMapping->getAccount($this->Auth->user('id'), $this->Auth->item('groups'));
 
-		$this->set('api', env('BANKAPI_SERVER'));
+		$this->set('api', parse_url(env('BANKAPI_SERVER')));
 		$this->set('username', $account['AccountMapping']['username']);
 		$this->set('password', $account['AccountMapping']['password']);
 	}

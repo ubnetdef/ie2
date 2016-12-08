@@ -33,9 +33,6 @@ if (!env('APP_NAME')) {
  */
 	Configure::write('ie.feature.scoreengine', (bool)env('FEATURE_SCOREENGINE'));
 	Configure::write('ie.feature.bankweb', (bool)env('FEATURE_BANKWEB'));
-	Configure::write('ie.feature.bluepass', (bool)env('FEATURE_BLUE_PASSWORD_CHANGES'));
-	Configure::write('ie.feature.help', (bool)env('FEATURE_HELP_SUBSYSTEM'));
-	Configure::write('ie.feature.hint', (bool)env('FEATURE_HINT_SUBSYSTEM'));
 
 /**
  * CakePHP Debug Level:

@@ -124,7 +124,7 @@ class InjectAbstraction implements JsonSerializable {
 	public function getManagerStartString() {
 		if ( !$this->isFuzzy() || $this->getStart() == 0 ) return $this->getStartString();
 
-		return '+'.($this->getScheduleStart() / 60).' minutes';
+		return $this->_fuzzyDuration($this->getStart());
 	}
 
 	/**
@@ -149,7 +149,7 @@ class InjectAbstraction implements JsonSerializable {
 	public function getManagerEndString() {
 		if ( !$this->isFuzzy() || $this->getEnd() == 0 ) return $this->getEndString();
 
-		return '+'.($this->getScheduleEnd() / 60).' minutes';
+		return $this->_fuzzyDuration($this->getEnd());
 	}
 
 	/**
@@ -217,5 +217,41 @@ class InjectAbstraction implements JsonSerializable {
 			'expired'   => $this->isExpired(),
 			'submitted' => ($this->getSubmissionCount() > 0),
 		];
+	}
+
+	/**
+	 * Fuzzy Duration Generator
+	 *
+	 * @source http://stackoverflow.com/a/18602474
+	 * @param $time The time you're checking
+	 * @return string The fuzzy time
+	 */
+	private function _fuzzyDuration($time) {
+		$start = new DateTime('@'.COMPETITION_START);
+		$end = new DateTime('@'.$time);
+		$diff = $end->diff($start);
+
+		$diff->w = floor($diff->d / 7);
+		$diff->d -= $diff->w * 7;
+
+		$string = [
+			'y' => 'year',
+			'm' => 'month',
+			'w' => 'week',
+			'd' => 'day',
+			'h' => 'hour',
+			'i' => 'minute',
+			's' => 'second',
+		];
+
+		foreach ($string as $k => &$v) {
+			if ( $diff->$k ) {
+				$v = $diff->$k . ' ' . $v . ($diff->$k > 1 ? 's' : '');
+			} else {
+				unset($string[$k]);
+			}
+		}
+
+		return '+'.implode(', ', $string);
 	}
 }

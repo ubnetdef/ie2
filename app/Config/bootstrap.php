@@ -91,7 +91,7 @@ if (php_sapi_name() !== 'cli' && Configure::read('debug') > 0 && in_array('Debug
 	}, 'Controller.initialize');
 }
 
-// Dynamically load ScoreEngine/BankWeb plugins
+// Dynamically load ScoreEngine plugin
 if ( Configure::read('ie.feature.scoreengine') ) {
 	CakePlugin::load('ScoreEngine', ['routes' => true]);
 
@@ -103,6 +103,7 @@ if ( Configure::read('ie.feature.scoreengine') ) {
 	}, 'Controller.initialize');
 }
 
+// Dynamically load BankWeb plugin
 if ( Configure::read('ie.feature.bankweb') ) {
 	CakePlugin::load('BankWeb', ['routes' => true]);
 }
