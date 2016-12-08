@@ -4,6 +4,59 @@ App::uses('AppController', 'Controller');
 class StaffController extends AppController {
 	public $uses = ['Config', 'Inject', 'Log', 'Grade', 'Group', 'Schedule', 'Submission'];
 
+	/**
+	 * Pagination Settings
+	 */
+	public $paginate = [
+		'Log' => [
+			'fields' => [
+				'Log.id', 'Log.time', 'Log.type', 'Log.data',
+				'Log.ip', 'Log.message', 'User.username', 'User.group_id',
+			],
+			'contain' => [
+				'User' => [
+					'Group.name',
+				]
+			],
+			'limit' => 20,
+			'order' => ['Log.id DESC'],
+		],
+
+		'OnlyGraded' => [
+			'fields' => [
+				'Submission.id', 'Submission.created', 'Submission.deleted',
+				'Inject.id', 'Inject.title', 'Inject.sequence', 'Inject.type',
+				'User.username', 'Group.name', 'Group.team_number',
+				'Grade.created', 'Grade.grade', 'Grade.comments',
+				'Grader.username',
+			],
+
+			'joins' => [
+				[
+					'table'      => 'users',
+					'alias'      => 'Grader',
+					'type'       => 'LEFT',
+					'conditions' => [
+						'Grader.id = Grade.grader_id',
+					],
+				]
+			],
+
+			'conditions' => [
+				'OR' => [
+					'Grade.created IS NOT NULL',
+					'Submission.deleted' => true,
+				],
+			],
+
+			'limit' => 20,
+			'order' => [
+				'Grade.created DESC',
+				'Submission.created DESC',
+			],
+		],
+	];
+
 	public function beforeFilter() {
 		parent::beforeFilter();
 
@@ -30,7 +83,9 @@ class StaffController extends AppController {
 	public function index() {
 		$this->set('active_injects', $this->Schedule->getActiveInjects(env('GROUP_BLUE')));
 		$this->set('recent_expired', $this->Schedule->getRecentExpired(env('GROUP_BLUE')));
-		$this->set('recent_logs', $this->Log->getRecent());
+
+		$this->Paginator->settings += $this->paginate['Log'];
+		$this->set('recent_logs', $this->Paginator->paginate('Log'));
 	}
 
 	/**
@@ -39,19 +94,10 @@ class StaffController extends AppController {
 	 * @url /staff/graders
 	 */
 	public function graders() {
-		$ungraded = [];
-		$graded   = [];
+		$this->set('ungraded', $this->Submission->getAllUngradedSubmissions());
 
-		foreach ( $this->Submission->getAllSubmissions() AS $s ) {
-			if ( empty($s['Grade']['created']) && !$s['Submission']['deleted'] ) {
-				$ungraded[] = $s;
-			} else {
-				$graded[] = $s;
-			}
-		}
-
-		$this->set('ungraded', $ungraded);
-		$this->set('graded', $graded);
+		$this->Paginator->settings += $this->paginate['OnlyGraded'];
+		$this->set('graded', $this->Paginator->paginate('Submission'));
 	}
 
 	/**

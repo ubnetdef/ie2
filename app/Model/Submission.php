@@ -11,6 +11,47 @@ class Submission extends AppModel {
 	public $recursive = 1;
 
 	/**
+	 * Get All Ungraded-Submissions
+	 *
+	 * This retrieves the submissions done by
+	 * a group that is ungraded.
+	 *
+	 * @return array The submissions that are ungraded.
+	 */
+	public function getAllUngradedSubmissions() {
+		return $this->find('all', [
+			'fields' => [
+				'Submission.id', 'Submission.created', 'Submission.deleted',
+				'Inject.id', 'Inject.title', 'Inject.sequence', 'Inject.type',
+				'User.username', 'Group.name', 'Group.team_number',
+				'Grade.created', 'Grade.grade', 'Grade.comments',
+				'Grader.username',
+			],
+
+			'joins' => [
+				[
+					'table'      => 'users',
+					'alias'      => 'Grader',
+					'type'       => 'LEFT',
+					'conditions' => [
+						'Grader.id = Grade.grader_id',
+					],
+				]
+			],
+
+			'conditions' => [
+				'Grade.created IS NULL',
+				'Submission.deleted' => false,
+			],
+
+			'order' => [
+				'Grade.created DESC',
+				'Submission.created DESC',
+			],
+		]);
+	}
+
+	/**
 	 * Get All Submissions
 	 *
 	 * This retrieves the submissions done by

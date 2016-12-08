@@ -12,7 +12,6 @@ class AppController extends Controller {
 		'Paginator' => [
 			'settings' => [
 				'paramType' => 'querystring',
-				'limit' => 30
 			]
 		],
 		'Preflight',
