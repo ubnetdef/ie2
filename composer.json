@@ -10,7 +10,8 @@
     "cakephp/cakephp" : "2.*",
     "josegonzalez/dotenv": "1.*",
     "ad7six/dsn": "0.3.*",
-    "wyrihaximus/html-compress": "^1.2"
+    "wyrihaximus/html-compress": "^1.2",
+    "respect/validation": "^1.1"
   },
   "require-dev": {
     "cakephp/debug_kit" : "2.2.*"

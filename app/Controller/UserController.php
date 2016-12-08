@@ -96,7 +96,14 @@ class UserController extends AppController {
 		$this->Auth->protect();
 
 		if ( $this->Auth->item('emulating') == true ) {
+			$oldUID = $this->Auth->user('id');
+			$oldUser = $this->Auth->user('username');
+
 			$this->Auth->emulateExit();
+
+			$msg = sprintf('Finished emulating user %s', $oldUser);
+			$this->logMessage('emulate', $msg, [], $oldUID);
+			$this->Flash->success($msg.'!');
 		}
 
 		return $this->redirect('/');

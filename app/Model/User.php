@@ -9,21 +9,6 @@ App::uses('Security', 'Utility');
 class User extends AppModel {
 	public $belongsTo = ['Group'];
 	public $recursive = 1;
-	
-	public $validate = [
-		'username' => [
-			'required' => [
-				'rule' => 'notBlank',
-				'message' => 'A username is required.',
-			],
-		],
-		'password' => [
-			'required' => [
-				'rule' => 'notBlank',
-				'message' => 'A password is required.',
-			],
-		],
-	];
 
 	/**
 	 * Before Save Hook

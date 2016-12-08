@@ -3,7 +3,6 @@
 <div class="well">
 	<p>We apologize, however an error has occured.  Please grab the nearest staff member.</p>
 
-	<p><strong>Name</strong>: <?= $name; ?></p>
 	<p><strong>Message</strong>: <?= $error->getMessage(); ?></p>
 </div>
 

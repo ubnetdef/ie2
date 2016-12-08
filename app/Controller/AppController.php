@@ -122,14 +122,19 @@ class AppController extends Controller {
 	 * @param $message The message
 	 * @param $data [Optional] Extra data to log
 	 * @param $related [Optional] Related ID of this message
+	 * @param $who [Optional] Who did this action
 	 * @return void
 	 */
-	public function logMessage($type, $message, $data=[], $related=0) {
+	public function logMessage($type, $message, $data=[], $related=0, $who=false) {
+		if ( $who === false ) {
+			$who = ($this->Auth->loggedIn() ? $this->Auth->user('id') : NULL);
+		}
+
 		$this->Log->create();
 		$this->Log->save([
 			'time'       => time(),
 			'type'       => $type,
-			'user_id'    => ($this->Auth->loggedIn() ? $this->Auth->user('id') : NULL),
+			'user_id'    => $who,
 			'related_id' => ($related > 0 ? $related : NULL),
 			'data'       => json_encode($data),
 			'ip'         => $this->request->clientIp(),

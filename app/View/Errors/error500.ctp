@@ -5,7 +5,6 @@
 
 	<hr />
 
-	<p><strong>Name</strong>: <?= $name; ?></p>
 	<p><strong>Message</strong>: <?= $error->getMessage(); ?></p>
 </div>
 

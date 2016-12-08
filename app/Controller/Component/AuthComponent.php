@@ -110,7 +110,7 @@ class AuthComponent extends Component {
 			return $this->controller->redirect('/user/login');
 		}
 
-		if ( $required_group != false ) {
+		if ( $required_group !== false ) {
 			if ( !in_array($required_group, $this->item('groups')) ) {
 				throw new ForbiddenException('You are unauthorized to view this page');
 			}
@@ -139,12 +139,19 @@ class AuthComponent extends Component {
 	 * Emulation will change the current session's user to the emulated user
 	 * account. The current session will be saved, however.
 	 * 
-	 * @param $username The username of the account you are emulating
+	 * @param $uidOrUsername The username or id of the account you are emulating
 	 */
-	public function emulate($username) {
+	public function emulate($uidOrUsername) {
 		$UserModel = ClassRegistry::init('User');
 		$GroupModel = ClassRegistry::init('Group');
-		$user = $UserModel->findByUsername($username);
+		$user = $UserModel->find('first', [
+			'conditions' => [
+				'OR' => [
+					'User.username' => $uidOrUsername,
+					'User.id' => $uidOrUsername,
+				],
+			]
+		]);
 
 		if ( empty($user) ) {
 			throw new InternalErrorException('Unknown username!');
@@ -170,7 +177,7 @@ class AuthComponent extends Component {
 			throw new InternalErrorException('A valid emulation session is not present!');
 		}
 
-		$newSession = $this->Session->comsume(self::SESSION_PREFIX.'.oldSession');
+		$newSession = $this->Session->consume(self::SESSION_PREFIX.'.oldSession');
 		$this->Session->destroy();
 		
 		$this->Session->write(self::SESSION_PREFIX, $newSession);
