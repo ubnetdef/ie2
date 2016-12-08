@@ -402,28 +402,8 @@ class AppSchema extends CakeSchema {
 			break;
 
 			case 'injects':
-				$content = <<<'INJECT_TEXT'
-<p>Hey Team,</p><p>On behalf of Catflix, I'd like to welcome you to our IT Operations and Security team!  In addition to keeping our cute cat videos secure and working, you will be responsible for our daily IT Operations.  This includes paying our hourly server bill, as well as processing the cutest cat videos to upload to our website.</p><p>To pay for the servers, please go to our bank website, and transfer the money to a specific account number (3141592653).  I believe our bill is due every hour, on the hour.</p><p>In addition to paying the bill, please monitor the email account "newvideos@catflix#TEAM_NUMBER_PADDED#.cat".  You will occasionally receive emails to this account.  You must upload the video within 15 minutes to our Plex server.  Failure to do this will result in financial deductions to your budget.</p><p>Regards,<br>Kevin Cleary<br>CIO</p>
-INJECT_TEXT;
-
 				$this->_create('Inject', [
 					'title'         => 'Learn about the InjectEngine',
-					'content'       => '<p>Maybe check the wiki?</p>',
-					'grading_guide' => '<p>You\'ll know when you got this.</p>',
-					'max_points'    => 100,
-					'type'          => 'noop',
-				]);
-
-				$this->_create('Inject', [
-					'title'         => 'Welcome to CatFlix!',
-					'content'       => $content,
-					'grading_guide' => '<p>You\'ll know when you got this.</p>',
-					'max_points'    => 100,
-					'type'          => 'noop',
-				]);
-
-				$this->_create('Inject', [
-					'title'         => 'Dev Test #2',
 					'content'       => '<p>Maybe check the wiki?</p>',
 					'grading_guide' => '<p>You\'ll know when you got this.</p>',
 					'max_points'    => 100,
@@ -435,22 +415,6 @@ INJECT_TEXT;
 				$this->_create('Schedule', [
 					'inject_id'     => 1,
 					'group_id'      => env('GROUP_STAFF'),
-					'active'        => true,
-				]);
-
-				$this->_create('Schedule', [
-					'inject_id'     => 2,
-					'group_id'      => env('GROUP_BLUE'),
-					'active'        => true,
-
-					'fuzzy'         => true,
-					'start'         => 60,
-					'end'           => 3660,
-				]);
-
-				$this->_create('Schedule', [
-					'inject_id'     => 3,
-					'group_id'      => env('GROUP_BLUE'),
 					'active'        => true,
 				]);
 			break;
