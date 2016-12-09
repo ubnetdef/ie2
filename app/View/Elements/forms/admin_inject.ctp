@@ -3,6 +3,7 @@ $this->Html->css('/vendor/bootstrap3-wysiwyg/bootstrap3-wysihtml5.min', ['inline
 
 $this->Html->script('/vendor/bootstrap3-wysiwyg/bootstrap3-wysihtml5.all.min', ['inline' => false]);
 ?>
+
 <form method="post" class="form-horizontal">
 	<div class="form-group">
 		<label for="title" class="col-sm-3 control-label">Title</label>
