@@ -98,8 +98,10 @@
 							$this->Misc->navbarItem('User Manager', '/admin/users'),
 							$this->Misc->navbarItem('Group Manager', '/admin/groups'),
 							$this->Misc->navbarItem('Inject Manager', '/admin/injects'),
-							((bool)env('FEATURE_SCOREENGINE') ? $this->Misc->navbarItem('Service Manager', '/admin/services', false) : ''),
 							$this->Misc->navbarItem('Log Manager', '/admin/logs'),
+							'<li role="separator" class="divider"></li>',
+							((bool)env('FEATURE_SCOREENGINE') ? $this->Misc->navbarItem('ScoreEngine Manager', '/admin/scoreengine', false) : ''),
+							((bool)env('FEATURE_BANKWEB') ? $this->Misc->navbarItem('BankWeb Manager', '/admin/bank', false) : ''),
 						]);
 					}
 

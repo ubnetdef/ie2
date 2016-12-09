@@ -12,6 +12,8 @@ class MiscHelper extends AppHelper {
 	}
 
 	public function navbarDropdown($name, $active, $children) {
+		if ( empty(array_filter($children)) ) return '';
+		
 		return sprintf(self::NAVBAR_MENU, ($active ? 'active' : ''), $name, implode('', $children));
 	}
 }
