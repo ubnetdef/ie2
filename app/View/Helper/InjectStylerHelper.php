@@ -145,4 +145,13 @@ class InjectStylerHelper extends AppHelper {
 	public function getName($id) {
 		return $this->typeManager->get($id)->getName();
 	}
+
+	/**
+	 * Get All Types
+	 *
+	 * @return array The type objects
+	 */
+	public function getAllTypes() {
+		return $this->typeManager->getAll();
+	}
 }

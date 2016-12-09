@@ -18,7 +18,7 @@
 			<td><?= isset($mappings[$id]) ? $mappings[$id] : 'N/A'; ?></td>
 			<td>
 				<?= $this->Html->link('Edit', '/admin/groups/edit/'.$id); ?>
-				| <?= $this->Html->link('Delete Group', '/admin/groups/delete/'.$id); ?>
+				| <?= $this->Html->link('Delete', '/admin/groups/delete/'.$id); ?>
 			</td>
 		</tr>
 		<?php endforeach; ?>
