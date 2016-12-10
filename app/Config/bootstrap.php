@@ -32,18 +32,6 @@ App::build(
 	App::RESET
 );
 
-// Deal with extra controllers
-$extra_controllers = [];
-foreach ( Configure::read('ie.special_controllers') AS $c ) {
-	$extra_controllers[] = ROOT . DS . APP_DIR . DS . 'Controller' . DS . $c . DS;
-}
-
-App::build([
-	'Controller' => $extra_controllers,
-]);
-
-unset($extra_controllers);
-
 /**
  * The settings below can be used to set additional paths to models, views and controllers.
  *
@@ -119,6 +107,9 @@ if ( Configure::read('ie.feature.scoreengine') ) {
 if ( Configure::read('ie.feature.bankweb') ) {
 	CakePlugin::load('BankWeb', ['routes' => true]);
 }
+
+// Admin Plugin
+CakePlugin::load('Admin');
 
 /**
  * You can attach event listeners to the request lifecycle as Dispatcher Filter . By Default CakePHP bundles two filters:

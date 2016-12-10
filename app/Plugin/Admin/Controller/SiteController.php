@@ -1,8 +1,8 @@
 <?php
-App::uses('AdminAppController', 'Controller');
+App::uses('AdminAppController', 'Admin.Controller');
 use Respect\Validation\Rules;
 
-class AdminSiteController extends AdminAppController {
+class SiteController extends AdminAppController {
 	public $uses = ['Config'];
 
 	public function beforeFilter() {
@@ -25,9 +25,7 @@ class AdminSiteController extends AdminAppController {
 	/**
 	 * Config Index Page 
 	 *
-	 * @url /adminsite
 	 * @url /admin/site
-	 * @url /adminsite/index
 	 * @url /admin/site/index
 	 */
 	public function index() {
@@ -37,7 +35,6 @@ class AdminSiteController extends AdminAppController {
 	/**
 	 * Config API Page 
 	 *
-	 * @url /adminsite/api/<id>
 	 * @url /admin/site/api/<id>
 	 */
 	public function api($id=false) {
@@ -52,7 +49,6 @@ class AdminSiteController extends AdminAppController {
 	/**
 	 * Config Edit/Create URL 
 	 *
-	 * @url /adminsite/api/<id>
 	 * @url /admin/site/api/<id>
 	 */
 	public function config() {
@@ -100,7 +96,6 @@ class AdminSiteController extends AdminAppController {
 	/**
 	 * Config Delete 
 	 *
-	 * @url /adminsite/delete/<id>
 	 * @url /admin/site/delete/<id>
 	 */
 	public function delete($id=false) {

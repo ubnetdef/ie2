@@ -1,8 +1,8 @@
 <?php
-App::uses('AdminAppController', 'Controller');
+App::uses('AdminAppController', 'Admin.Controller');
 use Respect\Validation\Rules;
 
-class AdminInjectsController extends AdminAppController {
+class InjectsController extends AdminAppController {
 	public $uses = ['Config', 'Inject', 'Schedule'];
 
 	public function beforeFilter() {
@@ -48,9 +48,7 @@ class AdminInjectsController extends AdminAppController {
 	/**
 	 * Inject List Page 
 	 *
-	 * @url /admininjects
 	 * @url /admin/injects
-	 * @url /admininjects/index
 	 * @url /admin/injects/index
 	 */
 	public function index() {
@@ -60,7 +58,6 @@ class AdminInjectsController extends AdminAppController {
 	/**
 	 * Create Inject 
 	 *
-	 * @url /admininjects/create
 	 * @url /admin/injects/create
 	 */
 	public function create() {
@@ -90,7 +87,6 @@ class AdminInjectsController extends AdminAppController {
 	/**
 	 * Edit Inject 
 	 *
-	 * @url /admininjects/edit/<id>
 	 * @url /admin/injects/edit/<id>
 	 */
 	public function edit($id=false) {
@@ -130,7 +126,6 @@ class AdminInjectsController extends AdminAppController {
 	/**
 	 * Delete Inject 
 	 *
-	 * @url /admininjects/delete/<id>
 	 * @url /admin/injects/delete/<id>
 	 */
 	public function delete($id=false) {

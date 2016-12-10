@@ -1,8 +1,8 @@
 <?php
-App::uses('AdminAppController', 'Controller');
+App::uses('AdminAppController', 'Admin.Controller');
 use Respect\Validation\Rules;
 
-class AdminUsersController extends AdminAppController {
+class UsersController extends AdminAppController {
 	public $uses = ['User', 'Group'];
 
 	public function beforeFilter() {
@@ -33,9 +33,7 @@ class AdminUsersController extends AdminAppController {
 	/**
 	 * User List Page 
 	 *
-	 * @url /adminuser
 	 * @url /admin/user
-	 * @url /adminuser/index
 	 * @url /admin/user/index
 	 */
 	public function index() {
@@ -49,7 +47,6 @@ class AdminUsersController extends AdminAppController {
 	/**
 	 * Emulate User 
 	 *
-	 * @url /adminuser/emulate/<uid>
 	 * @url /admin/user/emulate/<uid>
 	 */
 	public function emulate($uidOrUsername=false) {
@@ -71,7 +68,6 @@ class AdminUsersController extends AdminAppController {
 	/**
 	 * Create User 
 	 *
-	 * @url /adminuser/create
 	 * @url /admin/user/create
 	 */
 	public function create() {
@@ -144,7 +140,6 @@ class AdminUsersController extends AdminAppController {
 	/**
 	 * Delete User 
 	 *
-	 * @url /adminuser/delete/<uid>
 	 * @url /admin/user/delete/<uid>
 	 */
 	public function delete($uid=false) {
@@ -177,7 +172,6 @@ class AdminUsersController extends AdminAppController {
 	/**
 	 * Toggle User Status 
 	 *
-	 * @url /adminuser/flip/<uid>
 	 * @url /admin/user/flip/<uid>
 	 */
 	public function flip($uid=false) {

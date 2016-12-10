@@ -19,9 +19,12 @@ class UserController extends AppController {
 			$password = $this->request->data['password'];
 
 			if ( $this->Auth->login($username, $password) ) {
+				$this->logMessage('users', 'User has logged in');
+
 				return $this->redirect($this->Auth->redirectURL());
 			}
 
+			$this->logMessage('users', sprintf('Failed login for "%s"', htmlentities($username)));
 			$this->Flash->danger('Unknown username or password!');
 		}
 
@@ -72,7 +75,7 @@ class UserController extends AppController {
 					]);
 
 					// Log it
-					//$this->logMessage('USER', 'User just updated his/her password');
+					$this->logMessage('users', 'Updated his/her password');
 
 					// Message it
 					$this->Flash->success('Profile updated!');

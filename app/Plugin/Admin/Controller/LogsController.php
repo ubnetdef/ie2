@@ -1,7 +1,7 @@
 <?php
-App::uses('AdminAppController', 'Controller');
+App::uses('AdminAppController', 'Admin.Controller');
 
-class AdminLogsController extends AdminAppController {
+class LogsController extends AdminAppController {
 	public $uses = ['Log'];
 
 	public $paginate = [
@@ -22,9 +22,7 @@ class AdminLogsController extends AdminAppController {
 	/**
 	 * Log List Page 
 	 *
-	 * @url /adminlogs
 	 * @url /admin/logs
-	 * @url /adminlogs/index
 	 * @url /admin/logs/index
 	 */
 	public function index() {
@@ -35,7 +33,6 @@ class AdminLogsController extends AdminAppController {
 	/**
 	 * View Log 
 	 *
-	 * @url /adminlogs/view/<id>
 	 * @url /admin/logs/view/<id>
 	 */
 	public function view($id=false) {

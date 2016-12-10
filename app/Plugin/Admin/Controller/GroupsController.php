@@ -1,8 +1,8 @@
 <?php
-App::uses('AdminAppController', 'Controller');
+App::uses('AdminAppController', 'Admin.Controller');
 use Respect\Validation\Rules;
 
-class AdminGroupsController extends AdminAppController {
+class GroupsController extends AdminAppController {
 	public $uses = ['Group'];
 
 	public function beforeFilter() {
@@ -27,9 +27,7 @@ class AdminGroupsController extends AdminAppController {
 	/**
 	 * Group List Page 
 	 *
-	 * @url /admingroup
 	 * @url /admin/group
-	 * @url /admingroup/index
 	 * @url /admin/group/index
 	 */
 	public function index() {
@@ -47,7 +45,6 @@ class AdminGroupsController extends AdminAppController {
 	/**
 	 * Create Group 
 	 *
-	 * @url /admingroup/create
 	 * @url /admin/group/create
 	 */
 	public function create() {
@@ -79,7 +76,6 @@ class AdminGroupsController extends AdminAppController {
 	/**
 	 * Edit Group 
 	 *
-	 * @url /admingroup/edit/<gid>
 	 * @url /admin/group/edit/<gid>
 	 */
 	public function edit($gid=false) {
@@ -120,7 +116,6 @@ class AdminGroupsController extends AdminAppController {
 	/**
 	 * Delete group 
 	 *
-	 * @url /admingroup/delete/<gid>
 	 * @url /admin/group/delete/<gid>
 	 */
 	public function delete($gid=false) {

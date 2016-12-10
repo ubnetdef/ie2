@@ -35,15 +35,6 @@ if (!env('APP_NAME')) {
 	Configure::write('ie.feature.bankweb', (bool)env('FEATURE_BANKWEB'));
 
 /**
- * Special Controller Prefixes
- *
- * This maps to a folder inside app/Controller.  For example,
- * if there's a folder called 'Admin', with a controller 'UserController',
- * the route will be '/admin/user'.
- */
-	Configure::write('ie.special_controllers', ['Admin']);
-
-/**
  * CakePHP Debug Level:
  *
  * Production Mode:
