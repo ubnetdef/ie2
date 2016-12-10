@@ -1,12 +1,9 @@
 <?php
 App::uses('AdminAppController', 'Controller');
-
 use Respect\Validation\Rules;
-use Respect\Validation\Exceptions\NestedValidationException;
 
 class AdminGroupsController extends AdminAppController {
 	public $uses = ['Group'];
-	private $validators = [];
 
 	public function beforeFilter() {
 		parent::beforeFilter();
@@ -56,32 +53,11 @@ class AdminGroupsController extends AdminAppController {
 	public function create() {
 		if ( $this->request->is('post') ) {
 			// Validate the input
-			$errors = [];
-			$create = [];
+			$res = $this->_validate();
 
-			foreach ( $this->validators AS $key => $validator ) {
-				// If we're missing something, stop it's bad.
-				if ( !isset($this->request->data[$key]) ) {
-					$errors[] = sprintf('Missing input "%s"', $key);
-					continue;
-				}
-
-				try {
-					$validator->assert($this->request->data[$key]);
-
-					$create[$key] = $this->request->data[$key];
-				} catch ( NestedValidationException $e ) {
-					$errors[] = sprintf(
-						'Input %s must have pass the following rules:<br />-%s',
-						$key,
-						implode('<br />-', $e->getMessages())
-					);
-				}
-			}
-
-			if ( empty($errors) ) {
+			if ( empty($res['errors']) ) {
 				$this->Group->create();
-				$this->Group->save($create);
+				$this->Group->save($res['data']);
 
 				$this->logMessage(
 					'groups',
@@ -93,7 +69,7 @@ class AdminGroupsController extends AdminAppController {
 				$this->Flash->success('The group has been created!');
 				return $this->redirect('/admin/groups');
 			} else {
-				$this->Flash->danger('The following errors have occured:<br />'.implode('<br />', $errors));
+				$this->_errorFlash($res['errors']);
 			}
 		}
 
@@ -114,39 +90,18 @@ class AdminGroupsController extends AdminAppController {
 
 		if ( $this->request->is('post') ) {
 			// Validate the input
-			$errors = [];
-			$update = [];
+			$res = $this->_validate();
 
-			foreach ( $this->validators AS $key => $validator ) {
-				// If we're missing something, stop it's bad.
-				if ( !isset($this->request->data[$key]) ) {
-					$errors[] = sprintf('Missing input "%s"', $key);
-					continue;
-				}
-
-				try {
-					$validator->assert($this->request->data[$key]);
-
-					$update[$key] = $this->request->data[$key];
-				} catch ( NestedValidationException $e ) {
-					$errors[] = sprintf(
-						'Input %s must have pass the following rules:<br />-%s',
-						$key,
-						implode('<br />-', $e->getMessages())
-					);
-				}
-			}
-
-			if ( empty($errors) ) {
+			if ( empty($res['errors']) ) {
 				$this->Group->id = $gid;
-				$this->Group->save($update);
+				$this->Group->save($res['data']);
 
 				$this->logMessage(
 					'groups',
 					sprintf('Updated group "%s"', $group['Group']['name']),
 					[
 						'old_group' => $group['Group'],
-						'new_group' => $update,
+						'new_group' => $res['data'],
 					],
 					$uid
 				);
@@ -154,7 +109,7 @@ class AdminGroupsController extends AdminAppController {
 				$this->Flash->success('The user has been updated!');
 				return $this->redirect('/admin/groups');
 			} else {
-				$this->Flash->danger('The following errors have occured:<br />'.implode('<br />', $errors));
+				$this->_errorFlash($res['errors']);
 			}
 		}
 

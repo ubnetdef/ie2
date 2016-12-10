@@ -42,6 +42,18 @@ $this->Html->script('/vendor/bootstrap3-wysiwyg/bootstrap3-wysihtml5.all.min', [
 	</div>
 
 	<div class="form-group">
+		<label for="sequence" class="col-sm-3 control-label">Sequence Number</label>
+		<div class="col-sm-9">
+			<input type="text" class="form-control" id="sequence" name="sequence" value="<?= !empty($inject) ? $inject['Inject']['sequence'] : ''; ?>" required="required" />
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-sm-9 col-sm-offset-3">
+			<p class="help-block">The sequence number for this inject.</p>
+		</div>
+	</div>
+
+	<div class="form-group">
 		<label for="max_points" class="col-sm-3 control-label">Max Points</label>
 		<div class="col-sm-9">
 			<input type="text" class="form-control" id="max_points" name="max_points" value="<?= !empty($inject) ? $inject['Inject']['max_points'] : ''; ?>" required="required" />

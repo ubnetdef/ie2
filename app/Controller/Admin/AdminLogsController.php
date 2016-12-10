@@ -4,6 +4,21 @@ App::uses('AdminAppController', 'Controller');
 class AdminLogsController extends AdminAppController {
 	public $uses = ['Log'];
 
+	public $paginate = [
+		'fields' => [
+			'Log.id', 'Log.time', 'Log.type', 'Log.data',
+			'Log.ip', 'Log.message', 'User.username', 'User.group_id',
+		],
+		'contain' => [
+			'User' => [
+				'Group.name',
+			]
+		],
+		'order' => [
+			'Log.id' => 'DESC'
+		],
+	];
+
 	/**
 	 * Log List Page 
 	 *
@@ -13,7 +28,8 @@ class AdminLogsController extends AdminAppController {
 	 * @url /admin/logs/index
 	 */
 	public function index() {
-		// TODO
+		$this->Paginator->settings = $this->paginate;
+		$this->set('recent_logs', $this->Paginator->paginate('Log'));
 	}
 
 	/**
@@ -23,6 +39,11 @@ class AdminLogsController extends AdminAppController {
 	 * @url /admin/logs/view/<id>
 	 */
 	public function view($id=false) {
-		// TODO
+		$log = $this->Log->findById($id);
+		if ( empty($log) ) {
+			throw new NotFoundException('Unknown log!');
+		}
+
+		$this->set('log', $log);
 	}
 }

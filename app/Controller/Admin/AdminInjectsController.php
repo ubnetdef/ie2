@@ -1,12 +1,9 @@
 <?php
 App::uses('AdminAppController', 'Controller');
-
 use Respect\Validation\Rules;
-use Respect\Validation\Exceptions\NestedValidationException;
 
 class AdminInjectsController extends AdminAppController {
-	public $uses = ['Config', 'Inject'];
-	private $validators = [];
+	public $uses = ['Config', 'Inject', 'Schedule'];
 
 	public function beforeFilter() {
 		parent::beforeFilter();
@@ -28,11 +25,10 @@ class AdminInjectsController extends AdminAppController {
 				new Rules\NotEmpty()
 			),
 			'content' => new Rules\AllOf(
-				new Rules\Alnum('-_'),
 				new Rules\NotEmpty()
 			),
 			'grading_guide' => new Rules\AllOf(
-				new Rules\Alnum('-_')
+				new Rules\NotEmpty()
 			),
 			'max_points' => new Rules\AllOf(
 				new Rules\Digit(),
@@ -68,6 +64,27 @@ class AdminInjectsController extends AdminAppController {
 	 * @url /admin/injects/create
 	 */
 	public function create() {
+		if ( $this->request->is('post') ) {
+			// Validate the input
+			$res = $this->_validate();
+
+			if ( empty($res['errors']) ) {
+				$this->Inject->create();
+				$this->Inject->save($res['data']);
+
+				$this->logMessage(
+					'injects',
+					sprintf('Created inject "%s"', $res['data']['title']),
+					[],
+					$this->Inject->id
+				);
+
+				$this->Flash->success('The inject has been created!');
+				return $this->redirect('/admin/injects');
+			} else {
+				$this->_errorFlash($res['errors']);
+			}
+		}
 	}
 
 	/**
@@ -80,6 +97,31 @@ class AdminInjectsController extends AdminAppController {
 		$inject = $this->Inject->findById($id);
 		if ( empty($inject) ) {
 			throw new NotFoundException('Unknown inject!');
+		}
+
+		if ( $this->request->is('post') ) {
+			// Validate the input
+			$res = $this->_validate();
+
+			if ( empty($res['errors']) ) {
+				$this->Inject->id = $id;
+				$this->Inject->save($res['data']);
+
+				$this->logMessage(
+					'injects',
+					sprintf('Updated inject "%s"', $inject['Inject']['title']),
+					[
+						'old_inject' => $inject['Inject'],
+						'new_inject' => $res['data'],
+					],
+					$id
+				);
+
+				$this->Flash->success('The inject has been updated!');
+				return $this->redirect('/admin/injects');
+			} else {
+				$this->_errorFlash($res['errors']);
+			}
 		}
 
 		$this->set('inject', $inject);
@@ -95,6 +137,22 @@ class AdminInjectsController extends AdminAppController {
 		$inject = $this->Inject->findById($id);
 		if ( empty($inject) ) {
 			throw new NotFoundException('Unknown inject!');
+		}
+
+		if ( $this->request->is('post') ) {
+			$this->Inject->delete($id);
+
+			// Delete all associated schedules
+			$schedules = [];
+			foreach ( $this->Schedule->findByInjectId($id) AS $s ) {
+				$schedules[] = $s['Schedule']['id'];
+			}
+			$this->Schedule->delete($schedules);
+
+			$msg = sprintf('Deleted inject "%s"', $inject['Inject']['title']);
+			$this->logMessage('injects', $msg, ['inject' => $inject], $id);
+			$this->Flash->success($msg.'!');
+			return $this->redirect('/admin/injects');
 		}
 
 		$this->set('inject', $inject);

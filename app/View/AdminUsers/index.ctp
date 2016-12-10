@@ -1,5 +1,4 @@
 <h2>Backend Panel - User Manager</h2>
-<h4><?= $this->Auth->group('name'); ?></h4>
 
 <table class="table">
 	<thead>

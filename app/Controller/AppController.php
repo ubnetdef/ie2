@@ -1,5 +1,6 @@
 <?php
 App::uses('Controller', 'Controller');
+use Respect\Validation\Exceptions\NestedValidationException;
 
 class AppController extends Controller {
 	public $components = [
@@ -20,6 +21,8 @@ class AppController extends Controller {
 
 	public $uses = ['Announcement', 'Config', 'Log'];
 	public $helpers = ['Auth', 'Misc', 'Session'];
+
+	protected $validators = [];
 
 	/**
 	 * Before Filter Hook
@@ -140,5 +143,53 @@ class AppController extends Controller {
 			'ip'         => $this->request->clientIp(),
 			'message'    => $message,
 		]);
+	}
+
+	/**
+	 * Validate request data against
+	 * $validators
+	 *
+	 * @return array [errors,validated_data]
+	 */
+	protected function _validate() {
+		// Validate the input
+		$errors = [];
+		$modify = [];
+
+		foreach ( $this->validators AS $key => $validator ) {
+			// If we're missing something, stop it's bad.
+			if ( !isset($this->request->data[$key]) ) {
+				$errors[] = sprintf('Missing input "%s"', $key);
+				continue;
+			}
+
+			try {
+				$validator->assert($this->request->data[$key]);
+
+				$data[$key] = $this->request->data[$key];
+			} catch ( NestedValidationException $e ) {
+				$errors[] = sprintf(
+					'Input %s must have pass the following rules:<br />-%s',
+					$key,
+					implode('<br />-', $e->getMessages())
+				);
+			}
+		}
+
+		return [
+			'errors' => $errors,
+			'data'   => $data,
+		];
+	}
+
+	/**
+	 * Generates a flash message for a failed
+	 * validation
+	 *
+	 * @param $errors Array of the errors
+	 * @return void
+	 */
+	protected function _errorFlash($errors) {
+		$this->Flash->danger('The following errors have occured:<br />'.implode('<br />', $errors));
 	}
 }

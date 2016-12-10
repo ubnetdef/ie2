@@ -1,12 +1,9 @@
 <?php
 App::uses('AdminAppController', 'Controller');
-
 use Respect\Validation\Rules;
-use Respect\Validation\Exceptions\NestedValidationException;
 
 class AdminUsersController extends AdminAppController {
 	public $uses = ['User', 'Group'];
-	private $validators = [];
 
 	public function beforeFilter() {
 		parent::beforeFilter();
@@ -80,36 +77,15 @@ class AdminUsersController extends AdminAppController {
 	public function create() {
 		if ( $this->request->is('post') ) {
 			// Validate the input
-			$errors = [];
-			$create = [];
+			$res = $this->_validate();
 
-			foreach ( $this->validators AS $key => $validator ) {
-				// If we're missing something, stop it's bad.
-				if ( !isset($this->request->data[$key]) ) {
-					$errors[] = sprintf('Missing input "%s"', $key);
-					continue;
-				}
-
-				try {
-					$validator->assert($this->request->data[$key]);
-
-					$create[$key] = $this->request->data[$key];
-				} catch ( NestedValidationException $e ) {
-					$errors[] = sprintf(
-						'Input %s must have pass the following rules:<br />-%s',
-						$key,
-						implode('<br />-', $e->getMessages())
-					);
-				}
-			}
-
-			if ( empty($errors) ) {
+			if ( empty($res['errors']) ) {
 				$this->User->create();
-				$this->User->save($create);
+				$this->User->save($res['data']);
 
 				$this->logMessage(
 					'users',
-					sprintf('Created user "%s"', $create['username']),
+					sprintf('Created user "%s"', $res['data']['username']),
 					[],
 					$this->User->id
 				);
@@ -117,7 +93,7 @@ class AdminUsersController extends AdminAppController {
 				$this->Flash->success('The user has been created!');
 				return $this->redirect('/admin/users');
 			} else {
-				$this->Flash->danger('The following errors have occured:<br />'.implode('<br />', $errors));
+				$this->_errorFlash($res['errors']);
 			}
 		}
 
@@ -138,42 +114,18 @@ class AdminUsersController extends AdminAppController {
 
 		if ( $this->request->is('post') ) {
 			// Validate the input
-			$errors = [];
-			$update = [];
+			$res = $this->_validate();
 
-			foreach ( $this->validators AS $key => $validator ) {
-				// Password field is optional
-				if ( $key == 'password' && !isset($this->request->data[$key]) || empty($this->request->data[$key]) ) continue;
-
-				// If we're missing something, stop it's bad.
-				if ( !isset($this->request->data[$key]) ) {
-					$errors[] = sprintf('Missing input "%s"', $key);
-					continue;
-				}
-
-				try {
-					$validator->assert($this->request->data[$key]);
-
-					$update[$key] = $this->request->data[$key];
-				} catch ( NestedValidationException $e ) {
-					$errors[] = sprintf(
-						'Input %s must have pass the following rules:<br />-%s',
-						$key,
-						implode('<br />-', $e->getMessages())
-					);
-				}
-			}
-
-			if ( empty($errors) ) {
+			if ( empty($res['errors']) ) {
 				$this->User->id = $uid;
-				$this->User->save($update);
+				$this->User->save($res['data']);
 
 				$this->logMessage(
 					'users',
 					sprintf('Updated user "%s"', $user['User']['username']),
 					[
 						'old_user' => $user['User'],
-						'new_user' => $update,
+						'new_user' => $res['data'],
 					],
 					$uid
 				);
@@ -181,7 +133,7 @@ class AdminUsersController extends AdminAppController {
 				$this->Flash->success('The user has been updated!');
 				return $this->redirect('/admin/users');
 			} else {
-				$this->Flash->danger('The following errors have occured:<br />'.implode('<br />', $errors));
+				$this->_errorFlash($res['errors']);
 			}
 		}
 

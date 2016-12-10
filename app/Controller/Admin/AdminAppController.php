@@ -2,7 +2,6 @@
 App::uses('AppController', 'Controller');
 
 class AdminAppController extends AppController {
-
 	public function beforeFilter() {
 		parent::beforeFilter();
 
