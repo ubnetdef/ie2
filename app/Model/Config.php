@@ -25,7 +25,7 @@ class Config extends AppModel {
 	 */
 	public function afterSave($created, $options=[]) {
 		if ( !$created ) {
-			Cache::delete(sprintf(self::CACHE_KEY, $this->data['key']));
+			Cache::delete(sprintf(self::CACHE_KEY, $this->data['Config']['key']));
 		}
 	}
 
