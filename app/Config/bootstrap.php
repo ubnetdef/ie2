@@ -94,13 +94,6 @@ if (php_sapi_name() !== 'cli' && Configure::read('debug') > 0 && in_array('Debug
 // Dynamically load ScoreEngine plugin
 if ( Configure::read('ie.feature.scoreengine') ) {
 	CakePlugin::load('ScoreEngine', ['routes' => true]);
-
-	// Auto attach "EngineOutputter" on every controller
-	CakeEventManager::instance()->attach(function ($event) {
-		$controller = $event->subject();
-
-		$controller->helpers[] = 'ScoreEngine.EngineOutputter';
-	}, 'Controller.initialize');
 }
 
 // Dynamically load BankWeb plugin

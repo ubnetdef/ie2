@@ -21,7 +21,13 @@ class PreflightComponent extends Component {
 	 * it has been configured properly.
 	 */
 	public function initialize(Controller $controller) {
+		// Disable preflight on DEBUG
 		if ( env('DEBUG') == 0 && Cache::read('preflight_check') == true ) {
+			return;
+		}
+
+		// Disable preflight on the Admin plugin (otherwise, how would we fix issues)
+		if ( $controller->request->params['plugin'] == 'admin' ) {
 			return;
 		}
 

@@ -2,7 +2,11 @@
 App::uses('AppController', 'Controller');
 
 class StaffController extends AppController {
-	public $uses = ['Config', 'Inject', 'Log', 'Grade', 'Group', 'Schedule', 'Submission'];
+	public $helpers = ['ScoreEngine.EngineOutputter'];
+	public $uses = [
+		'Config', 'Inject', 'Log', 'Grade', 'Group', 'Schedule', 'Submission',
+		'ScoreEngine.Check', 'ScoreEngine.Service', 'ScoreEngine.Team'
+	];
 
 	/**
 	 * Pagination Settings
@@ -69,6 +73,16 @@ class StaffController extends AppController {
 
 		// We're at the staff page
 		$this->set('at_staff', true);
+	}
+
+	public function beforeRender() {
+		parent::beforeRender();
+
+		// Setup the ScoreEngine EngineOutputter
+		$this->helpers['ScoreEngine.EngineOutputter']['data'] = $this->Check->getChecksTable(
+			$this->Team->find('all'),
+			$this->Service->find('all')
+		);
 	}
 
 	/**

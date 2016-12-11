@@ -3,12 +3,63 @@ App::uses('AdminAppController', 'Admin.Controller');
 use Respect\Validation\Rules;
 
 class SiteController extends AdminAppController {
-	public $uses = ['Config'];
+	public $uses = ['Announcement', 'Config'];
 
-	public function beforeFilter() {
-		parent::beforeFilter();
+	/**
+	 * Config Index Page 
+	 *
+	 * @url /admin/site
+	 * @url /admin/site/index
+	 */
+	public function index() {
+		$this->set('announce', $this->Announcement->find('all'));
+		$this->set('config', $this->Config->find('all'));
+	}
 
-		// Set validators
+	/**
+	 * Config API Page 
+	 *
+	 * @url /admin/site/api/<type>/<id>
+	 */
+	public function api($type='announcement', $id=false) {
+		switch ( $type ) {
+			case 'config':
+				$config = $this->Config->findById($id);
+				if ( empty($config) ) {
+					throw new NotFoundException('Unknown config');
+				}
+
+				$data = $config['Config'];
+			break;
+
+			case 'announcement':
+				$announcement = $this->Announcement->findById($id);
+				if ( empty($announcement) ) {
+					throw new NotFoundException('Unknown announcement');
+				}
+
+				$data = $announcement['Announcement'];
+			break;
+
+			default:
+				throw new MethodNotAllowedException();
+			break;
+		}
+
+		return $this->ajaxResponse($data);
+	}
+
+	/**
+	 * Config Edit/Create URL 
+	 *
+	 * @url /admin/site/api
+	 */
+	public function config() {
+		if ( !$this->request->is('post') ) {
+			throw new MethodNotAllowedException();
+		}
+
+		// Validate the input
 		$this->validators = [
 			'id' => new Rules\AllOf(
 				new Rules\Digit()
@@ -20,43 +71,6 @@ class SiteController extends AdminAppController {
 				new Rules\NotEmpty()
 			),
 		];
-	}
-
-	/**
-	 * Config Index Page 
-	 *
-	 * @url /admin/site
-	 * @url /admin/site/index
-	 */
-	public function index() {
-		$this->set('config', $this->Config->find('all'));
-	}
-
-	/**
-	 * Config API Page 
-	 *
-	 * @url /admin/site/api/<id>
-	 */
-	public function api($id=false) {
-		$config = $this->Config->findById($id);
-		if ( empty($config) ) {
-			throw new NotFoundException('Unknown config');
-		}
-
-		return $this->ajaxResponse($config['Config']);
-	}
-
-	/**
-	 * Config Edit/Create URL 
-	 *
-	 * @url /admin/site/api/<id>
-	 */
-	public function config() {
-		if ( !$this->request->is('post') ) {
-			throw new MethodNotAllowedException();
-		}
-
-		// Validate the input
 		$res = $this->_validate();
 
 		if ( !empty($res['errors']) ) {
@@ -94,25 +108,93 @@ class SiteController extends AdminAppController {
 	}
 
 	/**
+	 * Announcement Edit/Create URL 
+	 *
+	 * @url /admin/site/announcement
+	 */
+	public function announcement() {
+		if ( !$this->request->is('post') ) {
+			throw new MethodNotAllowedException();
+		}
+
+		// Validate the input
+		$this->validators = [
+			'id' => new Rules\AllOf(
+				new Rules\Digit()
+			),
+			'content' => new Rules\AllOf(
+				new Rules\NotEmpty()
+			),
+			'active' => new Rules\AllOf(
+				new Rules\Digit()
+			),
+			'expiration' => new Rules\AllOf(
+				new Rules\Digit()
+			),
+		];
+		$res = $this->_validate();
+
+		if ( !empty($res['errors']) ) {
+			$this->_errorFlash($res['errors']);
+
+			return $this->redirect('/admin/site');
+		}
+
+		if ( $res['data']['id'] > 0 ) {
+			$announcement = $this->Announcement->findById($res['data']['id']);
+			if ( empty($announcement) ) {
+				throw new NotFoundException('Unknown announcement');
+			}
+
+			$this->Announcement->id = $res['data']['id'];
+			$this->Announcement->save($res['data']);
+
+			$msg = sprintf('Edited announcement #%d', $announcement['Announcement']['id']);
+
+			$this->logMessage('announcement', $msg, [
+				'old_announcement' => $announcement['Announcement'],
+				'new_announcement' => $res['data']
+			], $announcement['Announcement']['id']);
+			$this->Flash->success($msg.'!');
+		} else {
+			// Fix the data
+			unset($res['data']['id']);
+
+			$this->Announcement->create();
+			$this->Announcement->save($res['data']);
+
+			$msg = sprintf('Created announcement #%d', $this->Announcement->id);
+			$this->logMessage('announcement', $msg, [], $this->Announcement->id);
+			$this->Flash->success($msg.'!');
+		}
+
+		return $this->redirect('/admin/site');
+	}
+
+	/**
 	 * Config Delete 
 	 *
-	 * @url /admin/site/delete/<id>
+	 * @url /admin/site/delete/<type>/<id>
 	 */
-	public function delete($id=false) {
-		$config = $this->Config->findById($id);
-		if ( empty($config) ) {
-			throw new NotFoundException('Unknown config');
+	public function delete($type='announcement', $id=false) {
+		$modal = ($type == 'announcement' ? $this->Announcement : $this->Config);
+		$msgType = ($type == 'announcement' ? 'Announcement' : 'Config');
+		$logType = ($type == 'announcement' ? 'announcement' : 'config');
+
+		$data = $modal->findById($id);
+		if ( empty($data) ) {
+			throw new NotFoundException('Unknown '.$msgType);
 		}
 
 		if ( $this->request->is('post') ) {
-			$this->Config->delete($id);
+			$modal->delete($id);
 
-			$msg = sprintf('Deleted config value "%s"', $config['Config']['key']);
-			$this->logMessage('config', $msg. ['config' => $config], $id);
+			$msg = sprintf('Deleted %s value "%s"', $msgType, $config['Config']['key']);
+			$this->logMessage($logType, $msg, [$logType => $data], $id);
 			$this->Flash->success($msg.'!');
 			return $this->redirect('/admin/site');
 		}
 
-		$this->set('config', $config);
+		$this->set('data', $data);
 	}
 }

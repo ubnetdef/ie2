@@ -8,7 +8,7 @@
 			</div>
 			<div class="panel-body">
 				<form class="form-horizontal" method="post">
-					<p>Are you sure you wish to <strong>delete</strong> "<?= $config['Config']['key']; ?>".</p>
+					<p>Are you sure you wish to <strong>delete</strong> "<?= isset($data['Config']) ? $data['Config']['key'] : $data['Announcement']['content']; ?>".</p>
 
 					<div class="text-center">
 						<button type="submit" class="btn btn-danger">Delete Config</button>

@@ -25,7 +25,19 @@ class Check extends ScoreEngineAppModel {
 		]);
 	}
 
-	public function getChecksTable() {
+	public function getChecksTable($teams, $services) {
+		$rtn = [];
+		foreach ( $teams AS $t ) {
+			$team_name = $t['Team']['name'];
+
+			$rtn[$team_name] = [];
+			foreach ( $services AS $s ) {
+				$service_name = $s['Service']['name'];
+
+				$rtn[$team_name][$service_name] = null;
+			}
+		}
+
 		$data = $this->find('all', [
 			'fields' => [
 				'Check.passed', 'Team.name', 'Service.name',
@@ -33,7 +45,8 @@ class Check extends ScoreEngineAppModel {
 			],
 
 			'conditions' => [
-				'Check.round = (SELECT MAX(round) FROM checks)',
+				// We're going to use the highest number minus one
+				'Check.round = (SELECT IF(MAX(round) > 2, MAX(round)-1, 1) FROM checks)',
 			],
 
 			'order' => [
@@ -42,15 +55,12 @@ class Check extends ScoreEngineAppModel {
 			],
 		]);
 
-		$rtn = [];
 		foreach ( $data AS $d ) {
-			if ( !isset($rtn[$d['Team']['name']]) ) {
-				$rtn[$d['Team']['name']] = [];
-			}
+			$team_name = $d['Team']['name'];
+			$service_name = $d['Service']['name'];
 
-			$rtn[$d['Team']['name']][$d['Service']['name']] = ((bool) $d['Check']['passed']);
+			$rtn[$team_name][$service_name] = ((bool) $d['Check']['passed']);
 		}
-
 		return $rtn;
 	}
 
