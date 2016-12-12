@@ -76,7 +76,7 @@ class SiteController extends AdminAppController {
 		if ( !empty($res['errors']) ) {
 			$this->_errorFlash($res['errors']);
 
-			return $this->redirect('/admin/site');
+			return $this->redirect(['plugin' => 'admin', 'controller' => 'site', 'action' => 'index']);
 		}
 
 		if ( $res['data']['id'] > 0 ) {
@@ -104,7 +104,7 @@ class SiteController extends AdminAppController {
 			$this->Flash->success($msg.'!');
 		}
 
-		return $this->redirect('/admin/site');
+		return $this->redirect(['plugin' => 'admin', 'controller' => 'site', 'action' => 'index']);
 	}
 
 	/**
@@ -137,7 +137,7 @@ class SiteController extends AdminAppController {
 		if ( !empty($res['errors']) ) {
 			$this->_errorFlash($res['errors']);
 
-			return $this->redirect('/admin/site');
+			return $this->redirect(['plugin' => 'admin', 'controller' => 'site', 'action' => 'index']);
 		}
 
 		if ( $res['data']['id'] > 0 ) {
@@ -168,7 +168,7 @@ class SiteController extends AdminAppController {
 			$this->Flash->success($msg.'!');
 		}
 
-		return $this->redirect('/admin/site');
+		return $this->redirect(['plugin' => 'admin', 'controller' => 'site', 'action' => 'index']);
 	}
 
 	/**
@@ -189,10 +189,10 @@ class SiteController extends AdminAppController {
 		if ( $this->request->is('post') ) {
 			$modal->delete($id);
 
-			$msg = sprintf('Deleted %s value "%s"', $msgType, $config['Config']['key']);
+			$msg = sprintf('Deleted %s #%d', $msgType, $data[$msgType]['id']);
 			$this->logMessage($logType, $msg, [$logType => $data], $id);
 			$this->Flash->success($msg.'!');
-			return $this->redirect('/admin/site');
+			return $this->redirect(['plugin' => 'admin', 'controller' => 'site', 'action' => 'index']);
 		}
 
 		$this->set('data', $data);

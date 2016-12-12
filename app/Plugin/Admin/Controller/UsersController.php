@@ -87,7 +87,7 @@ class UsersController extends AdminAppController {
 				);
 
 				$this->Flash->success('The user has been created!');
-				return $this->redirect('/admin/users');
+				return $this->redirect(['plugin' => 'admin', 'controller' => 'users', 'action' => 'index']);
 			} else {
 				$this->_errorFlash($res['errors']);
 			}
@@ -127,7 +127,7 @@ class UsersController extends AdminAppController {
 				);
 
 				$this->Flash->success('The user has been updated!');
-				return $this->redirect('/admin/users');
+				return $this->redirect(['plugin' => 'admin', 'controller' => 'users', 'action' => 'index']);
 			} else {
 				$this->_errorFlash($res['errors']);
 			}
@@ -163,7 +163,7 @@ class UsersController extends AdminAppController {
 			);
 
 			$this->Flash->success($msg);
-			return $this->redirect('/admin/users');
+			return $this->redirect(['plugin' => 'admin', 'controller' => 'users', 'action' => 'index']);
 		}
 
 		$this->set('user', $user);
@@ -196,6 +196,6 @@ class UsersController extends AdminAppController {
 		);
 
 		$this->Flash->success(sprintf('Toggled status for user %s!', $user['User']['username']));
-		return $this->redirect('/admin/users');
+		return $this->redirect(['plugin' => 'admin', 'controller' => 'users', 'action' => 'index']);
 	}
 }

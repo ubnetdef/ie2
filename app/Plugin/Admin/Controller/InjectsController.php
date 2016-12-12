@@ -77,7 +77,7 @@ class InjectsController extends AdminAppController {
 				);
 
 				$this->Flash->success('The inject has been created!');
-				return $this->redirect('/admin/injects');
+				return $this->redirect(['plugin' => 'admin', 'controller' => 'injects', 'action' => 'index']);
 			} else {
 				$this->_errorFlash($res['errors']);
 			}
@@ -114,7 +114,7 @@ class InjectsController extends AdminAppController {
 				);
 
 				$this->Flash->success('The inject has been updated!');
-				return $this->redirect('/admin/injects');
+				return $this->redirect(['plugin' => 'admin', 'controller' => 'injects', 'action' => 'index']);
 			} else {
 				$this->_errorFlash($res['errors']);
 			}
@@ -147,7 +147,7 @@ class InjectsController extends AdminAppController {
 			$msg = sprintf('Deleted inject "%s"', $inject['Inject']['title']);
 			$this->logMessage('injects', $msg, ['inject' => $inject], $id);
 			$this->Flash->success($msg.'!');
-			return $this->redirect('/admin/injects');
+			return $this->redirect(['plugin' => 'admin', 'controller' => 'injects', 'action' => 'index']);
 		}
 
 		$this->set('inject', $inject);

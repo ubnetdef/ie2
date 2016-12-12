@@ -26,7 +26,7 @@ class LogsController extends AdminAppController {
 	 * @url /admin/logs/index
 	 */
 	public function index() {
-		$this->Paginator->settings = $this->paginate;
+		$this->Paginator->settings += $this->paginate;
 		$this->set('recent_logs', $this->Paginator->paginate('Log'));
 	}
 

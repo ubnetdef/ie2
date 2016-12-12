@@ -33,7 +33,7 @@ class ProductsController extends BankWebAppController {
 	/**
 	 * Product Purchase Confirmation
 	 *
-	 * @url /bank/products//confirm/<id>
+	 * @url /bank/products/confirm/<id>
 	 */
 	public function confirm($id=false) {
 		if ( $id === false || !isset($this->products[$id]) ) {

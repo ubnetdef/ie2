@@ -91,8 +91,8 @@
 	</div>
 </div>
 
-<?= $this->element('Admin.config_modal'); ?>
-<?= $this->element('Admin.announcement_modal'); ?>
+<?= $this->element('Admin.modals/config'); ?>
+<?= $this->element('Admin.modals/announcement'); ?>
 
 <script>
 $(document).ready(function() {

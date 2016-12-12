@@ -64,7 +64,7 @@ class GroupsController extends AdminAppController {
 				);
 
 				$this->Flash->success('The group has been created!');
-				return $this->redirect('/admin/groups');
+				return $this->redirect(['plugin' => 'admin', 'controller' => 'groups', 'action' => 'index']);
 			} else {
 				$this->_errorFlash($res['errors']);
 			}
@@ -103,7 +103,7 @@ class GroupsController extends AdminAppController {
 				);
 
 				$this->Flash->success('The user has been updated!');
-				return $this->redirect('/admin/groups');
+				return $this->redirect(['plugin' => 'admin', 'controller' => 'groups', 'action' => 'index']);
 			} else {
 				$this->_errorFlash($res['errors']);
 			}
@@ -139,7 +139,7 @@ class GroupsController extends AdminAppController {
 			);
 
 			$this->Flash->success($msg);
-			return $this->redirect('/admin/groups');
+			return $this->redirect(['plugin' => 'admin', 'controller' => 'groups', 'action' => 'index']);
 		}
 
 		$this->set('group', $group);
