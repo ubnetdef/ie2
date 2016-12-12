@@ -8,11 +8,7 @@ class BankWebSchema extends CakeSchema {
 			'null' => false,
 			'key'  => 'primary',
 		],
-		'object' => [
-			'type' => 'string',
-			'null' => false,
-		],
-		'object_id' => [
+		'group_id' => [
 			'type' => 'integer',
 			'null' => false,
 		],
@@ -42,8 +38,7 @@ class BankWebSchema extends CakeSchema {
 		switch ( $event['create'] ) {
 			case 'account_mappings':
 				$this->_create('AccountMapping', [
-					'object'    => 'Group',
-					'object_id' => env('GROUP_STAFF'),
+					'group_id' => env('GROUP_STAFF'),
 					'username'  => 'admin',
 					'password'  => 'admin',
 				]);

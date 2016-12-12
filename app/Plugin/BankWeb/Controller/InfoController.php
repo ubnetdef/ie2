@@ -21,7 +21,7 @@ class InfoController extends BankWebAppController {
 			throw new ForbiddenException();
 		} 
 
-		$account = $this->AccountMapping->getAccount($this->Auth->user('id'), $this->Auth->item('groups'));
+		$account = $this->AccountMapping->getAccount($this->Auth->item('groups'));
 
 		$this->set('api', parse_url(env('BANKAPI_SERVER')));
 		$this->set('username', $account['AccountMapping']['username']);

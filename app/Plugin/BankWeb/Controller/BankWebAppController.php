@@ -12,7 +12,7 @@ class BankWebAppController extends AppController {
 		$this->Auth->protect();
 
 		// Grab the account + set the credentials for the API
-		$account = $this->AccountMapping->getAccount($this->Auth->user('id'), $this->Auth->item('groups'));
+		$account = $this->AccountMapping->getAccount($this->Auth->item('groups'));
 		
 		if ( empty($account) ) {
 			throw new BadRequestException('You do not have a bank account associated with your user/groups!');

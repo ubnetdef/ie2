@@ -12,7 +12,26 @@
 			<li><strong>HTTPS</strong>: <?= $api['scheme'] == 'https' ? 'Yes' : 'No'; ?></li>
 			<li><hr /></li>
 			<li><strong>Username</strong>: <?= $username; ?></li>
-			<li><strong>Password</strong>: <?= $password; ?></li>
+			<li>
+				<strong>Password</strong>:
+				<a href="#" class="pw-hide" data-password="<?= $password; ?>">
+					<?= substr($password, 0, 2) . str_repeat('*', strlen($password) - 2); ?>
+				</a>
+			</li>
 		</ul>
 	</div>
 </div>
+
+<script>
+$(document).ready(function() {
+	$('.pw-hide').click(function(e) {
+		oldPW = $(this).html().trim();
+		newPW = $(this).data('password');
+
+		$(this).data('password', oldPW).html(newPW);
+
+		e.preventDefault();
+		return false;
+	});
+});
+</script>

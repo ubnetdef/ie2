@@ -2,34 +2,21 @@
 App::uses('BankWebAppModel', 'BankWeb.Model');
 
 class AccountMapping extends BankWebAppModel {
-	const TBL_USER = 'User';
-	const TBL_GROUP = 'Group';
+	public $belongsTo = ['Group'];
+	public $recursive = 1;
 
-	public function getAccount($user, $groups) {
-		// First, let's try to check if we have a user mapping
-		$mapping = $this->find('first', [
-			'conditions' => [
-				'AccountMapping.object'    => self::TBL_USER,
-				'AccountMapping.object_id' => $user,
-			],
-		]);
-
-		if ( !empty($mapping) ) {
-			return $mapping;
-		}
-
-		// Now check groups
+	public function getAccount($groups) {
+		// Check groups
 		$mapping = $this->find('all', [
 			'conditions' => [
-				'AccountMapping.object'    => self::TBL_GROUP,
-				'AccountMapping.object_id' => $groups,
+				'AccountMapping.group_id' => $groups,
 			],
 		]);
 
 		// Re-organize the mappings
 		$maps = [];
 		foreach ( $mapping AS $m ) {
-			$maps[$m['AccountMapping']['object_id']] = $m;
+			$maps[$m['AccountMapping']['group_id']] = $m;
 		}
 
 		// Now let's deal with the groups
