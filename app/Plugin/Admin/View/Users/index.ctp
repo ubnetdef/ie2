@@ -39,4 +39,3 @@
 	</tr>
 	</tbody>
 </table>
-	

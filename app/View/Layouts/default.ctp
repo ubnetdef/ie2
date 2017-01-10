@@ -62,7 +62,7 @@
 					echo $this->Misc->navbarItem('Injects', '/injects', isset($at_injects));
 				}
 
-				if ( (bool)env('FEATURE_BANKWEB') ) {
+				if ( (bool)env('FEATURE_BANKWEB') && $this->Auth->loggedIn() ) {
 					echo $this->Misc->navbarItem('Bank', '/bank/products', isset($at_bank));
 				}
 

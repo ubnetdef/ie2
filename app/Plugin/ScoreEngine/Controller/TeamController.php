@@ -16,6 +16,8 @@ class TeamController extends ScoreEngineAppController {
 	 * as well as sets up the user's team number
 	 */
 	public function beforeFilter() {
+		parent::beforeFilter();
+		
 		// Only blue teams may access
 		$this->Auth->protect(env('GROUP_BLUE'));
 
