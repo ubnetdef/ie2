@@ -1,0 +1,15 @@
+$this->Navigation->create('main', [
+	[ // stuff.. ], [ // stuff.. ],
+]);
+
+$this->Navigation->get('main')
+	->add('Injects', '/injects');
+
+$this->Navigation->get('main/Injects')
+	->setACL(function() {
+		return true;
+	})
+	->setActive();
+
+$this->Navigation->get('right/Competition Central/Bank')
+	->add

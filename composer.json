@@ -21,7 +21,8 @@
   },
   "autoload": {
     "psr-4": {
-      "InjectTypes\\": "app/Lib/InjectTypes"
+      "InjectTypes\\": "app/Lib/InjectTypes",
+      "Navigation\\": "app/Lib/Navigation"
     }
   }
 }
