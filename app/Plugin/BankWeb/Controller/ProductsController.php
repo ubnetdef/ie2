@@ -37,12 +37,12 @@ class ProductsController extends BankWebAppController {
 	 */
 	public function confirm($id=false) {
 		if ( $id === false || !isset($this->products[$id]) ) {
-			throw new NotFoundException('Unknown product!');
+			throw new NotFoundException('Unknown product');
 		}
 
 		$product = $this->products[$id];
 		if ( !$product['enabled'] ) {
-			throw new NotFoundException('Unknown product!');
+			throw new NotFoundException('Unknown product');
 		}
 
 		if (

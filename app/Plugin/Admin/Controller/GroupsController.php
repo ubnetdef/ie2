@@ -81,7 +81,7 @@ class GroupsController extends AdminAppController {
 	public function edit($gid=false) {
 		$group = $this->Group->findById($gid);
 		if ( empty($group) ) {
-			throw new NotFoundException('Unknown group!');
+			throw new NotFoundException('Unknown group');
 		}
 
 		if ( $this->request->is('post') ) {
@@ -121,7 +121,7 @@ class GroupsController extends AdminAppController {
 	public function delete($gid=false) {
 		$group = $this->Group->findById($gid);
 		if ( empty($group) ) {
-			throw new NotFoundException('Unknown group!');
+			throw new NotFoundException('Unknown group');
 		}
 
 		if ( $this->request->is('post') ) {

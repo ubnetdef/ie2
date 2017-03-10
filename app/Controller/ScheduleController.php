@@ -146,7 +146,7 @@ class ScheduleController extends AppController {
 		if ( $sid !== false && is_numeric($sid) ) {
 			$schedule = $this->Schedule->findById($sid);
 			if ( empty($schedule) ) {
-				throw new NotFoundException('Unknown Schedule ID.');
+				throw new NotFoundException('Unknown Schedule ID');
 			}
 
 			// Load + setup the InjectStyler helper
@@ -187,6 +187,8 @@ class ScheduleController extends AppController {
 			);
 
 			$this->Flash->success($msg.'!');
+		} else {
+			$this->Flash->danger('Unknown Schedule ID');
 		}
 
 		return $this->redirect('/schedule/manager');
@@ -200,7 +202,7 @@ class ScheduleController extends AppController {
 	public function edit($sid) {
 		$schedule = $this->Schedule->findById($sid);
 		if ( empty($schedule) ) {
-			throw new NotFoundException('Unknown Schedule ID.');
+			throw new NotFoundException('Unknown Schedule ID');
 		}
 
 		if ( $this->request->is('post') ) {
@@ -237,7 +239,7 @@ class ScheduleController extends AppController {
 
 				$this->Flash->success($msg.'!');
 			} else {
-				$this->Flash->danger('There are no changes to save!');
+				$this->Flash->danger('There are no changes to save');
 			}
 
 			return $this->redirect('/schedule/manager');
@@ -263,7 +265,7 @@ class ScheduleController extends AppController {
 	public function delete($sid) {
 		$schedule = $this->Schedule->findById($sid);
 		if ( empty($schedule) ) {
-			throw new NotFoundException('Unknown Schedule ID.');
+			throw new NotFoundException('Unknown Schedule ID');
 		}
 
 		if ( $this->request->is('post') ) {

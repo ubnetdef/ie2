@@ -100,6 +100,18 @@ class StaffController extends AppController {
 	}
 
 	/**
+	 * Inject View Page
+	 *
+	 * @url /staff/inject/<id>
+	 */
+	public function inject($id=false) {
+		$inject = $this->Inject->findById($id);
+		if ( empty($inject) ) {
+			throw new NotFoundException('Unknown Inject');
+		}
+	}
+
+	/**
 	 * Grader Island Page
 	 *
 	 * @url /staff/graders
@@ -117,13 +129,9 @@ class StaffController extends AppController {
 	 * @url /staff/grade/<sid>
 	 */
 	public function grade($sid=false) {
-		if ( $sid === false || !is_numeric($sid) ) {
-			return $this->redirect('/staff/graders');
-		}
-
 		$submission = $this->Submission->getSubmission($sid);
 		if ( empty($submission) ) {
-			throw new NotFoundException('Unknown submission.');
+			throw new NotFoundException('Unknown submission');
 		}
 
 		if ( $this->request->is('post') ) {
@@ -186,13 +194,9 @@ class StaffController extends AppController {
 	 * @url /staff/submission/<sid>
 	 */
 	public function submission($sid=false) {
-		if ( $sid === false || !is_numeric($sid) ) {
-			return $this->redirect('/staff/graders');
-		}
-
 		$submission = $this->Submission->getSubmission($sid);
 		if ( empty($submission) ) {
-			throw new NotFoundException('Unknown submission.');
+			throw new NotFoundException('Unknown submission');
 		}
 
 		$data = json_decode($submission['Submission']['data'], true);

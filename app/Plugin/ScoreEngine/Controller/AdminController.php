@@ -32,7 +32,7 @@ class AdminController extends ScoreEngineAppController {
 	public function team($id=false) {
 		$team = $this->Team->findById($id);
 		if ( empty ($team) ) {
-			throw new NotFoundException('Unknown team!');
+			throw new NotFoundException('Unknown team');
 		}
 
 		$tid = $team['Team']['id'];
@@ -50,10 +50,10 @@ class AdminController extends ScoreEngineAppController {
 	public function service($tid=false, $sid=false) {
 		$team = $this->Team->findById($tid);
 		if ( empty($team) ) {
-			throw new NotFoundException('Unknown team!');
+			throw new NotFoundException('Unknown team');
 		}
 		if ( $sid === false || !is_numeric($sid) ) {
-			throw new NotFoundException('Unknown service!');
+			throw new NotFoundException('Unknown service');
 		}
 
 		$this->set('team', $team);
@@ -76,7 +76,7 @@ class AdminController extends ScoreEngineAppController {
 	public function config($id=false) {
 		$team = $this->Team->findById($id);
 		if ( empty($team) ) {
-			throw new NotFoundException('Unknown team!');
+			throw new NotFoundException('Unknown team');
 		}
 
 		$this->set('team', $team);

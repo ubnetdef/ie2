@@ -45,7 +45,7 @@ class TeamController extends ScoreEngineAppController {
 	 */
 	public function service($sid=false) {
 		if ( $sid === false || !is_numeric($sid) ) {
-			throw new NotFoundException('Unknown service!');
+			throw new NotFoundException('Unknown service');
 		}
 
 		$this->set('data', $this->Check->find('all', [

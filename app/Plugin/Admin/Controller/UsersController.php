@@ -105,7 +105,7 @@ class UsersController extends AdminAppController {
 	public function edit($uid=false) {
 		$user = $this->User->findById($uid);
 		if ( empty($user) ) {
-			throw new NotFoundException('Unknown user!');
+			throw new NotFoundException('Unknown user');
 		}
 
 		if ( $this->request->is('post') ) {
@@ -145,7 +145,7 @@ class UsersController extends AdminAppController {
 	public function delete($uid=false) {
 		$user = $this->User->findById($uid);
 		if ( empty($user) ) {
-			throw new NotFoundException('Unknown user!');
+			throw new NotFoundException('Unknown user');
 		}
 
 		if ( $this->request->is('post') ) {
@@ -177,7 +177,7 @@ class UsersController extends AdminAppController {
 	public function flip($uid=false) {
 		$user = $this->User->findById($uid);
 		if ( empty($user) ) {
-			throw new NotFoundException('Unknown user!');
+			throw new NotFoundException('Unknown user');
 		}
 
 		$this->User->id = $uid;

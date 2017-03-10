@@ -92,7 +92,7 @@ class InjectsController extends AdminAppController {
 	public function edit($id=false) {
 		$inject = $this->Inject->findById($id);
 		if ( empty($inject) ) {
-			throw new NotFoundException('Unknown inject!');
+			throw new NotFoundException('Unknown inject');
 		}
 
 		if ( $this->request->is('post') ) {
@@ -131,7 +131,7 @@ class InjectsController extends AdminAppController {
 	public function delete($id=false) {
 		$inject = $this->Inject->findById($id);
 		if ( empty($inject) ) {
-			throw new NotFoundException('Unknown inject!');
+			throw new NotFoundException('Unknown inject');
 		}
 
 		if ( $this->request->is('post') ) {

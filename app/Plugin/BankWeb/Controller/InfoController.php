@@ -18,7 +18,7 @@ class InfoController extends BankWebAppController {
 	 */
 	public function index() {
 		if ( (bool)env('BANKWEB_PUBLIC_APIINFO') == false && !$this->Auth->isAdmin() ) {
-			throw new ForbiddenException();
+			throw new ForbiddenException('This feature is disabled');
 		} 
 
 		$account = $this->AccountMapping->getAccount($this->Auth->item('groups'));

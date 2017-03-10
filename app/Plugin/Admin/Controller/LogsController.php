@@ -38,7 +38,7 @@ class LogsController extends AdminAppController {
 	public function view($id=false) {
 		$log = $this->Log->findById($id);
 		if ( empty($log) ) {
-			throw new NotFoundException('Unknown log!');
+			throw new NotFoundException('Unknown Log ID');
 		}
 
 		$this->set('log', $log);
