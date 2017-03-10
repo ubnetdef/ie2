@@ -184,7 +184,7 @@ class PreflightComponent extends Component {
 	 */
 	public function checkBankWeb() {
 		foreach ( ['BANKAPI_SERVER', 'BANKAPI_TIMEOUT', 'BANKWEB_PRODUCTS', 'BANKWEB_WHITETEAM_ACCOUNT', 'BANKWEB_PUBLIC_APIINFO'] AS $key ) {
-			if ( empty(env($key)) ) {
+			if ( env($key) === null ) {
 				return sprintf('Please setup the variable "%s" to use the BankWeb Feature.', $key);
 			}
 		}
