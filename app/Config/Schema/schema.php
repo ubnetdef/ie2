@@ -414,7 +414,7 @@ class AppSchema extends CakeSchema {
 					'title'         => 'Learn about the InjectEngine',
 					'content'       => '<p>Maybe check the wiki?</p>',
 					'from_name'     => 'James Droste',
-					'from_email'    => 'ubnetdef@buffalo.edu'
+					'from_email'    => 'ubnetdef@buffalo.edu',
 					'grading_guide' => '<p>You\'ll know when you got this.</p>',
 					'max_points'    => 100,
 					'type'          => 'noop',
