@@ -226,12 +226,50 @@ class StaffController extends AppController {
 	 * @url /staff/export
 	 */
 	public function export() {
-		$blueTeams = $this->Group->getChildren(env('GROUP_BLUE'));
+		$blueTeams = array_merge($this->Group->getChildren(env('GROUP_BLUE')), [env('GROUP_BLUE')]);
 		$submissions = $this->Submission->getAllSubmissions($blueTeams, true);
-		$out = ['team_number,inject_number,grade'];
+		$injects = $this->Schedule->getInjects($blueTeams, false);
+		$out = [];
 
+		// Grab all the injects
+		$seenInjects = [];
+		foreach ( $injects AS $i ) {
+			if ( in_array($i->getSequence(), $seenInjects) ) continue;
+
+			$seenInjects[] = $i->getSequence();
+		}
+		sort($seenInjects);
+
+		// Build the header
+		$header = ['team_number'];
+		foreach ( $seenInjects AS $i ) {
+			$header[] = sprintf('inject_%d_grade', $i);
+		}
+		$out[] = implode(',', $header);
+
+		// Parse the (fun) data
+		$scores = [];
 		foreach ( $submissions AS $s ) {
-			$out[] = $s['Group']['team_number'].','.$s['Inject']['sequence'].','.$s['Grade']['grade'];
+			$tn = $s['Group']['team_number'];
+			$inject = $s['Inject']['sequence'];
+
+			if ( !isset($scores[$tn]) ) {
+				$scores[$tn] = [];
+			}
+
+			$scores[$tn][$inject] = $s['Grade']['grade'];
+		}
+
+		// Output the grades
+		foreach ( $scores AS $team => $data ) {
+			$line = [$team];
+
+			foreach ( $seenInjects AS $i ) {
+				// Default the grade to 0 if it's not submitted
+				$line[] = isset($data[$i]) ? $data[$i] : 0;
+			}
+
+			$out[] = implode(',', $line);
 		}
 
 		return $this->ajaxResponse(implode(PHP_EOL, $out));

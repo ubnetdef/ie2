@@ -19,24 +19,28 @@ class Schedule extends AppModel {
 	 * has passed
 	 *
 	 * @param $groups The groups to check for injects in
+	 * @param $onlyActive Only include injects that are active
 	 * @return array All the active injects
 	 */
-	public function getInjectsRaw($groups) {
+	public function getInjectsRaw($groups, $onlyActive=true) {
 		$now = time();
-		$conditions = [
-			'Schedule.group_id' => $groups,
-			'Schedule.active'   => true,
-			'OR' => [
-				[
-					'Schedule.fuzzy' => false,
-					'Schedule.start <=' => $now,
+		$conditions = ['Schedule.group_id' => $groups];
+			
+		if ( $onlyActive ) {
+			$conditions += [
+				'Schedule.active'   => true,
+				'OR' => [
+					[
+						'Schedule.fuzzy' => false,
+						'Schedule.start <=' => $now,
+					],
+					[
+						'Schedule.fuzzy' => true,
+						'Schedule.start <=' => ($now - COMPETITION_START)
+					],
 				],
-				[
-					'Schedule.fuzzy' => true,
-					'Schedule.start <=' => ($now - COMPETITION_START)
-				],
-			],
-		];
+			];
+		}
 
 		$injects = $this->find('all', [
 			'conditions' => $conditions,
@@ -127,19 +131,20 @@ class Schedule extends AppModel {
 	}
 
 	/**
-	 * Get Active Injects (and wrap them)
+	 * Get Injects (and wrap them)
 	 *
 	 * This function uses the raw data from
 	 * `getInjectsRaw` and wraps every inject
 	 * inside an InjectAbstraction class
 	 *
 	 * @param $groups The groups to check for injects in
+	 * @param $onlyActive Only include injects that are active
 	 * @return array All the active injects
 	 */
-	public function getInjects($groups) {
+	public function getInjects($groups, $onlyActive=true) {
 		$rtn = [];
 
-		foreach ( $this->getInjectsRaw($groups) AS $inject ) {
+		foreach ( $this->getInjectsRaw($groups, $onlyActive) AS $inject ) {
 			$submissionCount = ClassRegistry::init('Submission')->getCount($inject['Inject']['id'], $groups);
 			$rtn[] = new InjectAbstraction($inject, $submissionCount);
 		}
@@ -174,19 +179,13 @@ class Schedule extends AppModel {
 	/**
 	 * Get all active injects
 	 *
+	 * @deprecated
+	 *
 	 * @param $groups The groups to check for injects in
 	 * @return array All the active injects
 	 */
 	public function getActiveInjects($groups) {
-		$rtn = [];
-
-		foreach ( $this->getInjects($groups) AS $inject ) {
-			if ( !$inject->isExpired() ) {
-				$rtn[] = $inject;
-			}
-		}
-
-		return $rtn;
+		return $this->getInjects($groups);
 	}
 
 	/**
