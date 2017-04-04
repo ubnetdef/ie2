@@ -7,6 +7,9 @@ class AdminController extends ScoreEngineAppController {
 	public function beforeFilter() {
 		parent::beforeFilter();
 
+		// Enforce staff only
+		$this->Auth->protect(env('GROUP_STAFF'));
+
 		// Set the active menu item
 		$this->set('at_backend', true);
 	}
