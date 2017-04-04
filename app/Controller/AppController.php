@@ -200,6 +200,10 @@ class AppController extends Controller {
 	protected function _sendSlack($msg, $extra=[]) {
 		if ( !env('SLACK_ENDPOINT') ) return;
 
+		// Sprintf it
+		$msg = sprintf($msg, $this->Auth->user('username'), $this->Auth->group('name'));
+
+		// Build the payload
 		$payload = 'payload='.json_encode([
 			'text'       => $msg,
 			'link_names' => 1,
