@@ -1,5 +1,9 @@
 <?php
 $col_subrows = ((bool)env('FEATURE_SCOREENGINE') ? 'col-md-3' : 'col-md-6');
+
+$this->Html->scriptStart(['inline' => false, 'safe' => false]);
+echo 'setTimeout(window.location.reload.bind(window.location), 30 * 1000);';
+$this->Html->scriptEnd();
 ?>
 <h2>Competition Central</h2>
 
