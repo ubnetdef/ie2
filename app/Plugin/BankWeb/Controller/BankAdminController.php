@@ -2,7 +2,7 @@
 App::uses('BankWebAppController', 'BankWeb.Controller');
 use Respect\Validation\Rules;
 
-class AdminController extends BankWebAppController {
+class BankAdminController extends BankWebAppController {
 	public $uses = ['Group', 'BankWeb.AccountMapping'];
 
 	public function beforeFilter() {
@@ -73,7 +73,7 @@ class AdminController extends BankWebAppController {
 		if ( !empty($res['errors']) ) {
 			$this->_errorFlash($res['errors']);
 
-			return $this->redirect(['plugin' => 'bank_web', 'controller' => 'admin', 'action' => 'index']);
+			return $this->redirect(['plugin' => 'bank_web', 'controller' => 'bankadmin', 'action' => 'index']);
 		}
 
 		if ( $res['data']['id'] > 0 ) {
@@ -101,7 +101,7 @@ class AdminController extends BankWebAppController {
 			$this->Flash->success($msg.'!');
 		}
 
-		return $this->redirect(['plugin' => 'bank_web', 'controller' => 'admin', 'action' => 'index']);
+		return $this->redirect(['plugin' => 'bank_web', 'controller' => 'bankadmin', 'action' => 'index']);
 	}
 
 	/**
@@ -121,7 +121,7 @@ class AdminController extends BankWebAppController {
 			$msg = sprintf('Deleted account mapping for user "%s"', $data['AccountMapping']['username']);
 			$this->logMessage('bank', $msg, ['mapping' => $data], $id);
 			$this->Flash->success($msg.'!');
-			return $this->redirect(['plugin' => 'bank_web', 'controller' => 'admin', 'action' => 'index']);
+			return $this->redirect(['plugin' => 'bank_web', 'controller' => 'bankadmin', 'action' => 'index']);
 		}
 
 		$this->set('data', $data);

@@ -29,7 +29,7 @@
 				<h4>Latest: <?php echo isset($latest[$d['Service']['name']]) ? $latest[$d['Service']['name']]['passed'] == 1 ? 'UP' : 'DOWN' : 'N/A'; ?></h4>
 			</div>
 			<div class="panel-footer text-right">
-				<?php echo $this->Html->link('More Information', ['plugin' => 'ScoreEngine', 'controller' => 'admin', 'action' => 'service', $team['Team']['id'], $d['Service']['id']]); ?>
+				<?php echo $this->Html->link('More Information', ['plugin' => 'ScoreEngine', 'controller' => 'scoreadmin', 'action' => 'service', $team['Team']['id'], $d['Service']['id']]); ?>
 			</div>
 		</div>
 	</div>

@@ -1,7 +1,7 @@
 <?php
 App::uses('ScoreEngineAppController', 'ScoreEngine.Controller');
 
-class AdminController extends ScoreEngineAppController {
+class ScoreAdminController extends ScoreEngineAppController {
 	public $uses = ['ScoreEngine.Team', 'ScoreEngine.Check','ScoreEngine.Service', 'ScoreEngine.TeamService'];
 
 	public function beforeFilter() {

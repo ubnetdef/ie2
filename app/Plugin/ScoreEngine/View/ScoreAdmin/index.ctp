@@ -16,9 +16,9 @@
 			<td><?= $team['Team']['name']; ?></td>
 			<td><?= $team['Team']['enabled'] == 1 ? 'Enabled' : 'Disabled'; ?></td>
 			<td>
-				<?= $this->Html->link('Team Overview', ['plugin' => 'ScoreEngine', 'controller' => 'admin', 'action' => 'team', $team['Team']['id']]); ?>
+				<?= $this->Html->link('Team Overview', ['plugin' => 'ScoreEngine', 'controller' => 'scoreadmin', 'action' => 'team', $team['Team']['id']]); ?>
 				
-				| <?= $this->Html->link('Service Config', ['plugin' => 'ScoreEngine', 'controller' => 'admin', 'action' => 'config', $team['Team']['id']]); ?> 
+				| <?= $this->Html->link('Service Config', ['plugin' => 'ScoreEngine', 'controller' => 'scoreadmin', 'action' => 'config', $team['Team']['id']]); ?> 
 			</td>
 		</tr>
 		<?php endforeach; ?>
