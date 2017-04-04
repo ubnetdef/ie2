@@ -60,6 +60,12 @@ class ProductsController extends BankWebAppController {
 
 			if ( $res === true ) {
 				$this->Flash->success($product['on_purchase']);
+
+				if ( (bool)env('BANKWEB_SLACK_ENABLED') ) {
+					$this->_sendSlack(
+						sprintf($product['slack_message'], $this->Auth->user('username'), $this->Auth->group('name'))
+					);
+				}
 			}
 
 			return $this->redirect(['plugin' => 'bank_web', 'controller' => 'products', 'action' => 'index']);

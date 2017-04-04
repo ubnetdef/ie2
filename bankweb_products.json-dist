@@ -5,5 +5,6 @@
       "desc": "Some silly description",
       "cost": 100,
       "on_purchase": "Purchased!"
+      "slack_message": "@some-username: Bank Item #1 was just purchased by %s (%s)"
    }
 ]
