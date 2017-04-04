@@ -9,8 +9,8 @@
 			<h2><?= $inject->getTitle(); ?></h2>
 
 			<p class="injectinfo">
-				<strong>To</strong>: <?= $this->Auth->group('name'); ?> &lt;<?= $this->Auth->user('username'); ?>@<?= env('SERVER_NAME'); ?>&gt;<br />
-				<strong>From</strong>: SomeImportant Person &lt;im.super.important@<?= env('SERVER_NAME'); ?>&gt;
+				<strong>To</strong>: <?= $this->Auth->group('name'); ?> &lt;<?= $this->Auth->user('username'); ?>@<?= env('INJECT_COMPANY_DOMAIN'); ?>&gt;<br />
+				<strong>From</strong>: <?= $inject->getFromName(); ?> &lt;<?= $inject->getFromEmail(); ?>&gt;
 			</p>
 
 			<p class="injectinfo">

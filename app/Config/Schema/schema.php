@@ -110,6 +110,14 @@ class AppSchema extends CakeSchema {
 			'type' => 'text',
 			'null' => false,
 		],
+		'from_name' => [
+			'type' => 'string',
+			'null' => false,
+		],
+		'from_email' => [
+			'type' => 'string',
+			'null' => false,
+		],
 		'grading_guide' => [
 			'type'    => 'text',
 			'null'    => false,

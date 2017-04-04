@@ -27,6 +27,12 @@ class InjectsController extends AdminAppController {
 			'content' => new Rules\AllOf(
 				new Rules\NotEmpty()
 			),
+			'from_name' => new Rules\AllOf(
+				new Rules\NotEmpty()
+			),
+			'from_email' => new Rules\AllOf(
+				new Rules\NotEmpty()
+			),
 			'grading_guide' => new Rules\AllOf(
 				new Rules\NotEmpty()
 			),

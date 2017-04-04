@@ -30,6 +30,30 @@ $this->Html->script('/vendor/bootstrap3-wysiwyg/bootstrap3-wysihtml5.all.min', [
 	</div>
 
 	<div class="form-group">
+		<label for="content" class="col-sm-3 control-label">From Name</label>
+		<div class="col-sm-9">
+			<input type="text" class="form-control" id="from_name" name="from_name" value="<?= !empty($inject) ? $inject['Inject']['from_name'] : ''; ?>" required="required" />
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-sm-9 col-sm-offset-3">
+			<p class="help-block">Who is this inject from?</p>
+		</div>
+	</div>
+
+	<div class="form-group">
+		<label for="content" class="col-sm-3 control-label">From Email</label>
+		<div class="col-sm-9">
+			<input type="text" class="form-control" id="from_email" name="from_email" value="<?= !empty($inject) ? $inject['Inject']['from_email'] : ''; ?>" required="required" />
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-sm-9 col-sm-offset-3">
+			<p class="help-block">What email is this inject from?</p>
+		</div>
+	</div>
+
+	<div class="form-group">
 		<label for="grading_guide" class="col-sm-3 control-label">Grading Guide</label>
 		<div class="col-sm-9">
 			<textarea class="form-control wysiwyg" name="grading_guide" id="grading_guide" rows="10"></textarea>
