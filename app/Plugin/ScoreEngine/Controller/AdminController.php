@@ -2,7 +2,7 @@
 App::uses('ScoreEngineAppController', 'ScoreEngine.Controller');
 
 class AdminController extends ScoreEngineAppController {
-	public $uses = ['ScoreEngine.Team', 'ScoreEngine.Check', 'ScoreEngine.TeamService'];
+	public $uses = ['ScoreEngine.Team', 'ScoreEngine.Check','ScoreEngine.Service', 'ScoreEngine.TeamService'];
 
 	public function beforeFilter() {
 		parent::beforeFilter();
@@ -11,7 +11,7 @@ class AdminController extends ScoreEngineAppController {
 		$this->Auth->protect(env('GROUP_STAFF'));
 
 		// Set the active menu item
-		$this->set('at_backend', true);
+		$this->set('at_staff', true);
 	}
 
 	/**
@@ -111,5 +111,52 @@ class AdminController extends ScoreEngineAppController {
 		}
 
 		$this->set('data', $data);
+	}
+
+	/**
+	 * Export Grades
+	 *
+	 * @url /admin/scoreengine/export
+	 * @url /score_engine/admin/export
+	 */
+	public function export() {
+		$teams = $this->Team->find('all');
+		$services = $this->Service->find('all');
+		$out = [];
+		$chkOrder = [];
+
+		// Helper function to grab the right check
+		$grabCheckById = function($checks, $id) {
+			foreach ( $checks AS $c ) {
+				if ( $c['Service']['id'] == $id ) {
+					return $c;
+				}
+			}
+		};
+
+		// Build the header
+		$header = ['team_number'];
+		foreach ( $services AS $s ) {
+			$header[] = '"'.$s['Service']['name'].'"';
+			$chkOrder[] = $s['Service']['id'];
+		}
+		$out[] = implode(',', $header);
+
+		// Parse team scores
+		foreach ( $teams AS $t ) {
+			$tid = $t['Team']['id'];
+			$line = [$tid];
+
+			$checks = $this->Check->getTeamChecks($tid);
+
+			foreach ( $chkOrder AS $id ) {
+				$chk = $grabCheckById($checks, $id);
+				$line[] = isset($chk['Check']['total_passed']) ? $chk['Check']['total_passed'] : 0;
+			}
+
+			$out[] = implode(',', $line);
+		}
+
+		return $this->ajaxResponse(implode(PHP_EOL, $out));
 	}
 }

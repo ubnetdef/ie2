@@ -86,8 +86,12 @@
 							$this->Misc->navbarItem('Competition Overview', '/staff'),
 							'<li role="separator" class="divider"></li>',
 							$this->Misc->navbarItem('Grader Island', '/staff/graders'),
-							$this->Misc->navbarItem('Grading Export', '/staff/export'),
 							$this->Misc->navbarItem('Scheduler', '/schedule'),
+							'<li role="separator" class="divider"></li>',
+							$this->Misc->navbarItem('Grading Export', '/staff/export'),
+							((bool)env('FEATURE_SCOREENGINE') ? $this->Misc->navbarItem('ScoreEngine Export', '/admin/scoreengine/export', false) : ''),
+							'<li role="separator" class="divider"></li>',
+							((bool)env('FEATURE_SCOREENGINE') ? $this->Misc->navbarItem('ScoreEngine Manager', '/admin/scoreengine', false) : ''),
 						]);
 					}
 
@@ -100,7 +104,6 @@
 							$this->Misc->navbarItem('Inject Manager', '/admin/injects'),
 							$this->Misc->navbarItem('Log Manager', '/admin/logs'),
 							'<li role="separator" class="divider"></li>',
-							((bool)env('FEATURE_SCOREENGINE') ? $this->Misc->navbarItem('ScoreEngine Manager', '/admin/scoreengine', false) : ''),
 							((bool)env('FEATURE_BANKWEB') ? $this->Misc->navbarItem('BankWeb Manager', '/admin/bank', false) : ''),
 						]);
 					}
