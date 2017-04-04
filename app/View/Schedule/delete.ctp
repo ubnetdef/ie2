@@ -1,10 +1,7 @@
 <ol class="breadcrumb">
-	<li><a href="<?= $this->Html->url('/schedule'); ?>">Scheduler</a></li>
 	<li><a href="<?= $this->Html->url('/schedule/manager'); ?>">Schedule Manager</a></li>
 	<li class="active">Delete Schedule</li>
 </ol>
-
-<?= $this->element('navbar/schedule', ['at_manager' => true]); ?>
 
 <div class="row">
 	<div class="col-md-10 col-md-offset-1">

@@ -16,7 +16,6 @@ echo 'window.END = '.($end * 1000).';';
 echo 'window.SCHEDULE = "'.$this->Html->url('/schedule/api').'";';
 $this->Html->scriptEnd();
 ?>
-<?= $this->element('navbar/schedule', ['at_overview' => true]); ?>
 
 <h2>
 	Schedule Overview

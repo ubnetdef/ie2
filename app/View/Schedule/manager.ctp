@@ -2,13 +2,6 @@
 .no-underline { text-decoration: none !important; }
 </style>
 
-<ul class="nav nav-pills">
-	<li class=""><a href="<?= $this->Html->url('/schedule'); ?>">Overview</a></li>
-	<li class="active"><a href="<?= $this->Html->url('/schedule/manager'); ?>">Manager</a></li>
-</ul>
-
-<hr />
-
 <h2>Schedule Manager</h2>
 
 <table class="table">

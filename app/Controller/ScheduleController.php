@@ -13,11 +13,13 @@ class ScheduleController extends AppController {
 	public function beforeFilter() {
 		parent::beforeFilter();
 
-		// Require staff
-		$this->Auth->protect(env('GROUP_STAFF'));
-
-		// Tell the template we're in the staff dropdown
-		$this->set('at_staff', true);
+		if ( in_array($this->request->action, ['index', 'api']) ) {
+			$this->Auth->protect(env('GROUP_STAFF'));
+			$this->set('at_staff', true);
+		} else {
+			$this->Auth->protect(env('GROUP_ADMINS'));
+			$this->set('at_backend', true);
+		}
 	}
 
 	/**

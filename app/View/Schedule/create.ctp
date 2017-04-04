@@ -1,5 +1,4 @@
 <ol class="breadcrumb">
-	<li><a href="<?= $this->Html->url('/schedule'); ?>">Scheduler</a></li>
 	<li><a href="<?= $this->Html->url('/schedule/manager'); ?>">Schedule Manager</a></li>
 	<?php if ( isset($schedule) ): ?>
 	<li class="active">Extend Schedule</li>
@@ -7,8 +6,6 @@
 	<li class="active">Create Schedule</li>
 	<?php endif; ?>
 </ol>
-
-<?= $this->element('navbar/schedule', ['at_manager' => true]); ?>
 
 <?php if ( isset($schedule) ): ?>
 <div class="row">
