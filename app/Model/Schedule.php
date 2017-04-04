@@ -177,18 +177,6 @@ class Schedule extends AppModel {
 	}
 
 	/**
-	 * Get all active injects
-	 *
-	 * @deprecated
-	 *
-	 * @param $groups The groups to check for injects in
-	 * @return array All the active injects
-	 */
-	public function getActiveInjects($groups) {
-		return $this->getInjects($groups);
-	}
-
-	/**
 	 * Get recently expired injects
 	 *
 	 * This function uses the raw data from

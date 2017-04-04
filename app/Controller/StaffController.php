@@ -92,7 +92,7 @@ class StaffController extends AppController {
 	 * @url /staff/index
 	 */
 	public function index() {
-		$this->set('active_injects', $this->Schedule->getActiveInjects(env('GROUP_BLUE')));
+		$this->set('active_injects', $this->Schedule->getInjects(env('GROUP_BLUE')));
 		$this->set('recent_expired', $this->Schedule->getRecentExpired(env('GROUP_BLUE')));
 
 		$this->Paginator->settings += $this->paginate['Log'];
