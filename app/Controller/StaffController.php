@@ -138,7 +138,7 @@ class StaffController extends AppController {
 			if (
 				!isset($this->request->data['grade']) ||
 				!isset($this->request->data['comments']) ||
-				empty($this->request->data['grade']) ||
+				(empty($this->request->data['grade']) && $this->request->data['grade'] != 0) ||
 				empty($this->request->data['comments']) ||
 				$this->request->data['grade'] > $submission['Inject']['max_points']
 			) {
