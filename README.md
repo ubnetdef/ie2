@@ -7,7 +7,7 @@ Cyber Security competition Inject Engine.
 
 * PHP 5.4
 * MySQL
-* Composer
+* [Composer](https://getcomposer.org/)
 
 ## Installation
 

@@ -41,6 +41,10 @@ class PreflightComponent extends Component {
 		if ( (bool)env('FEATURE_BANKWEB') ) {
 			$this->checks[] = 'checkBankWeb';
 			$this->checks[] = 'checkBankWebTable';
+
+			if ( (bool)env('BANKWEB_SLACK_ENABLED') ) {
+				$this->checks[] = 'checkBankWebSlack';
+			}
 		}
 
 		foreach ( $this->checks AS $check ) {
@@ -216,6 +220,25 @@ class PreflightComponent extends Component {
 			return 'BankWeb plugin is not setup - please run `./cake engine install_bankweb`';
 		}
 
+		return true;
+	}
+
+	/**
+	 * Check BankWeb Slack Configuration
+	 *
+	 * Verify that BankWeb's slack configuration is correct
+	 */
+	public function checkBankWebSlack() {
+		$url = env('SLACK_ENDPOINT');
+
+		$ch = curl_init(env('SLACK_ENDPOINT'));
+		curl_exec($ch);
+		$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+		curl_close($ch);
+
+		if ( $http_code != 400 ) {
+			return 'Invalid slack endpoint setup. Please verify that your Slack URL is correct.';
+		}
 		return true;
 	}
 }
