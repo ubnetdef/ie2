@@ -22,7 +22,14 @@ class PreflightComponent extends Component {
 	 */
 	public function initialize(Controller $controller) {
 		// Disable preflight on DEBUG
-		if ( env('DEBUG') == 0 && Cache::read('preflight_check') == true ) {
+		if ( env('DEBUG') == 0 || !file_exists(ROOT.'/.env') ) {
+			return;
+		}
+
+		// Calculate the hash of the config file. Don't run Preflight if it
+		// hasn't changed
+		$hash = md5(file_get_contents(ROOT.'/.env'));
+		if ( Cache::read('preflight_check') == $hash ) {
 			return;
 		}
 
@@ -56,9 +63,7 @@ class PreflightComponent extends Component {
 		}
 
 		// If we got here, we can save and cache the result
-		if ( env('DEBUG') == 0 ) {
-			Cache::write('preflight_check', true);
-		}
+		Cache::write('preflight_check', $hash);
 	}
 
 	/**
