@@ -2,7 +2,7 @@
 App::uses('BankWebAppController', 'BankWeb.Controller');
 use Respect\Validation\Rules;
 
-class BankAdminController extends BankWebAppController {
+class BankadminController extends BankWebAppController {
 	public $uses = ['Group', 'BankWeb.AccountMapping'];
 
 	public function beforeFilter() {
