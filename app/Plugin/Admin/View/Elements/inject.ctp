@@ -120,6 +120,24 @@ $this->Html->script('/vendor/bootstrap3-wysiwyg/bootstrap3-wysihtml5.all.min', [
 	</div>
 
 	<div class="form-group">
+		<label for="type" class="col-sm-3 control-label">Attachments</label>
+		<div class="col-sm-9">
+			<select class="form-control" id="type" name="type" required="required">
+				<?php foreach($this->InjectStyler->getAllTypes() AS $type): ?>
+				<option value="<?= $type->getID(); ?>"<?= (!empty($inject) && $inject['Inject']['type'] == $type->getID()) ? ' selected="selected"' : ''; ?>>
+					<?= $type->getName(); ?>
+				</option>
+				<?php endforeach; ?>
+			</select>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-sm-9 col-sm-offset-3">
+			<p class="help-block">Attachments for this inject.</p>
+		</div>
+	</div>
+
+	<div class="form-group">
 		<div class="col-sm-offset-3 col-sm-9">
 			<button type="submit" class="btn btn-default"><?= !empty($inject) ? 'Edit' : 'Create'; ?> Inject</button>
 		</div>
