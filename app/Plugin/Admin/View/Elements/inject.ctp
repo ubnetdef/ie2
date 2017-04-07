@@ -4,7 +4,7 @@ $this->Html->css('/vendor/bootstrap3-wysiwyg/bootstrap3-wysihtml5.min', ['inline
 $this->Html->script('/vendor/bootstrap3-wysiwyg/bootstrap3-wysihtml5.all.min', ['inline' => false]);
 ?>
 
-<form method="post" class="form-horizontal">
+<form method="post" class="form-horizontal" enctype="multipart/form-data">
 	<div class="form-group">
 		<label for="title" class="col-sm-3 control-label">Title</label>
 		<div class="col-sm-9">
@@ -121,14 +121,23 @@ $this->Html->script('/vendor/bootstrap3-wysiwyg/bootstrap3-wysihtml5.all.min', [
 
 	<div class="form-group">
 		<label for="type" class="col-sm-3 control-label">Attachments</label>
-		<div class="col-sm-9">
-			<select class="form-control" id="type" name="type" required="required">
-				<?php foreach($this->InjectStyler->getAllTypes() AS $type): ?>
-				<option value="<?= $type->getID(); ?>"<?= (!empty($inject) && $inject['Inject']['type'] == $type->getID()) ? ' selected="selected"' : ''; ?>>
-					<?= $type->getName(); ?>
-				</option>
-				<?php endforeach; ?>
-			</select>
+		<div class="col-sm-8 attachments">
+			<?php foreach ( $inject['Attachment'] AS $a ): ?>
+			<div class="row">
+				<input type="hidden" name="attachments[<?= $a['id']; ?>]" value="true" />
+				<div class="col-xs-9">
+					<p class="form-control-static">
+						<a href="<?= $this->Html->url(['plugin' => 'admin', 'controller' => 'injects', 'action' => 'index', $a['id']]); ?>">
+						View Attachment #<?= $a['id']; ?>
+						</a>
+					</p>
+				</div>
+				<div class="col-xs-3"><a href="#" class="attachment_del"><i class="glyphicon glyphicon-trash"></i></a></div>
+			</div>
+			<?php endforeach; ?>
+		</div>
+		<div class="col-sm-1">
+			<a href="#" class="attachment_more"><i class="glyphicon glyphicon-plus"></i></a>
 		</div>
 	</div>
 	<div class="row">
@@ -151,6 +160,21 @@ $(document).ready(function() {
 			html: true,
 			size: "xs",
 		},
+	});
+
+	$('.attachment_more').click(function() {
+		$('.attachments').append('<div class="row">'+
+				'<div class="col-xs-9"><input type="file" name="attachments[]"></div>'+
+				'<div class="col-xs-3"><a href="#" class="attachment_del"><i class="glyphicon glyphicon-trash"></i></a></div>'+
+			'</div>');
+
+		return false;
+	});
+
+	$(document).on('click', '.attachment_del', function() {
+		$(this).parent().parent().remove();
+
+		return false;
 	});
 
 	<?php if ( !empty($inject) ): ?>
