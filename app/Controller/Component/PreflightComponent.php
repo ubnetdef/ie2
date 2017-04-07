@@ -22,7 +22,7 @@ class PreflightComponent extends Component {
 	 */
 	public function initialize(Controller $controller) {
 		// Disable preflight on DEBUG
-		if ( env('DEBUG') == 0 || !file_exists(ROOT.'/.env') ) {
+		if ( env('DEBUG') == 2 || !file_exists(ROOT.'/.env') ) {
 			return;
 		}
 
