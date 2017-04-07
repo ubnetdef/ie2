@@ -200,6 +200,10 @@ class BankApiComponent extends Component {
 		curl_setopt($ch, CURLOPT_POSTFIELDS, implode('&', $postData));
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
+		// Set the UA to the app version
+		list($version_short, $version_long) = Cache::read('version');
+		curl_setopt($ch,CURLOPT_USERAGENT, 'ie2/BankWeb @ '.$version_short);
+
 		curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $this->timeout); 
 		curl_setopt($ch, CURLOPT_TIMEOUT, $this->timeout);
 
