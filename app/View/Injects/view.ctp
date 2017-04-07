@@ -1,3 +1,4 @@
+<?php debug($inject->getAttachments()); ?>
 <ol class="breadcrumb">
 	<li><a href="<?= $this->Html->url('/injects'); ?>">Inject Inbox</a></li>
 	<li class="active">View Inject</li>
@@ -44,6 +45,16 @@
 	<?= $this->InjectStyler->contentOutput($inject->getContent(), $this->Auth->item()); ?>
 
 	<hr />
+
+	<?php if ( $inject->hasAttachments() ): ?>
+	<h4>Attachments</h4>
+
+	<?php foreach ( $inject->getAttachments() AS $a ): ?>
+	- <?= $this->Html->link($a['name'], '/injects/attachment/'.$a['id']) ?>
+	<?php endforeach; ?>
+
+	<hr />
+	<?php endif ?>
 
 	<ul class="nav nav-tabs">
 		<li class="<?= $inject->isAcceptingSubmissions() ? ' active in' : ''; ?>">

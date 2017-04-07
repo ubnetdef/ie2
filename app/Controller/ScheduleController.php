@@ -103,17 +103,19 @@ class ScheduleController extends AppController {
 	 */
 	public function create($sid=false) {
 		if ( $this->request->is('post') ) {
-			// Fix dependency_id to be NULL if the ID is 0
-			if ( isset($this->request->data['dependency_id']) && $this->request->data['dependency_id'] == 0 ) {
-				$this->request->data['dependency_id'] = NULL;
-			}
-
 			$create = [];
 			$missing = [];
 			foreach ( array_keys($this->Schedule->schema()) AS $key ) {
+				if ( in_array($key, ['id']) ) continue;
+
 				if ( !isset($this->request->data[$key]) ) {
 					$missing[] = $key;
 					continue;
+				}
+
+				// Fix dependency_id to be NULL if the ID is 0
+				if ( $key == 'dependency_id' && $this->request->data['dependency_id'] == 0 ) {
+					$this->request->data['dependency_id'] = NULL;
 				}
 
 				$create[$key] = $this->request->data[$key];

@@ -30,7 +30,7 @@ $this->Html->script('/vendor/bootstrap3-wysiwyg/bootstrap3-wysihtml5.all.min', [
 	</div>
 
 	<div class="form-group">
-		<label for="content" class="col-sm-3 control-label">From Name</label>
+		<label for="from_name" class="col-sm-3 control-label">From Name</label>
 		<div class="col-sm-9">
 			<input type="text" class="form-control" id="from_name" name="from_name" value="<?= !empty($inject) ? $inject['Inject']['from_name'] : ''; ?>" required="required" />
 		</div>
@@ -42,7 +42,7 @@ $this->Html->script('/vendor/bootstrap3-wysiwyg/bootstrap3-wysihtml5.all.min', [
 	</div>
 
 	<div class="form-group">
-		<label for="content" class="col-sm-3 control-label">From Email</label>
+		<label for="from_email" class="col-sm-3 control-label">From Email</label>
 		<div class="col-sm-9">
 			<input type="text" class="form-control" id="from_email" name="from_email" value="<?= !empty($inject) ? $inject['Inject']['from_email'] : ''; ?>" required="required" />
 		</div>
@@ -120,7 +120,7 @@ $this->Html->script('/vendor/bootstrap3-wysiwyg/bootstrap3-wysihtml5.all.min', [
 	</div>
 
 	<div class="form-group">
-		<label for="type" class="col-sm-3 control-label">Attachments</label>
+		<label class="col-sm-3 control-label">Attachments</label>
 		<div class="col-sm-8 attachments">
 			<?php foreach ( $inject['Attachment'] AS $a ): ?>
 			<div class="row">
@@ -163,6 +163,7 @@ $(document).ready(function() {
 	});
 
 	$('.attachment_more').click(function() {
+		// Needs to be data[new_attachments][] for CakePHP to process it
 		$('.attachments').append('<div class="row">'+
 				'<div class="col-xs-9"><input type="file" name="data[new_attachments][]" class="form_control"></div>'+
 				'<div class="col-xs-3"><a href="#" class="attachment_del"><i class="glyphicon glyphicon-trash"></i></a></div>'+

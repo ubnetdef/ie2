@@ -186,8 +186,10 @@ class InjectAbstraction implements JsonSerializable {
 
 		$attachments = [];
 		foreach ( $this->data['Inject']['Attachment'] AS $a ) {
-			// ToDo: Limit what information we give out
-			$attachments[] = $a;
+			$attachments[] = [
+				'id'   => $a['id'],
+				'name' => $a['name'],
+			];
 		}
 
 		return $attachments;

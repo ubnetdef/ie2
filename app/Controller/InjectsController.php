@@ -18,7 +18,7 @@ class InjectsController extends AppController {
 		// Administrator blue team override
 		$this->groups = $this->Auth->item('groups');
 		if ( $this->Auth->isStaff() ) {
-			$this->groups[] = env('GROUP_BLUE');
+			$this->groups[] = (int) env('GROUP_BLUE');
 		}
 
 		// Load + setup the InjectStyler helper
