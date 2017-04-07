@@ -133,6 +133,8 @@ class AppController extends Controller {
 			$who = ($this->Auth->loggedIn() ? $this->Auth->user('id') : NULL);
 		}
 
+		$safe = !((bool)env('X_FORWARDED_ENABLED') == true);
+
 		$this->Log->create();
 		$this->Log->save([
 			'time'       => time(),
@@ -140,7 +142,7 @@ class AppController extends Controller {
 			'user_id'    => $who,
 			'related_id' => ($related > 0 ? $related : NULL),
 			'data'       => json_encode($data),
-			'ip'         => $this->request->clientIp(),
+			'ip'         => $this->request->clientIp($safe),
 			'message'    => $message,
 		]);
 	}
