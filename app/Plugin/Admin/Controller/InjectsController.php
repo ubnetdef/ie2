@@ -3,7 +3,7 @@ App::uses('AdminAppController', 'Admin.Controller');
 use Respect\Validation\Rules;
 
 class InjectsController extends AdminAppController {
-	public $uses = ['Config', 'Inject', 'Schedule'];
+	public $uses = ['Attachment', 'Config', 'Inject', 'Schedule'];
 
 	public function beforeFilter() {
 		parent::beforeFilter();
@@ -71,6 +71,21 @@ class InjectsController extends AdminAppController {
 			$res = $this->_validate();
 
 			if ( empty($res['errors']) ) {
+				// Upload the new attachments
+				if ( isset($this->request->data['new_attachments'])) {
+					foreach ( $this->request->data['new_attachments'] AS $new ) {
+						$contents = file_get_contents($new['tmp_name']);
+						$data = json_encode(['hash' => md5($contents), 'data' => base64_encode($contents)]);
+
+						$this->Attachment->create();
+						$this->Attachment->save([
+							'inject_id' => $inject['Inject']['id'],
+							'name'      => $new['name'],
+							'data'      => $data,
+						]);
+					}
+				}
+				
 				$this->Inject->create();
 				$this->Inject->save($res['data']);
 
@@ -105,6 +120,30 @@ class InjectsController extends AdminAppController {
 			$res = $this->_validate();
 
 			if ( empty($res['errors']) ) {
+				// Figure out if we deleted any attachments
+				foreach ( $inject['Attachment'] AS $i => $a ) {
+					if ( !isset($this->request->data['attachments'][$a['id']]) ) {
+						$this->Attachment->delete($a['id']);
+
+						unset($inject['Attachment'][$i]);
+					}
+				}
+
+				// Upload the new attachments
+				if ( isset($this->request->data['new_attachments'])) {
+					foreach ( $this->request->data['new_attachments'] AS $new ) {
+						$contents = file_get_contents($new['tmp_name']);
+						$data = json_encode(['hash' => md5($contents), 'data' => base64_encode($contents)]);
+
+						$this->Attachment->create();
+						$this->Attachment->save([
+							'inject_id' => $inject['Inject']['id'],
+							'name'      => $new['name'],
+							'data'      => $data,
+						]);
+					}
+				}
+
 				$this->Inject->id = $id;
 				$this->Inject->save($res['data']);
 

@@ -164,7 +164,7 @@ $(document).ready(function() {
 
 	$('.attachment_more').click(function() {
 		$('.attachments').append('<div class="row">'+
-				'<div class="col-xs-9"><input type="file" name="attachments[]"></div>'+
+				'<div class="col-xs-9"><input type="file" name="data[new_attachments][]" class="form_control"></div>'+
 				'<div class="col-xs-3"><a href="#" class="attachment_del"><i class="glyphicon glyphicon-trash"></i></a></div>'+
 			'</div>');
 
