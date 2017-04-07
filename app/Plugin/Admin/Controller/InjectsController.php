@@ -21,7 +21,6 @@ class InjectsController extends AdminAppController {
 				new Rules\Digit()
 			),
 			'title' => new Rules\AllOf(
-				new Rules\Alnum('-_'),
 				new Rules\NotEmpty()
 			),
 			'content' => new Rules\AllOf(

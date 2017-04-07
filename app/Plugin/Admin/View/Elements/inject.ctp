@@ -128,7 +128,7 @@ $this->Html->script('/vendor/bootstrap3-wysiwyg/bootstrap3-wysihtml5.all.min', [
 				<div class="col-xs-9">
 					<p class="form-control-static">
 						<a href="<?= $this->Html->url(['plugin' => 'admin', 'controller' => 'injects', 'action' => 'index', $a['id']]); ?>">
-						View Attachment #<?= $a['id']; ?>
+						<?= $a['name']; ?>
 						</a>
 					</p>
 				</div>

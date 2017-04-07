@@ -373,6 +373,14 @@ class AppSchema extends CakeSchema {
 			'type' => 'integer',
 			'null' => false,
 		],
+		'name' => [
+			'type' => 'string',
+			'null' => false,
+		],
+		'mime' => [
+			'type' => 'string',
+			'null' => false,
+		],
 		'data' => [
 			'type'    => 'binary',
 			'null'    => false,
