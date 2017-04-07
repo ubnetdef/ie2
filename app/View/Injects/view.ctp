@@ -49,7 +49,7 @@
 	<h4>Attachments</h4>
 
 	<?php foreach ( $inject->getAttachments() AS $a ): ?>
-	- <?= $this->Html->link($a['name'], '/injects/attachment/'.$a['id']) ?>
+	- <?= $this->Html->link($a['name'], '/injects/attachment/'.$inject->getScheduleId().'/'.$a['id']) ?>
 	<?php endforeach; ?>
 
 	<hr />

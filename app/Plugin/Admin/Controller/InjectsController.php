@@ -75,7 +75,11 @@ class InjectsController extends AdminAppController {
 				if ( isset($this->request->data['new_attachments'])) {
 					foreach ( $this->request->data['new_attachments'] AS $new ) {
 						$contents = file_get_contents($new['tmp_name']);
-						$data = json_encode(['hash' => md5($contents), 'data' => base64_encode($contents)]);
+						$data = json_encode([
+							'extension' => pathinfo($new['name'], PATHINFO_EXTENSION),
+							'hash'      => md5($contents),
+							'data'      => base64_encode($contents)
+						]);
 
 						$this->Attachment->create();
 						$this->Attachment->save([
@@ -85,7 +89,7 @@ class InjectsController extends AdminAppController {
 						]);
 					}
 				}
-				
+
 				$this->Inject->create();
 				$this->Inject->save($res['data']);
 
@@ -133,7 +137,11 @@ class InjectsController extends AdminAppController {
 				if ( isset($this->request->data['new_attachments'])) {
 					foreach ( $this->request->data['new_attachments'] AS $new ) {
 						$contents = file_get_contents($new['tmp_name']);
-						$data = json_encode(['hash' => md5($contents), 'data' => base64_encode($contents)]);
+						$data = json_encode([
+							'extension' => pathinfo($new['name'], PATHINFO_EXTENSION),
+							'hash'      => md5($contents),
+							'data'      => base64_encode($contents)
+						]);
 
 						$this->Attachment->create();
 						$this->Attachment->save([
