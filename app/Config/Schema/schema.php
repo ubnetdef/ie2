@@ -363,6 +363,26 @@ class AppSchema extends CakeSchema {
 		],
 	];
 
+	public $attachments = [
+		'id' => [
+			'type' => 'integer',
+			'null' => false,
+			'key'  => 'primary',
+		],
+		'inject_id' => [
+			'type' => 'integer',
+			'null' => false,
+		],
+		'data' => [
+			'type'    => 'binary',
+			'null'    => false,
+		],
+
+		'indexes' => [
+			'PRIMARY' => ['column' => 'id', 'unqiue' => true],
+		],
+	];
+
 	// ================================
 
 	public function before($event = array()) {
@@ -440,6 +460,11 @@ class AppSchema extends CakeSchema {
 			case 'submissions':
 				// We have to change BLOB -> LONGBLOB
 				ClassRegistry::init('submissions')->query('ALTER TABLE submissions MODIFY data LONGBLOB');
+			break;
+
+			case 'attachments':
+				// We have to change BLOB -> LONGBLOB
+				ClassRegistry::init('attachments')->query('ALTER TABLE attachments MODIFY data LONGBLOB');
 			break;
 
 			case 'logs':

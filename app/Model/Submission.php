@@ -8,7 +8,7 @@ App::uses('AppModel', 'Model');
 class Submission extends AppModel {
 	public $belongsTo = ['Inject', 'User', 'Group'];
 	public $hasOne = ['Grade'];
-	public $recursive = 1;
+	public $recursive = 2;
 
 	/**
 	 * Get All Ungraded-Submissions

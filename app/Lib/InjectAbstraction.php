@@ -166,6 +166,13 @@ class InjectAbstraction implements JsonSerializable {
 	}
 
 	/**
+	 * Get Attachments
+	 *
+	 * @return array The inject attachments
+	 */
+	
+
+	/**
 	 * Generic accessor method
 	 *
 	 * This method will capture all "getSOMETHING"

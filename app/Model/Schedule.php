@@ -8,7 +8,7 @@ App::uses('InjectAbstraction', 'Lib');
  */
 class Schedule extends AppModel {
 	public $belongsTo = ['Inject'];
-	public $recursive = 1;
+	public $recursive = 2;
 
 	/**
 	 * Get Active Injects (RAW)
