@@ -166,6 +166,36 @@ class InjectAbstraction implements JsonSerializable {
 	}
 
 	/**
+	 * Has Attachments
+	 *
+	 * @return bool If the inject has attachments
+	 */
+	public function hasAttachments() {
+		return isset($this->data['Inject']['Attachment']) && count($this->data['Inject']['Attachment']) > 0;
+	}
+
+	/**
+	 * Get Attachments
+	 *
+	 * @return array The inject attachments
+	 */
+	public function getAttachments() {
+		if ( !$this->hasAttachments() ) {
+			return [];
+		}
+
+		$attachments = [];
+		foreach ( $this->data['Inject']['Attachment'] AS $a ) {
+			$attachments[] = [
+				'id'   => $a['id'],
+				'name' => $a['name'],
+			];
+		}
+
+		return $attachments;
+	}
+
+	/**
 	 * Generic accessor method
 	 *
 	 * This method will capture all "getSOMETHING"

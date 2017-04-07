@@ -2,7 +2,7 @@
 App::uses('AppController', 'Controller');
 
 class InjectsController extends AppController {
-	public $uses = ['Config', 'Schedule', 'Submission'];
+	public $uses = ['Attachment', 'Config', 'Schedule', 'Submission'];
 
 	private $groups = [];
 
@@ -18,7 +18,7 @@ class InjectsController extends AppController {
 		// Administrator blue team override
 		$this->groups = $this->Auth->item('groups');
 		if ( $this->Auth->isStaff() ) {
-			$this->groups[] = env('GROUP_BLUE');
+			$this->groups[] = (int) env('GROUP_BLUE');
 		}
 
 		// Load + setup the InjectStyler helper
@@ -179,6 +179,46 @@ class InjectsController extends AppController {
 
 		$type = ($download ? 'attachment' : 'inline');
 		$filename = $data['filename'];
+		$response->header('Content-Disposition', $type.'; filename="'.$filename.'"');
+
+		return $response;
+	}
+
+	/**
+	 * Inject Attachment View Page
+	 *
+	 * @url /injects/attachment/<schedule_id>/<attachment_id>
+	 */
+	public function attachment($sid=false, $aid=false) {
+		$inject = $this->Schedule->getInject($sid, $this->groups);
+		if ( empty($inject) ) {
+			throw new NotFoundException('Unknown inject');
+		}
+
+		// Get the inject id, then select the Attachment
+		$injectID = $inject->getInjectId();
+
+		$attachment = $this->Attachment->findByIdAndInjectId($aid, $injectID);
+		if ( empty($attachment) ) {
+			throw new NotFoundException('Unknown attachment');
+		}
+
+		$data = json_decode($attachment['Attachment']['data'], true);
+		$download = (isset($this->params['url']['download']) && $this->params['url']['download'] == true);
+
+		// Let's verify our data is correct
+		if ( md5(base64_decode($data['data'])) !== $data['hash'] ) {
+			throw new InternalErrorException('Data storage failure');
+		}
+
+		// Create the new response for the data
+		$response = new CakeResponse();
+		$response->type($data['extension']);
+		$response->body(base64_decode($data['data']));
+		$response->disableCache();
+
+		$type = ($download ? 'attachment' : 'inline');
+		$filename = $attachment['Attachment']['name'];
 		$response->header('Content-Disposition', $type.'; filename="'.$filename.'"');
 
 		return $response;

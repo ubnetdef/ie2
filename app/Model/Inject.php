@@ -6,5 +6,6 @@ App::uses('AppModel', 'Model');
  *
  */
 class Inject extends AppModel {
-	
+	public $hasMany = ['Attachment'];
+	public $recursive = 1;
 }

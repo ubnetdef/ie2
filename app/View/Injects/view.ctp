@@ -45,6 +45,16 @@
 
 	<hr />
 
+	<?php if ( $inject->hasAttachments() ): ?>
+	<h4>Attachments</h4>
+
+	<?php foreach ( $inject->getAttachments() AS $a ): ?>
+	- <?= $this->Html->link($a['name'], '/injects/attachment/'.$inject->getScheduleId().'/'.$a['id']) ?>
+	<?php endforeach; ?>
+
+	<hr />
+	<?php endif ?>
+
 	<ul class="nav nav-tabs">
 		<li class="<?= $inject->isAcceptingSubmissions() ? ' active in' : ''; ?>">
 			<a href="#submit" role="tab" data-toggle="tab">Submit</a>

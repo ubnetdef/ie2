@@ -8,7 +8,7 @@ App::uses('InjectAbstraction', 'Lib');
  */
 class Schedule extends AppModel {
 	public $belongsTo = ['Inject'];
-	public $recursive = 1;
+	public $recursive = 2;
 
 	/**
 	 * Get Active Injects (RAW)
@@ -37,6 +37,9 @@ class Schedule extends AppModel {
 					[
 						'Schedule.fuzzy' => true,
 						'Schedule.start <=' => ($now - COMPETITION_START)
+					],
+					[
+						'Schedule.start' => 0,
 					],
 				],
 			];
@@ -121,6 +124,9 @@ class Schedule extends AppModel {
 				[
 					'Schedule.fuzzy' => true,
 					'Schedule.start <=' => ($now - COMPETITION_START)
+				],
+				[
+					'Schedule.start' => 0,
 				]
 			];
 		}

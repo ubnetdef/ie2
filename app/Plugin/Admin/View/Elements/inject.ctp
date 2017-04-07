@@ -4,7 +4,7 @@ $this->Html->css('/vendor/bootstrap3-wysiwyg/bootstrap3-wysihtml5.min', ['inline
 $this->Html->script('/vendor/bootstrap3-wysiwyg/bootstrap3-wysihtml5.all.min', ['inline' => false]);
 ?>
 
-<form method="post" class="form-horizontal">
+<form method="post" class="form-horizontal" enctype="multipart/form-data">
 	<div class="form-group">
 		<label for="title" class="col-sm-3 control-label">Title</label>
 		<div class="col-sm-9">
@@ -30,7 +30,7 @@ $this->Html->script('/vendor/bootstrap3-wysiwyg/bootstrap3-wysihtml5.all.min', [
 	</div>
 
 	<div class="form-group">
-		<label for="content" class="col-sm-3 control-label">From Name</label>
+		<label for="from_name" class="col-sm-3 control-label">From Name</label>
 		<div class="col-sm-9">
 			<input type="text" class="form-control" id="from_name" name="from_name" value="<?= !empty($inject) ? $inject['Inject']['from_name'] : ''; ?>" required="required" />
 		</div>
@@ -42,7 +42,7 @@ $this->Html->script('/vendor/bootstrap3-wysiwyg/bootstrap3-wysihtml5.all.min', [
 	</div>
 
 	<div class="form-group">
-		<label for="content" class="col-sm-3 control-label">From Email</label>
+		<label for="from_email" class="col-sm-3 control-label">From Email</label>
 		<div class="col-sm-9">
 			<input type="text" class="form-control" id="from_email" name="from_email" value="<?= !empty($inject) ? $inject['Inject']['from_email'] : ''; ?>" required="required" />
 		</div>
@@ -120,6 +120,33 @@ $this->Html->script('/vendor/bootstrap3-wysiwyg/bootstrap3-wysihtml5.all.min', [
 	</div>
 
 	<div class="form-group">
+		<label class="col-sm-3 control-label">Attachments</label>
+		<div class="col-sm-8 attachments">
+			<?php foreach ( $inject['Attachment'] AS $a ): ?>
+			<div class="row">
+				<input type="hidden" name="attachments[<?= $a['id']; ?>]" value="true" />
+				<div class="col-xs-9">
+					<p class="form-control-static">
+						<a href="<?= $this->Html->url(['plugin' => 'admin', 'controller' => 'injects', 'action' => 'index', $a['id']]); ?>">
+						<?= $a['name']; ?>
+						</a>
+					</p>
+				</div>
+				<div class="col-xs-3"><a href="#" class="attachment_del"><i class="glyphicon glyphicon-trash"></i></a></div>
+			</div>
+			<?php endforeach; ?>
+		</div>
+		<div class="col-sm-1">
+			<a href="#" class="attachment_more"><i class="glyphicon glyphicon-plus"></i></a>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-sm-9 col-sm-offset-3">
+			<p class="help-block">Attachments for this inject.</p>
+		</div>
+	</div>
+
+	<div class="form-group">
 		<div class="col-sm-offset-3 col-sm-9">
 			<button type="submit" class="btn btn-default"><?= !empty($inject) ? 'Edit' : 'Create'; ?> Inject</button>
 		</div>
@@ -133,6 +160,22 @@ $(document).ready(function() {
 			html: true,
 			size: "xs",
 		},
+	});
+
+	$('.attachment_more').click(function() {
+		// Needs to be data[new_attachments][] for CakePHP to process it
+		$('.attachments').append('<div class="row">'+
+				'<div class="col-xs-9"><input type="file" name="data[new_attachments][]" class="form_control"></div>'+
+				'<div class="col-xs-3"><a href="#" class="attachment_del"><i class="glyphicon glyphicon-trash"></i></a></div>'+
+			'</div>');
+
+		return false;
+	});
+
+	$(document).on('click', '.attachment_del', function() {
+		$(this).parent().parent().remove();
+
+		return false;
 	});
 
 	<?php if ( !empty($inject) ): ?>
