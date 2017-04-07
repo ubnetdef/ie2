@@ -237,6 +237,7 @@ class PreflightComponent extends Component {
 		$url = env('SLACK_ENDPOINT');
 
 		$ch = curl_init(env('SLACK_ENDPOINT'));
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 		curl_exec($ch);
 		$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 		curl_close($ch);
