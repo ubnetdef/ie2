@@ -142,7 +142,7 @@
 <footer class="footer">
 	<div class="container">
 		<p class="text-muted pull-right">
-			ie<sup>2</sup> &mdash; <abbr title="<?= isset($version_log) ? $version_long : 'Unknown'; ?>">
+			ie<sup>2</sup> &mdash; <abbr title="<?= isset($version_long) ? $version_long : 'Unknown'; ?>">
 				<?= isset($version) ? $version : 'UNK'; ?>
 			</abbr>
 		</p>
