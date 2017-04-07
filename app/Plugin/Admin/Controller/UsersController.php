@@ -113,12 +113,21 @@ class UsersController extends AdminAppController {
 			$res = $this->_validate();
 
 			if ( empty($res['errors']) ) {
+				// Clear out the password, if it's empty
+				if ( empty($res['data']['password']) ) {
+					unset($res['data']['password']);
+				}
+
 				$this->User->id = $uid;
 				$this->User->save($res['data']);
 
-				// Redact the old and new password
+				// Redact the old password
 				$user['User']['password'] = '<redacted>';
-				$res['data']['password'] = '<redacted>';
+
+				// ...and the new one
+				if ( isset($res['data']['password']) ) {
+					$res['data']['password'] = '<redacted>';
+				}
 
 				$this->logMessage(
 					'users',
