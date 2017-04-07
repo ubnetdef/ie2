@@ -38,6 +38,9 @@ class Schedule extends AppModel {
 						'Schedule.fuzzy' => true,
 						'Schedule.start <=' => ($now - COMPETITION_START)
 					],
+					[
+						'Schedule.start' => 0,
+					],
 				],
 			];
 		}
@@ -121,6 +124,9 @@ class Schedule extends AppModel {
 				[
 					'Schedule.fuzzy' => true,
 					'Schedule.start <=' => ($now - COMPETITION_START)
+				],
+				[
+					'Schedule.start' => 0,
 				]
 			];
 		}

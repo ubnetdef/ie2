@@ -1,4 +1,3 @@
-<?php debug($inject->getAttachments()); ?>
 <ol class="breadcrumb">
 	<li><a href="<?= $this->Html->url('/injects'); ?>">Inject Inbox</a></li>
 	<li class="active">View Inject</li>
