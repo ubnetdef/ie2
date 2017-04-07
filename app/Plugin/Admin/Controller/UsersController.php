@@ -116,6 +116,10 @@ class UsersController extends AdminAppController {
 				$this->User->id = $uid;
 				$this->User->save($res['data']);
 
+				// Redact the old and new password
+				$user['User']['password'] = '<redacted>';
+				$res['data']['password'] = '<redacted>';
+
 				$this->logMessage(
 					'users',
 					sprintf('Updated user "%s"', $user['User']['username']),
