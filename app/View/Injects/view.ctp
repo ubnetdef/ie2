@@ -22,7 +22,7 @@
 		</div>
 		<div class="col-md-2">
 			<?php if ( (bool)env('FEATURE_HINT_SUBSYSTEM') && $hints > 0 ): ?>
-			<p><a herf="#" class="btn btn-info btn-block">HINTS</a></p>
+			<p><a herf="#" class="btn btn-info btn-block btn-hint">HINTS</a></p>
 			<?php endif; ?>
 
 			<?php if ( (bool)env('FEATURE_HELP_SUBSYSTEM') ): ?>
@@ -73,3 +73,4 @@
 		</div>
 	</div>
 </div>
+
