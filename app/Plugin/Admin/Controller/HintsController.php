@@ -2,7 +2,7 @@
 App::uses('AdminAppController', 'Admin.Controller');
 
 class HintsController extends AdminAppController {
-	public $uses = ['Log'];
+	public $uses = ['Hint'];
 
 	/**
 	 * Hint List Page 
@@ -11,7 +11,34 @@ class HintsController extends AdminAppController {
 	 * @url /admin/hints/index
 	 */
 	public function index() {
-		
+		$this->set('hints', $this->Hint->find('all'));
+	}
+
+	/**
+	 * Create Hint 
+	 *
+	 * @url /admin/hints/create
+	 */
+	public function create() {
+		// TODO
+	}
+
+	/**
+	 * Edit Hint 
+	 *
+	 * @url /admin/hints/edit/<id>
+	 */
+	public function edit($id=false) {
+		// TODO
+	}
+
+	/**
+	 * Delete Hint 
+	 *
+	 * @url /admin/hints/delete/<id>
+	 */
+	public function delete($id=false) {
+		// TODO
 	}
 
 	/**
