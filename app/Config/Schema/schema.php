@@ -305,6 +305,34 @@ class AppSchema extends CakeSchema {
 		],
 	];
 
+	public $used_hints = [
+		'id' => [
+			'type' => 'integer',
+			'null' => false,
+			'key'  => 'primary',
+		],
+		'hint_id' => [
+			'type' => 'integer',
+			'null' => false,
+		],
+		'user_id' => [
+			'type' => 'integer',
+			'null' => false,
+		],
+		'group_id' => [
+			'type' => 'integer',
+			'null' => false,
+		],
+		'time' => [
+			'type' => 'integer',
+			'null' => false,
+		],
+
+		'indexes' => [
+			'PRIMARY' => ['column' => 'id', 'unqiue' => true],
+		],
+	];
+
 	public $announcements = [
 		'id' => [
 			'type' => 'integer',
