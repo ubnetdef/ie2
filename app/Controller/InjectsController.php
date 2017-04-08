@@ -2,7 +2,7 @@
 App::uses('AppController', 'Controller');
 
 class InjectsController extends AppController {
-	public $uses = ['Attachment', 'Config', 'Schedule', 'Submission'];
+	public $uses = ['Attachment', 'Config', 'Hint', 'Schedule', 'Submission'];
 
 	private $groups = [];
 
@@ -74,6 +74,7 @@ class InjectsController extends AppController {
 		// Setup the InjectStyler helper with the latest inject
 		$this->helpers['InjectStyler']['inject'] = $inject;
 
+		$this->set('hints', $this->Hint->findAllByInjectId($inject->getInjectId()));
 		$this->set('inject', $inject);
 		$this->set('submissions', $submissions);
 	}

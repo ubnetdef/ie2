@@ -125,6 +125,19 @@ $(document).ready(function() {
 		},
 	});
 
+	// Bind on form submit
+	$('form').submit(function() {
+		$('.datetimepicker').each(function() {
+			dtp = $(this).data('DateTimePicker');
+			input = $(this).children('input');
+
+			if ( !$.isNumeric(input.val()) ) {
+				diff = dtp.date().unix() - moment().startOf('day').unix();
+				input.val(diff);
+			}
+		});
+	});
+
 	<?php if ( !empty($hint) ): ?>
 	$('#content').html('<?php echo addslashes($hint['Hint']['content']); ?>');
 

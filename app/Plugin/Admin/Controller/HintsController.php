@@ -58,7 +58,7 @@ class HintsController extends AdminAppController {
 
 				$this->logMessage(
 					'hints',
-					sprintf('Created hint "%s"', $data['res']['title']),
+					sprintf('Created hint "%s"', $res['data']['title']),
 					[],
 					$id
 				);

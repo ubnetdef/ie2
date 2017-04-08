@@ -21,7 +21,7 @@
 			</p>
 		</div>
 		<div class="col-md-2">
-			<?php if ( (bool)env('FEATURE_HINT_SUBSYSTEM') ): ?>
+			<?php if ( (bool)env('FEATURE_HINT_SUBSYSTEM') && count($hints) > 0 ): ?>
 			<p><a herf="#" class="btn btn-info btn-block">HINTS</a></p>
 			<?php endif; ?>
 
