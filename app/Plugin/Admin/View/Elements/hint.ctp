@@ -128,7 +128,9 @@ $(document).ready(function() {
 	<?php if ( !empty($hint) ): ?>
 	$('#content').html('<?php echo addslashes($hint['Hint']['content']); ?>');
 
-	$('#time_wait_datepicker').children('input').val('<?= $hint['Hint']['time_wait']; ?>');
+	$('#time_wait_datepicker').data('DateTimePicker').date(
+		moment().startOf('day').seconds(<?= $hint['Hint']['time_wait']; ?>)
+	);
 	<?php endif; ?>
 });
 </script>
