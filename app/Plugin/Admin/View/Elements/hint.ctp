@@ -1,7 +1,12 @@
 <?php
+// Bootstrap WYSIWYG
 $this->Html->css('/vendor/bootstrap3-wysiwyg/bootstrap3-wysihtml5.min', ['inline' => false]);
-
 $this->Html->script('/vendor/bootstrap3-wysiwyg/bootstrap3-wysihtml5.all.min', ['inline' => false]);
+
+// DateTimePicker
+$this->Html->css('/vendor/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min', ['inline' => false]);
+$this->Html->script('/vendor/moment.min', ['inline' => false]);
+$this->Html->script('/vendor/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min', ['inline' => false]);
 ?>
 
 <form method="post" class="form-horizontal">
@@ -34,7 +39,12 @@ $this->Html->script('/vendor/bootstrap3-wysiwyg/bootstrap3-wysihtml5.all.min', [
 	<div class="form-group">
 		<label for="time_wait" class="col-sm-3 control-label">Time Wait</label>
 		<div class="col-sm-9">
-			<input type="text" class="form-control" id="time_wait" name="time_wait" value="<?= !empty($hint) ? $hint['Hint']['time_wait'] : ''; ?>" required="required" />
+			<div class="input-group date datetimepicker" id="time_wait_datepicker">
+				<input type="text" class="form-control time-use-data" id="time_wait" name="time_wait" required="required" />
+				<span class="input-group-addon">
+					<span class="glyphicon glyphicon-calendar"></span>
+				</span>
+			</div>
 		</div>
 	</div>
 	<div class="row">
@@ -77,9 +87,9 @@ $this->Html->script('/vendor/bootstrap3-wysiwyg/bootstrap3-wysihtml5.all.min', [
 		<label for="parent_id" class="col-sm-3 control-label">Hint Parent</label>
 		<div class="col-sm-9">
 			<select class="form-control" id="parent_id" name="parent_id" required="required">
-				<option value="0"<?= 0 == $hint['Hint']['parent_id'] ? ' checked' : ''; ?>>None</option>
+				<option value="0"<?= !empty($hint) && 0 == $hint['Hint']['parent_id'] ? ' checked' : ''; ?>>None</option>
 				<option disabled>──────────</option>
-				<?php foreach($hints AS $i): if ( $i['Hint']['id'] == $hint['Hint']['id'] ) continue;?>
+				<?php foreach($hints AS $i): if ( !empty($hint) && $i['Hint']['id'] == $hint['Hint']['id'] ) continue; ?>
 				<option value="<?= $i['Hint']['id']; ?>"<?= (!empty($hint) && $hint['Hint']['parent_id'] == $i['Hint']['id']) ? ' selected="selected"' : ''; ?>>
 					<?= $i['Hint']['title']; ?>
 				</option>
@@ -102,6 +112,12 @@ $this->Html->script('/vendor/bootstrap3-wysiwyg/bootstrap3-wysihtml5.all.min', [
 
 <script>
 $(document).ready(function() {
+	$('.datetimepicker').datetimepicker({
+		sideBySide: true,
+		keepInvalid: true,
+		format: "H[h] mm[m] s[s]",
+	});
+
 	$('.wysiwyg').wysihtml5({
 		toolbar: {
 			html: true,
@@ -111,6 +127,8 @@ $(document).ready(function() {
 
 	<?php if ( !empty($hint) ): ?>
 	$('#content').html('<?php echo addslashes($hint['Hint']['content']); ?>');
+
+	$('#time_wait_datepicker').children('input').val('<?= $hint['Hint']['time_wait']; ?>');
 	<?php endif; ?>
 });
 </script>
