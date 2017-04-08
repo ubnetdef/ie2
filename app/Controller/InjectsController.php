@@ -74,7 +74,7 @@ class InjectsController extends AppController {
 		// Setup the InjectStyler helper with the latest inject
 		$this->helpers['InjectStyler']['inject'] = $inject;
 
-		$this->set('hints', $this->Hint->findAllByInjectId($inject->getInjectId()));
+		$this->set('hints', $this->Hint->find('count', ['conditions' => ['inject_id' => $inject->getInjectId()]]));
 		$this->set('inject', $inject);
 		$this->set('submissions', $submissions);
 	}
@@ -223,5 +223,29 @@ class InjectsController extends AppController {
 		$response->header('Content-Disposition', $type.'; filename="'.$filename.'"');
 
 		return $response;
+	}
+
+	/**
+	 * API Endpoint for Hints
+	 *
+	 * Gets all the unlocked hints for an inject
+	 *
+	 * @url /injects/hints/<inject_id>
+	 */
+	public function hints($id=false) {
+		return $this->ajaxResponse([
+			'injects' => $this->Schedule->getInjects($this->groups),
+		]);
+	}
+
+	/**
+	 * API Endpoint to Unlock a Hint
+	 *
+	 * Unlocks a hint
+	 *
+	 * @url /injects/unlock_hint/<hint_id>
+	 */
+	public function unlock_hint($id=false) {
+		return $this->ajaxResponse(true);
 	}
 }
