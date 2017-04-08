@@ -59,6 +59,7 @@ class ScoreadminController extends ScoreEngineAppController {
 			throw new NotFoundException('Unknown service');
 		}
 
+		$this->Check->virtualFields = [];
 		$this->set('team', $team);
 		$this->set('data', $this->Check->find('all', [
 			'conditions' => [
