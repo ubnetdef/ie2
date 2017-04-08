@@ -4,6 +4,7 @@
 	<thead>
 		<tr>
 			<td>ID</td>
+			<td><abbr title="Sequence ID">SID</abbr></td>
 			<td>Name</td>
 			<td>Type</td>
 			<td>Max Points</td>
@@ -15,6 +16,7 @@
 		<?php foreach ( $injects AS $inject ): ?>
 		<tr>
 			<td><?= $inject['Inject']['id']; ?></td>
+			<td><?= $inject['Inject']['sequence']; ?></td>
 			<td><?= $inject['Inject']['title']; ?></td>
 			<td><?= $this->InjectStyler->getName($inject['Inject']['type']); ?></td>
 			<td><?= $inject['Inject']['max_points']; ?></td>
