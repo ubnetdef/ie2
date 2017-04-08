@@ -4,6 +4,33 @@ App::uses('AdminAppController', 'Admin.Controller');
 class HintsController extends AdminAppController {
 	public $uses = ['Hint'];
 
+	public function beforeFilter() {
+		parent::beforeFilter();
+
+		// Setup the validators
+		$this->validators = [
+			'inject_id' => new Rules\AllOf(
+				new Rules\Digit(),
+			),
+			'parent_id' => new Rules\OneOf(
+				new Rules\Digit(),
+				new Rules\Not(new Rules\NotEmpty())
+			),
+			'title' => new Rules\AllOf(
+				new Rules\NotEmpty()
+			),
+			'content' => new Rules\AllOf(
+				new Rules\NotEmpty()
+			),
+			'time_wait' => new Rules\AllOf(
+				new Rules\Digit()
+			),
+			'cost' => new Rules\AllOf(
+				new Rules\Digit()
+			),
+		];
+	}
+
 	/**
 	 * Hint List Page 
 	 *
@@ -20,7 +47,27 @@ class HintsController extends AdminAppController {
 	 * @url /admin/hints/create
 	 */
 	public function create() {
-		// TODO
+		if ( $this->request->is('post') ) {
+			// Validate the input
+			$res = $this->_validate();
+
+			if ( empty($res['errors']) ) {
+				$this->Hint->create();
+				$this->Hint->save($res['data']);
+
+				$this->logMessage(
+					'hints',
+					sprintf('Created hint "%s"', $data['res']['title']),
+					[],
+					$id
+				);
+
+				$this->Flash->success('The hint has been created!');
+				return $this->redirect(['plugin' => 'admin', 'controller' => 'hints', 'action' => 'index']);
+			} else {
+				$this->_errorFlash($res['errors']);
+			}
+		}
 	}
 
 	/**
@@ -29,7 +76,37 @@ class HintsController extends AdminAppController {
 	 * @url /admin/hints/edit/<id>
 	 */
 	public function edit($id=false) {
-		// TODO
+		$hint = $this->Hint->findById($id);
+		if ( empty($hint) ) {
+			throw new NotFoundException('Unknown hint');
+		}
+
+		if ( $this->request->is('post') ) {
+			// Validate the input
+			$res = $this->_validate();
+
+			if ( empty($res['errors']) ) {
+				$this->Hint->id = $id;
+				$this->Hint->save($res['data']);
+
+				$this->logMessage(
+					'hints',
+					sprintf('Updated hint "%s"', $hint['Hint']['title']),
+					[
+						'old_hint' => $hint['Hint'],
+						'new_hint' => $res['data'],
+					],
+					$id
+				);
+
+				$this->Flash->success('The hint has been updated!');
+				return $this->redirect(['plugin' => 'admin', 'controller' => 'hints', 'action' => 'index']);
+			} else {
+				$this->_errorFlash($res['errors']);
+			}
+		}
+
+		$this->set('hint', $hint);
 	}
 
 	/**
