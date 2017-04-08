@@ -22,7 +22,7 @@
 		</div>
 		<div class="col-md-2">
 			<?php if ( (bool)env('FEATURE_HINT_SUBSYSTEM') && $hints > 0 ): ?>
-			<p><a herf="#" class="btn btn-info btn-block btn-hint">HINTS</a></p>
+			<p><a herf="#" class="btn btn-info btn-block" data-toggle="modal" data-target=".hint_modal">HINTS</a></p>
 			<?php endif; ?>
 
 			<?php if ( (bool)env('FEATURE_HELP_SUBSYSTEM') ): ?>
@@ -74,3 +74,21 @@
 	</div>
 </div>
 
+<?php
+if ( (bool)env('FEATURE_HINT_SUBSYSTEM') && $hints > 0 ) {
+	echo $this->element('hint_modal', ['inject_title' => $inject->getTitle()]);
+	?>
+
+<script>
+$('.hint_modal').on('show.bs.modal', function (event) {
+	modal = $(this)
+
+	$.get('/injects/hints/<?= $inject->getId(); ?>').done(function(data) {
+		modal.find('.modal-body').html(data);
+	});
+});
+</script>
+
+	<?php
+}
+?>

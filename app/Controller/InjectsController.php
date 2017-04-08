@@ -233,13 +233,13 @@ class InjectsController extends AppController {
 	 * @url /injects/hints/<inject_id>
 	 */
 	public function hints($id=false) {
-		$hint = $this->Hint->findById($id);
-		if ( empty($hint) ) {
-			throw new NotFoundException('Unknown hint');
+		$hints = $this->Hint->findAllByInjectId($id);
+		if ( empty($hints) ) {
+			throw new NotFoundException('Unknown inject');
 		}
 
 		$this->layout = 'ajax';
-		$this->set('hint', $hint);
+		$this->set('hints', $hints);
 	}
 
 	/**
