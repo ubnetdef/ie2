@@ -38,7 +38,21 @@ class HintsController extends AdminAppController {
 	 * @url /admin/hints/delete/<id>
 	 */
 	public function delete($id=false) {
-		// TODO
+		$hint = $this->Hint->findById($id);
+		if ( empty($hint) ) {
+			throw new NotFoundException('Unknown hint');
+		}
+
+		if ( $this->request->is('post') ) {
+			$this->Hint->delete($id);
+
+			$msg = sprintf('Deleted hint "%s"', $hint['Hint']['title']);
+			$this->logMessage('hints', $msg, ['hint' => $hint], $id);
+			$this->Flash->success($msg.'!');
+			return $this->redirect(['plugin' => 'admin', 'controller' => 'hints', 'action' => 'index']);
+		}
+
+		$this->set('hint', $hint);
 	}
 
 	/**
