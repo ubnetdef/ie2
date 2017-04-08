@@ -1,8 +1,9 @@
 <?php
 App::uses('AdminAppController', 'Admin.Controller');
+use Respect\Validation\Rules;
 
 class HintsController extends AdminAppController {
-	public $uses = ['Hint'];
+	public $uses = ['Hint', 'Inject'];
 
 	public function beforeFilter() {
 		parent::beforeFilter();
@@ -10,7 +11,7 @@ class HintsController extends AdminAppController {
 		// Setup the validators
 		$this->validators = [
 			'inject_id' => new Rules\AllOf(
-				new Rules\Digit(),
+				new Rules\Digit()
 			),
 			'parent_id' => new Rules\OneOf(
 				new Rules\Digit(),
@@ -68,6 +69,9 @@ class HintsController extends AdminAppController {
 				$this->_errorFlash($res['errors']);
 			}
 		}
+
+		$this->set('hints', $this->Hint->find('all'));
+		$this->set('injects', $this->Inject->find('all'));
 	}
 
 	/**
@@ -106,6 +110,8 @@ class HintsController extends AdminAppController {
 			}
 		}
 
+		$this->set('hints', $this->Hint->find('all'));
+		$this->set('injects', $this->Inject->find('all'));
 		$this->set('hint', $hint);
 	}
 
@@ -135,7 +141,7 @@ class HintsController extends AdminAppController {
 	/**
 	 * View Hint 
 	 *
-	 * @url /admin/logs/view/<id>
+	 * @url /admin/hints/view/<id>
 	 */
 	public function view($id=false) {
 		$log = $this->Log->findById($id);
