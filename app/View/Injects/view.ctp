@@ -83,8 +83,15 @@ if ( (bool)env('FEATURE_HINT_SUBSYSTEM') && $hints > 0 ) {
 $('.hint_modal').on('show.bs.modal', function (event) {
 	modal = $(this)
 
-	$.get('/injects/hints/<?= $inject->getId(); ?>').done(function(data) {
+	$.get('<?= $this->Html->url('/injects/hints/'.$inject->getId()); ?>').done(function(data) {
 		modal.find('.modal-body').html(data);
+	});
+});
+
+$(document).on('click', '.unlock_hint', function() {
+	hint_id = $(this).data('hint');
+	$.get('<?= $this->Html->url('/injects/unlock_hint/'.$inject->getId()); ?>/'+hint_id).done(function() {
+		$('.hint_modal').modal('show');
 	});
 });
 </script>
