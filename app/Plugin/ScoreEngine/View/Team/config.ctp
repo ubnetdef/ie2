@@ -5,6 +5,8 @@
 
 <p>&nbsp;</p>
 
+<div class="alert alert-info"><strong>NOTICE</strong>: Any IP changes must be in the same subnet.  IP changes that do not follow this rule will be discarded.</div>
+
 <form method="post" class="form-horizontal">
 	<?php foreach ( $data AS $group => $options ): ?>
 		<div class="panel panel-default">
@@ -17,7 +19,7 @@
 				<div class="form-group">
 					<label class="col-sm-3 control-label"><?php echo $opt['key']; ?></label>
 					<div class="col-sm-9">
-						<input type="text" name="opt<?php echo $opt['id']; ?>" class="form-control" value="<?php echo $opt['value']; ?>"<?php echo ($opt['edit'] != 1 ? ' readonly="readonly"' : ''); ?>) />
+						<input type="text" name="opt<?php echo $opt['id']; ?>" class="form-control" value="<?php echo $opt['value']; ?>"<?php echo ($opt['edit'] != 1 ? ' readonly="readonly"' : ''); ?> />
 					</div>
 				</div>
 			<?php endforeach; ?>

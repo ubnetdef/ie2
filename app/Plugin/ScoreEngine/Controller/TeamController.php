@@ -10,6 +10,13 @@ class TeamController extends ScoreEngineAppController {
 	private $team;
 
 	/**
+	 * IP Regex
+	 *
+	 * Source: http://stackoverflow.com/a/20270082
+	 */
+	const IP_REGEX = "/\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/";
+
+	/**
 	 * Before Filter
 	 *
 	 * Locks the page to blue teams' group,
@@ -80,6 +87,18 @@ class TeamController extends ScoreEngineAppController {
 			return false;
 		};
 
+		$getOpt = function($id) use(&$data) {
+			foreach ( $data AS $group => &$options ) {
+				foreach ( $options AS $opt ) {
+					if ( $opt['id'] == $id ) {
+						return $opt['value'];
+					}
+				}
+			}
+
+			return false;
+		};
+
 		$updateOpt = function($id, $value) use(&$data) {
 			foreach ( $data AS $group => &$options ) {
 				foreach ( $options AS &$opt ) {
@@ -98,6 +117,21 @@ class TeamController extends ScoreEngineAppController {
 				if ( $opt < 0 || !is_numeric($opt) ) continue;
 
 				if ( $canEdit($opt) ) {
+					// Do some hacky magic with IPs to check subnets
+					if ( preg_match(self::IP_REGEX, $value, $match) ) {
+						$newSubnet = explode('.', $value);
+						array_pop($newSubnet);
+						$newSubnet = implode('.', $newSubnet);
+
+						$oldSubnet = explode('.', $getOpt($opt));
+						array_pop($oldSubnet);
+						$oldSubnet = implode('.', $oldSubnet);
+
+						if ( $newSubnet != $oldSubnet ) {
+							continue;
+						}
+					}
+
 					$this->TeamService->updateConfig($opt, $value);
 
 					$updateOpt($opt, $value);
