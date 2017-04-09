@@ -276,12 +276,7 @@ class AppSchema extends CakeSchema {
 			'type' => 'integer',
 			'null' => false,
 		],
-		'dependency_id' => [
-			'type'    => 'integer',
-			'null'    => true,
-			'default' => null,
-		],
-		'time_dependency' => [
+		'parent_id' => [
 			'type'    => 'integer',
 			'null'    => true,
 			'default' => null,
@@ -293,6 +288,44 @@ class AppSchema extends CakeSchema {
 		'content' => [
 			'type'    => 'text',
 			'null'    => false,
+		],
+		'time_wait' => [
+			'type'    => 'integer',
+			'null'    => false,
+			'default' => 0,
+		],
+		'cost' => [
+			'type'    => 'integer',
+			'null'    => false,
+			'default' => 0,
+		],
+
+		'indexes' => [
+			'PRIMARY' => ['column' => 'id', 'unqiue' => true],
+		],
+	];
+
+	public $used_hints = [
+		'id' => [
+			'type' => 'integer',
+			'null' => false,
+			'key'  => 'primary',
+		],
+		'hint_id' => [
+			'type' => 'integer',
+			'null' => false,
+		],
+		'user_id' => [
+			'type' => 'integer',
+			'null' => false,
+		],
+		'group_id' => [
+			'type' => 'integer',
+			'null' => false,
+		],
+		'time' => [
+			'type' => 'integer',
+			'null' => false,
 		],
 
 		'indexes' => [

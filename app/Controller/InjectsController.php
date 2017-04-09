@@ -2,7 +2,7 @@
 App::uses('AppController', 'Controller');
 
 class InjectsController extends AppController {
-	public $uses = ['Attachment', 'Config', 'Schedule', 'Submission'];
+	public $uses = ['Attachment', 'Config', 'Hint', 'UsedHint', 'Schedule', 'Submission'];
 
 	private $groups = [];
 
@@ -74,6 +74,7 @@ class InjectsController extends AppController {
 		// Setup the InjectStyler helper with the latest inject
 		$this->helpers['InjectStyler']['inject'] = $inject;
 
+		$this->set('hints', $this->Hint->find('count', ['conditions' => ['inject_id' => $inject->getInjectId()]]));
 		$this->set('inject', $inject);
 		$this->set('submissions', $submissions);
 	}
@@ -222,5 +223,67 @@ class InjectsController extends AppController {
 		$response->header('Content-Disposition', $type.'; filename="'.$filename.'"');
 
 		return $response;
+	}
+
+	/**
+	 * API Endpoint for Hints
+	 *
+	 * Gets all the unlocked hints for an inject
+	 *
+	 * @url /injects/hints/<schedule_id>
+	 */
+	public function hints($id=false) {
+		$inject = $this->Schedule->getInject($id, $this->groups);
+		if ( empty($inject) ) {
+			throw new NotFoundException('Unknown inject');
+		}
+
+		$hints = $this->Hint->getHints($inject->getInjectId(), $this->Auth->group('id'));
+		if ( empty($hints) ) {
+			throw new NotFoundException('Unknown inject');
+		}
+
+		$this->layout = 'ajax';
+		$this->set('inject', $inject);
+		$this->set('hints', $hints);
+	}
+
+	/**
+	 * API Endpoint to Unlock a Hint
+	 *
+	 * Unlocks a hint
+	 *
+	 * @url /injects/unlock_hint/<hint_id>
+	 */
+	public function unlock_hint($sid=false, $id=false) {
+		$inject = $this->Schedule->getInject($sid, $this->groups);
+		if ( empty($inject) ) {
+			return $this->ajaxResponse(false);
+		}
+
+		$hints = $this->Hint->getHints($inject->getInjectId(), $this->Auth->group('id'));
+		if ( empty($hints) ) {
+			return $this->ajaxResponse(false);
+		}
+
+		// Find said hint, make sure we can unlock it
+		foreach ( $hints AS $h ) {
+			if ( $h['Hint']['id'] != $id ) continue;
+
+			if ( $h['Hint']['unlocked'] ) return $this->ajaxResponse(true);
+			if ( !$h['Hint']['dependency_met'] ) return $this->ajaxResponse(false);
+			if ( $h['Hint']['time_wait'] > 0 && $inject->getStart()+$h['Hint']['time_wait'] > time() ) return $this->ajaxResponse(false);
+		}
+
+		// If we got here, we're good
+		$this->UsedHint->create();
+		$this->UsedHint->save([
+			'hint_id'  => $id,
+			'user_id'  => $this->Auth->user('id'),
+			'group_id' => $this->Auth->group('id'),
+			'time'     => time(),
+		]);
+
+		return $this->ajaxResponse(true);
 	}
 }
