@@ -14,10 +14,6 @@ class UsersController extends AdminAppController {
 				new Rules\NotEmpty(),
 				new Rules\NoWhitespace()
 			),
-			'password' => new Rules\OneOf(
-				new Rules\NotEmpty(),
-				new Rules\NullType()
-			),
 			'group_id' => new Rules\AllOf(
 				new Rules\Digit(),
 				new Rules\NotEmpty()
