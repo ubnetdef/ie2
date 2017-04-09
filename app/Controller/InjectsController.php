@@ -2,7 +2,7 @@
 App::uses('AppController', 'Controller');
 
 class InjectsController extends AppController {
-	public $uses = ['Attachment', 'Config', 'Schedule', 'Submission'];
+	public $uses = ['Attachment', 'Config', 'Hint', 'Schedule', 'Submission'];
 
 	private $groups = [];
 
@@ -74,6 +74,7 @@ class InjectsController extends AppController {
 		// Setup the InjectStyler helper with the latest inject
 		$this->helpers['InjectStyler']['inject'] = $inject;
 
+		$this->set('hints', $this->Hint->find('count', ['conditions' => ['inject_id' => $inject->getInjectId()]]));
 		$this->set('inject', $inject);
 		$this->set('submissions', $submissions);
 	}
@@ -222,5 +223,33 @@ class InjectsController extends AppController {
 		$response->header('Content-Disposition', $type.'; filename="'.$filename.'"');
 
 		return $response;
+	}
+
+	/**
+	 * API Endpoint for Hints
+	 *
+	 * Gets all the unlocked hints for an inject
+	 *
+	 * @url /injects/hints/<inject_id>
+	 */
+	public function hints($id=false) {
+		$hints = $this->Hint->findAllByInjectId($id);
+		if ( empty($hints) ) {
+			throw new NotFoundException('Unknown inject');
+		}
+
+		$this->layout = 'ajax';
+		$this->set('hints', $hints);
+	}
+
+	/**
+	 * API Endpoint to Unlock a Hint
+	 *
+	 * Unlocks a hint
+	 *
+	 * @url /injects/unlock_hint/<hint_id>
+	 */
+	public function unlock_hint($id=false) {
+		return $this->ajaxResponse(true);
 	}
 }
