@@ -14,6 +14,7 @@
 					<label class="col-sm-3 control-label">
 						<?php echo $opt['key']; ?>
 						<?php echo ($opt['edit'] != 1 ? '(Read Only)' : ''); ?>
+						<?php echo ($opt['hidden'] == 1 ? ' (Hidden)' : ''); ?>
 					</label>
 					<div class="col-sm-9">
 						<input type="text" name="opt<?php echo $opt['id']; ?>" class="form-control" value="<?php echo $opt['value']; ?>" />

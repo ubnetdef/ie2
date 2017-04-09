@@ -15,7 +15,7 @@
 
 			<div class="alert alert-info"><strong>WARNING</strong>: USERPASS's value must be in the format username||password.  If you do not follow this, your service will not score.</div>
 
-			<?php foreach ($options AS $opt): ?>
+			<?php foreach ($options AS $opt): if ( $opt['hidden'] == 1 ) continue; ?>
 				<div class="form-group">
 					<label class="col-sm-3 control-label"><?php echo $opt['key']; ?></label>
 					<div class="col-sm-9">
