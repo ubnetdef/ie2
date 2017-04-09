@@ -10,7 +10,7 @@ class TeamService extends ScoreEngineAppModel {
 		$data = $this->find('all', [
 			'fields' => [
 				'TeamService.id', 'TeamService.key', 'TeamService.value',
-				'TeamService.edit', 'Service.name', 'Service.id',
+				'TeamService.edit', 'TeamService.hidden', 'Service.name', 'Service.id',
 			],
 
 			'conditions' => [
