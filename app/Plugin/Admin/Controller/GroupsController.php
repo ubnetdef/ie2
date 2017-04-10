@@ -16,8 +16,7 @@ class GroupsController extends AdminAppController {
 			'team_number' => new Rules\Optional(
 				new Rules\Digit()
 			),
-			'parent_id' => new Rules\OneOf(
-				new Rules\Not(new Rules\NotEmpty()),
+			'parent_id' => new Rules\Optional(
 				new Rules\Digit()
 			),
 		];
