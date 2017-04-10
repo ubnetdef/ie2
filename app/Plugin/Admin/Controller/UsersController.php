@@ -14,6 +14,7 @@ class UsersController extends AdminAppController {
 				new Rules\NotEmpty(),
 				new Rules\NoWhitespace()
 			),
+			'password' => new Rules\AlwaysValid(),
 			'group_id' => new Rules\AllOf(
 				new Rules\Digit(),
 				new Rules\NotEmpty()
@@ -119,11 +120,11 @@ class UsersController extends AdminAppController {
 				$this->User->save($res['data']);
 
 				// Redact the old password
-				$user['User']['password'] = '<redacted>';
+				$user['User']['password'] = '-redacted-';
 
 				// ...and the new one
 				if ( isset($res['data']['password']) ) {
-					$res['data']['password'] = '<redacted>';
+					$res['data']['password'] = '-redacted-';
 				}
 
 				$this->logMessage(
