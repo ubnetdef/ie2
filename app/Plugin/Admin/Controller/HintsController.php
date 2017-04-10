@@ -13,9 +13,8 @@ class HintsController extends AdminAppController {
 			'inject_id' => new Rules\AllOf(
 				new Rules\Digit()
 			),
-			'parent_id' => new Rules\OneOf(
-				new Rules\Digit(),
-				new Rules\Not(new Rules\NotEmpty())
+			'parent_id' => new Rules\Optional(
+				new Rules\Digit()
 			),
 			'title' => new Rules\AllOf(
 				new Rules\NotEmpty()

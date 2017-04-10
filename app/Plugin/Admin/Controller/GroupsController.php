@@ -13,8 +13,7 @@ class GroupsController extends AdminAppController {
 				new Rules\Alnum('-_'),
 				new Rules\NotEmpty()
 			),
-			'team_number' => new Rules\OneOf(
-				new Rules\Not(new Rules\NotEmpty()),
+			'team_number' => new Rules\Optional(
 				new Rules\Digit()
 			),
 			'parent_id' => new Rules\OneOf(
