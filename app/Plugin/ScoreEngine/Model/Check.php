@@ -46,7 +46,7 @@ class Check extends ScoreEngineAppModel {
 
 			'conditions' => [
 				// We're going to use the highest number minus one
-				'Check.round = (SELECT IF(MAX(round) > 2, MAX(round)-1, 1) FROM checks)',
+				'Check.round = (SELECT MAX(number) FROM rounds WHERE completed = 1)',
 			],
 
 			'order' => [
@@ -87,7 +87,7 @@ class Check extends ScoreEngineAppModel {
 
 			'conditions' => [
 				'Team.id' => $tid,
-				'Check.round = (SELECT MAX(round) FROM checks)',
+				'Check.round = (SELECT MAX(number) FROM rounds WHERE completed = 1)',
 			],
 		]);
 
