@@ -13,6 +13,6 @@ class Round extends ScoreEngineAppModel {
 			],
 		]);
 
-		return $round[0]['round'];
+		return empty($round[0]['round']) ? 0 : $round[0]['round'];
 	}
 }

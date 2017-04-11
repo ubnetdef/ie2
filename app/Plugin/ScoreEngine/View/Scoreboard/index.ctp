@@ -5,5 +5,6 @@ $this->Html->scriptEnd();
 ?>
 
 <h2>ScoreBoard</h2>
+<h4>Round #<?= $round; ?></h4>
 
 <?= $this->EngineOutputter->generateScoreBoard(); ?>
