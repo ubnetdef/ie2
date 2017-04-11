@@ -91,6 +91,33 @@
 	</div>
 </div>
 
+<div class="row">
+	<div class="col-md-12">
+		<h3>Competition Start Manager</h3>
+
+		<form method="post" action="<?= $this->Html->url('/admin/site/config'); ?>" class="form-horizontal">
+			<?php foreach ( $config AS $c ): if ( $c['Config']['key'] != 'competition.start' ) continue; ?>
+			<input type="hidden" name="id" value="<?= $c['Config']['id']; ?>" />
+			<input type="hidden" name="key" value="<?= $c['Config']['key']; ?>" />
+			<?php endforeach; ?>			
+
+			<div class="form-group">
+				<label for="value" class="col-sm-2 control-label">Competition Start</label>
+				<div class="col-sm-10">
+					<div class="input-group date datetimepicker" id="start_datepicker">
+						<input type="text" class="form-control time-use-data" id="value" name="value" required="required" />
+						<span class="input-group-addon">
+							<span class="glyphicon glyphicon-calendar"></span>
+						</span>
+					</div>
+				</div>
+			</div>
+
+			<input type="submit" class="btn btn-primary" />
+		</form>
+	</div>
+</div>
+
 <?= $this->element('Admin.modals/config'); ?>
 <?= $this->element('Admin.modals/announcement'); ?>
 
@@ -107,6 +134,10 @@ $(document).ready(function() {
 		sideBySide: true,
 		keepInvalid: true,
 	});
+
+	<?php foreach ( $config AS $c ): if ( $c['Config']['key'] != 'competition.start' ) continue; ?>
+	$('#start_datepicker').data('DateTimePicker').date(moment.unix(<?= $c['Config']['value']; ?>));
+	<?php endforeach; ?>
 
 	$('.edit-btn').click(function() {
 		target = $(this).data('target');
