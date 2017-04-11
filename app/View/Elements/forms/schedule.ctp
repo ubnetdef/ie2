@@ -63,7 +63,7 @@ $this->Html->script('/vendor/bootstrap-datetimepicker/js/bootstrap-datetimepicke
 						<div class="col-sm-9">
 							<select class="form-control" id="inject_id" name="inject_id">
 								<?php foreach ( $injects AS $i ): ?>
-								<option value="<?= $i['Inject']['id']; ?>"<?= $i['Inject']['id'] == $inject ? ' checked' : ''; ?>>
+								<option value="<?= $i['Inject']['id']; ?>"<?= $i['Inject']['id'] == $inject ? ' selected="selected"' : ''; ?>>
 									<?= $i['Inject']['title']; ?>
 								</option>
 								<?php endforeach; ?>
@@ -76,7 +76,7 @@ $this->Html->script('/vendor/bootstrap-datetimepicker/js/bootstrap-datetimepicke
 						<div class="col-sm-9">
 							<select class="form-control" id="group_id" name="group_id">
 								<?php foreach ( $groups AS $id => $g ): ?>
-								<option value="<?= $id; ?>"<?= $id == $group ? ' checked' : ''; ?>>
+								<option value="<?= $id; ?>"<?= $id == $group ? ' selected="selected"' : ''; ?>>
 									<?= $g; ?>
 								</option>
 								<?php endforeach; ?>
@@ -88,10 +88,10 @@ $this->Html->script('/vendor/bootstrap-datetimepicker/js/bootstrap-datetimepicke
 						<label for="dependency_id" class="col-sm-3 control-label">Inject Dependency</label>
 						<div class="col-sm-9">
 							<select class="form-control" id="dependency_id" name="dependency_id">
-								<option value="0"<?= 0 == $dep ? ' checked' : ''; ?>>None</option>
+								<option value="0"<?= 0 == $dep ? ' selected="selected"' : ''; ?>>None</option>
 								<option disabled>──────────</option>
 								<?php foreach ( $injects AS $i ): ?>
-								<option value="<?= $i['Inject']['id']; ?>"<?= $i['Inject']['id'] == $dep ? ' checked' : ''; ?>>
+								<option value="<?= $i['Inject']['id']; ?>"<?= $i['Inject']['id'] == $dep ? ' selected="selected"' : ''; ?>>
 									<?= $i['Inject']['title']; ?>
 								</option>
 								<?php endforeach; ?>

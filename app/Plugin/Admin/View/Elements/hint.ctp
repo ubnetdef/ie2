@@ -87,7 +87,7 @@ $this->Html->script('/vendor/bootstrap-datetimepicker/js/bootstrap-datetimepicke
 		<label for="parent_id" class="col-sm-3 control-label">Hint Parent</label>
 		<div class="col-sm-9">
 			<select class="form-control" id="parent_id" name="parent_id" required="required">
-				<option value="0"<?= !empty($hint) && 0 == $hint['Hint']['parent_id'] ? ' checked' : ''; ?>>None</option>
+				<option value="0"<?= !empty($hint) && 0 == $hint['Hint']['parent_id'] ? ' selected="selected"' : ''; ?>>None</option>
 				<option disabled>──────────</option>
 				<?php foreach($hints AS $i): if ( !empty($hint) && $i['Hint']['id'] == $hint['Hint']['id'] ) continue; ?>
 				<option value="<?= $i['Hint']['id']; ?>"<?= (!empty($hint) && $hint['Hint']['parent_id'] == $i['Hint']['id']) ? ' selected="selected"' : ''; ?>>
