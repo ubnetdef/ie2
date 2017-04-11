@@ -4,7 +4,7 @@ App::uses('AppController', 'Controller');
 class StaffController extends AppController {
 	public $helpers = ['ScoreEngine.EngineOutputter'];
 	public $uses = [
-		'Config', 'Inject', 'Log', 'Grade', 'Group', 'Schedule', 'Submission',
+		'Config', 'Inject', 'UsedHint', 'Log', 'Grade', 'Group', 'Schedule', 'Submission',
 		'ScoreEngine.Check', 'ScoreEngine.Service', 'ScoreEngine.Team'
 	];
 
@@ -229,7 +229,22 @@ class StaffController extends AppController {
 		$blueTeams = array_merge($this->Group->getChildren(env('GROUP_BLUE')), [env('GROUP_BLUE')]);
 		$submissions = $this->Submission->getAllSubmissions($blueTeams, true);
 		$injects = $this->Schedule->getInjects($blueTeams, false);
+		$used_hints = $this->UsedHint->find('all');
 		$out = [];
+
+		// Lookup for hint deductions
+		$hintDeduction = function($team, $inject) use($used_hints) {
+			$deduction = 0;
+
+			foreach ( $used_hints AS $h ) {
+				if ( $h['UsedHint']['group_id'] != $team ) continue;
+				if ( $h['Hint']['inject_id'] != $inject ) continue;
+
+				$deduction += $h['Hint']['cost'];
+			}
+
+			return $deduction;
+		};
 
 		// Grab all the injects
 		$seenInjects = [];
@@ -250,14 +265,14 @@ class StaffController extends AppController {
 		// Parse the (fun) data
 		$scores = [];
 		foreach ( $submissions AS $s ) {
-			$tn = $s['Group']['team_number'];
+			$tn = $s['Group']['id'];
 			$inject = $s['Inject']['sequence'];
 
 			if ( !isset($scores[$tn]) ) {
 				$scores[$tn] = [];
 			}
 
-			$scores[$tn][$inject] = $s['Grade']['grade'];
+			$scores[$tn][$inject] = $s['Grade']['grade'] - $hintDeduction($tn, $s['Inject']['id']);
 		}
 
 		// Output the grades

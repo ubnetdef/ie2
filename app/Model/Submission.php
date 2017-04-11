@@ -75,7 +75,7 @@ class Submission extends AppModel {
 			'fields' => [
 				'Submission.id', 'Submission.created', 'Submission.deleted',
 				'Inject.id', 'Inject.title', 'Inject.sequence', 'Inject.type',
-				'User.username', 'Group.name', 'Group.team_number',
+				'User.username', 'Group.id', 'Group.name', 'Group.team_number',
 				'Grade.created', 'Grade.grade', 'Grade.comments',
 				'Grader.username',
 			],
