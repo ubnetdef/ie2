@@ -448,6 +448,11 @@ class AppSchema extends CakeSchema {
 				]);
 
 				$this->_create('Config', [
+					'key' => 'competition.sponsors',
+					'value' => '[]',
+				]);
+
+				$this->_create('Config', [
 					'key' => 'engine.install_date',
 					'value' => time(),
 				]);
