@@ -39,6 +39,16 @@ body {
 	font-size: 16px;
 }
 
+.sponsor-header {
+	text-align: center;
+	padding-top: 15px;
+}
+
+.carousel-inner > .item > img {
+	margin: 0 auto;
+	height: 150px;
+}
+
 .footer {
 	position: absolute;
 	bottom: 0;

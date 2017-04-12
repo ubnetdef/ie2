@@ -3,7 +3,7 @@ App::uses('ScoreEngineAppController', 'ScoreEngine.Controller');
 
 class ScoreboardController extends ScoreEngineAppController {
 	public $helpers = ['ScoreEngine.EngineOutputter'];
-	public $uses = ['ScoreEngine.Check', 'ScoreEngine.Service', 'ScoreEngine.Team', 'ScoreEngine.Round'];
+	public $uses = ['Config', 'ScoreEngine.Check', 'ScoreEngine.Service', 'ScoreEngine.Team', 'ScoreEngine.Round'];
 
 	public function beforeRender() {
 		parent::beforeRender();
@@ -23,6 +23,12 @@ class ScoreboardController extends ScoreEngineAppController {
 	 * @url /score_engine/scoreboard/index
 	 */
 	public function index() {
+		$sponsors = $this->Config->getKey('competition.sponsors');
+		if ( !empty($sponsors) ) {
+			$sponsors = json_decode($sponsors, true);
+		}
+
+		$this->set('sponsors', $sponsors);
 		$this->set('at_scoreboard', true);
 	}
 
