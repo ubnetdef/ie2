@@ -18,7 +18,7 @@
 			<td><?= $user['User']['username']; ?></td>
 			<td><?= $user['Group']['name']; ?></td>
 			<td><?= $user['User']['active'] == 1 ? 'Enabled' : 'Disabled'; ?></td>
-			<td><?= ($user['User']['expiration'] == 0) ? 'Never' : date('m/d/Y \a\t g:iA', $user['User']['expiration']); ?></td>
+			<td><?= ($user['User']['expiration'] == 0) ? 'Never' : $this->Misc->date('m/d/Y \a\t g:iA', $user['User']['expiration']); ?></td>
 			<td>
 				<?= $this->Html->link('Edit', '/admin/users/edit/'.$user['User']['id']); ?>
 				

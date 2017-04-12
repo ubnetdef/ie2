@@ -16,4 +16,11 @@ class MiscHelper extends AppHelper {
 		
 		return sprintf(self::NAVBAR_MENU, ($active ? 'active' : ''), $name, implode('', $children));
 	}
+
+	public function date($format, $ts) {
+		$date = new DateTime('@'.$ts);
+		$date->setTimezone(new DateTimeZone(env('TIMEZONE_USER')));
+
+		return $date->format($format);
+	}
 }

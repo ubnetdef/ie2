@@ -119,7 +119,7 @@ class InjectAbstraction implements JsonSerializable {
 	}
 	public function getStartString() {
 		return ($this->getStart() > 0
-			? date(self::DATE_FORMAT, $this->getStart()) : self::STR_IMMEDIATELY);
+			? $this->_date($this->getStart()) : self::STR_IMMEDIATELY);
 	}
 	public function getManagerStartString() {
 		if ( !$this->isFuzzy() || $this->getStart() == 0 ) return $this->getStartString();
@@ -144,7 +144,7 @@ class InjectAbstraction implements JsonSerializable {
 	}
 	public function getEndString() {
 		return ($this->getEnd() > 0
-			? date(self::DATE_FORMAT, $this->getEnd()) : self::STR_NEVER);
+			? $this->_date($this->getEnd()) : self::STR_NEVER);
 	}
 	public function getManagerEndString() {
 		if ( !$this->isFuzzy() || $this->getEnd() == 0 ) return $this->getEndString();
@@ -283,5 +283,19 @@ class InjectAbstraction implements JsonSerializable {
 		}
 
 		return '+'.implode(', ', $string);
+	}
+
+	/**
+	 * Format a timestamp according to the
+	 *  user's timezone
+	 *
+	 * @param $ts The timestamp
+	 * @return string The formatted time from the timestamp
+	 */
+	private function _date($ts) {
+		$date = new DateTime('@'.$ts);
+		$date->setTimezone(new DateTimeZone(env('TIMEZONE_USER')));
+
+		return $date->format(self::DATE_FORMAT);
 	}
 }
