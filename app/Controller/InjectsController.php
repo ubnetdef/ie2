@@ -267,12 +267,15 @@ class InjectsController extends AppController {
 		}
 
 		// Find said hint, make sure we can unlock it
+		$hint_title = '-error-';
 		foreach ( $hints AS $h ) {
 			if ( $h['Hint']['id'] != $id ) continue;
 
 			if ( $h['Hint']['unlocked'] ) return $this->ajaxResponse(true);
 			if ( !$h['Hint']['dependency_met'] ) return $this->ajaxResponse(false);
 			if ( $h['Hint']['time_wait'] > 0 && $inject->getStart()+$h['Hint']['time_wait'] > time() ) return $this->ajaxResponse(false);
+
+			$hint_title = $h['Hint']['title'];
 		}
 
 		// If we got here, we're good
@@ -283,6 +286,13 @@ class InjectsController extends AppController {
 			'group_id' => $this->Auth->group('id'),
 			'time'     => time(),
 		]);
+
+		$this->logMessage(
+			'hint',
+			sprintf('Unlocked Hint "%s" for Inject #%d', $hint_title, $inject->getSequence()),
+			[],
+			$id
+		);
 
 		return $this->ajaxResponse(true);
 	}
