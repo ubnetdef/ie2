@@ -1,10 +1,11 @@
 <?php
 App::uses('AppController', 'Controller');
+App::uses('InjectAbstraction', 'Lib');
 
 class StaffController extends AppController {
 	public $helpers = ['ScoreEngine.EngineOutputter'];
 	public $uses = [
-		'Config', 'Inject', 'UsedHint', 'Log', 'Grade', 'Group', 'Schedule', 'Submission',
+		'Config', 'Inject', 'UsedHint', 'Hint', 'Log', 'Grade', 'Group', 'Schedule', 'Submission',
 		'ScoreEngine.Check', 'ScoreEngine.Service', 'ScoreEngine.Team'
 	];
 
@@ -109,6 +110,14 @@ class StaffController extends AppController {
 		if ( empty($inject) ) {
 			throw new NotFoundException('Unknown Inject');
 		}
+
+		$inject = new InjectAbstraction($inject, 0);
+
+		// Setup the InjectStyler helper with the latest inject
+		$this->helpers['InjectStyler']['inject'] = $inject;
+
+		$this->set('hints', $this->Hint->find('count', ['conditions' => ['inject_id' => $inject->getInjectId()]]));
+		$this->set('inject', $inject);
 	}
 
 	/**

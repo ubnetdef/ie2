@@ -21,8 +21,8 @@
 			<h2><?= $submission['Inject']['title']; ?></h2>
 
 			<p class="injectinfo">
-				<strong>To</strong>: <?= $submission['Group']['name']; ?> &lt;<?= $submission['User']['username']; ?>@<?= env('SERVER_NAME'); ?>&gt;<br />
-				<strong>From</strong>: SomeImportant Person &lt;im.super.important@<?= env('SERVER_NAME'); ?>&gt;
+				<strong>To</strong>: <?= $submission['Group']['name']; ?> &lt;<?= $submission['User']['username']; ?>@<?= env('INJECT_COMPANY_DOMAIN'); ?>&gt;<br />
+				<strong>From</strong>: <?= $submission['Inject']['from_name']; ?> &lt;<?= $submission['Inject']['from_email']; ?>&gt;
 			</p>
 
 			<hr />
