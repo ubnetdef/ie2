@@ -3,10 +3,9 @@ App::uses('AppController', 'Controller');
 App::uses('InjectAbstraction', 'Lib');
 
 class StaffController extends AppController {
-	public $helpers = ['ScoreEngine.EngineOutputter'];
 	public $uses = [
-		'Config', 'Inject', 'UsedHint', 'Hint', 'Log', 'Grade', 'Group', 'Schedule', 'Submission',
-		'ScoreEngine.Check', 'ScoreEngine.Service', 'ScoreEngine.Team', 'ScoreEngine.Round',
+		'Config', 'Inject', 'UsedHint', 'Hint', 'Log',
+		'Grade', 'Group', 'Schedule', 'Submission',
 	];
 
 	/**
@@ -57,18 +56,19 @@ class StaffController extends AppController {
 			'inject' => new stdClass(), // Nothing...for now
 		];
 
+		// Load+Setup ScoreEngine EngineOutputter, if ScoreEngine is enabled
+		if ( (bool)env('FEATURE_SCOREENGINE') ) {
+			$this->helpers[] = 'ScoreEngine.EngineOutputter';
+			$this->uses = array_merge($this->uses, ['ScoreEngine.Check', 'ScoreEngine.Team', 'ScoreEngine.Service']);
+
+			$this->helpers['ScoreEngine.EngineOutputter']['data'] = $this->Check->getChecksTable(
+				$this->Team->findAllByEnabled(true),
+				$this->Service->findAllByEnabled(true)
+			);
+		}
+
 		// We're at the staff page
 		$this->set('at_staff', true);
-	}
-
-	public function beforeRender() {
-		parent::beforeRender();
-
-		// Setup the ScoreEngine EngineOutputter
-		$this->helpers['ScoreEngine.EngineOutputter']['data'] = $this->Check->getChecksTable(
-			$this->Team->findAllByEnabled(true),
-			$this->Service->findAllByEnabled(true)
-		);
 	}
 
 	/**
@@ -89,7 +89,11 @@ class StaffController extends AppController {
 	public function api() {
 		$this->layout = 'ajax';
 
-		$this->set('round', $this->Round->getLastRound());
+		if ( (bool)env('FEATURE_SCOREENGINE') ) {
+			$this->uses[] = 'ScoreEngine.Round';
+			$this->set('round', $this->Round->getLastRound());
+		}
+
 		$this->set('active_injects', $this->Schedule->getInjects(env('GROUP_BLUE')));
 		$this->set('recent_expired', $this->Schedule->getRecentExpired(env('GROUP_BLUE')));
 		$this->set('recent_logs', $this->Log->find('all', [

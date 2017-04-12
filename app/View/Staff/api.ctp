@@ -5,8 +5,7 @@ $col_subrows = ((bool)env('FEATURE_SCOREENGINE') ? 'col-md-2' : 'col-md-6');
 <div class="row">
 	<?php if ( (bool)env('FEATURE_SCOREENGINE') ): ?>
 	<div class="col-md-8">
-		<h3>Uptime Overview</h3>
-		<h4>Round: <?= $round; ?></h4>
+		<h3>Uptime Overview (Round: <?= $round; ?>)</h3>
 		<?= $this->EngineOutputter->generateScoreBoard(); ?>
 	</div>
 	<?php endif; ?>
