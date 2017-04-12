@@ -6,28 +6,13 @@ class StaffController extends AppController {
 	public $helpers = ['ScoreEngine.EngineOutputter'];
 	public $uses = [
 		'Config', 'Inject', 'UsedHint', 'Hint', 'Log', 'Grade', 'Group', 'Schedule', 'Submission',
-		'ScoreEngine.Check', 'ScoreEngine.Service', 'ScoreEngine.Team'
+		'ScoreEngine.Check', 'ScoreEngine.Service', 'ScoreEngine.Team', 'ScoreEngine.Round',
 	];
 
 	/**
 	 * Pagination Settings
 	 */
 	public $paginate = [
-		'Log' => [
-			'fields' => [
-				'Log.id', 'Log.time', 'Log.type', 'Log.data',
-				'Log.ip', 'Log.message', 'User.username', 'User.group_id',
-			],
-			'contain' => [
-				'User' => [
-					'Group.name',
-				]
-			],
-			'order' => [
-				'Log.id' => 'DESC'
-			],
-		],
-
 		'OnlyGraded' => [
 			'fields' => [
 				'Submission.id', 'Submission.created', 'Submission.deleted',
@@ -93,11 +78,35 @@ class StaffController extends AppController {
 	 * @url /staff/index
 	 */
 	public function index() {
+		// Static page
+	}
+
+	/**
+	 * Competition Overview API
+	 *
+	 * @url /staff/api
+	 */
+	public function api() {
+		$this->layout = 'ajax';
+
+		$this->set('round', $this->Round->getLastRound());
 		$this->set('active_injects', $this->Schedule->getInjects(env('GROUP_BLUE')));
 		$this->set('recent_expired', $this->Schedule->getRecentExpired(env('GROUP_BLUE')));
-
-		$this->Paginator->settings += $this->paginate['Log'];
-		$this->set('recent_logs', $this->Paginator->paginate('Log'));
+		$this->set('recent_logs', $this->Log->find('all', [
+			'fields' => [
+				'Log.id', 'Log.time', 'Log.type', 'Log.data',
+				'Log.ip', 'Log.message', 'User.username', 'User.group_id',
+			],
+			'contain' => [
+				'User' => [
+					'Group.name',
+				]
+			],
+			'limit' => 20,
+			'order' => [
+				'Log.id' => 'DESC'
+			],
+		]));
 	}
 
 	/**
