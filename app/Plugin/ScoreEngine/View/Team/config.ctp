@@ -13,14 +13,28 @@
 			<div class="panel-heading"><?php echo $group; ?></div>
 			<div class="panel-body">
 
-			<div class="alert alert-info"><strong>WARNING</strong>: USERPASS's value must be in the format username||password.  If you do not follow this, your service will not score.</div>
-
 			<?php foreach ($options AS $opt): if ( $opt['hidden'] == 1 ) continue; ?>
 				<div class="form-group">
-					<label class="col-sm-3 control-label"><?php echo $opt['key']; ?></label>
-					<div class="col-sm-9">
-						<input type="text" name="opt<?php echo $opt['id']; ?>" class="form-control" value="<?php echo $opt['value']; ?>"<?php echo ($opt['edit'] != 1 ? ' readonly="readonly"' : ''); ?> />
+					<label class="col-sm-3 control-label"><?= ($opt['key'] == 'USERPASS' ? 'ACCOUNT' : $opt['key']); ?></label>
+					
+					<?php if ( $opt['key'] == 'USERPASS' ): list($user, $pass) = explode('||', $opt['value'], 2); ?>
+					<div class="col-sm-4">
+						<div class="input-group">
+							<div class="input-group-addon">USER</div>
+							<input type="text" name="opt<?= $opt['id']; ?>[user]" class="form-control" value="<?= $user; ?>" />
+						</div>
 					</div>
+					<div class="col-sm-4">
+						<div class="input-group">
+							<div class="input-group-addon">PASS</div>
+							<input type="text" name="opt<?= $opt['id']; ?>[pass]" class="form-control" value="<?= $pass; ?>" />
+						</div>
+					</div>
+					<?php else: ?>
+					<div class="col-sm-9">
+						<input type="text" name="opt<?= $opt['id']; ?>" class="form-control" value="<?= $opt['value']; ?>" />
+					</div>
+					<?php endif; ?>
 				</div>
 			<?php endforeach; ?>
 

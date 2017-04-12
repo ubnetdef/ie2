@@ -116,29 +116,32 @@ class TeamController extends ScoreEngineAppController {
 			foreach ( $this->request->data AS $opt => $value ) {
 				$opt = (int) str_replace('opt', '', $opt);
 				if ( $opt < 0 || !is_numeric($opt) ) continue;
+				if ( !$canEdit($opt) ) continue;
 
-				if ( $canEdit($opt) ) {
-					// Do some hacky magic with IPs to check subnets
-					$oldVal = $getOpt($opt);
-
-					if ( preg_match(self::IP_REGEX, $oldVal, $match) ) {
-						$newSubnet = explode('.', $value);
-						array_pop($newSubnet);
-						$newSubnet = implode('.', $newSubnet);
-
-						$oldSubnet = explode('.', $oldVal);
-						array_pop($oldSubnet);
-						$oldSubnet = implode('.', $oldSubnet);
-
-						if ( $newSubnet != $oldSubnet ) {
-							continue;
-						}
-					}
-
-					$this->TeamService->updateConfig($opt, $value);
-
-					$updateOpt($opt, $value);
+				// Only USERPASS is an array
+				if ( is_array($value) ) {
+					$value = $value['user'].'||'.$value['pass'];
 				}
+
+				// Do some hacky magic with IPs to check subnets
+				$oldVal = $getOpt($opt);
+
+				if ( preg_match(self::IP_REGEX, $oldVal, $match) ) {
+					$newSubnet = explode('.', $value);
+					array_pop($newSubnet);
+					$newSubnet = implode('.', $newSubnet);
+
+					$oldSubnet = explode('.', $oldVal);
+					array_pop($oldSubnet);
+					$oldSubnet = implode('.', $oldSubnet);
+
+					if ( $newSubnet != $oldSubnet ) {
+						continue;
+					}
+				}
+
+				$this->TeamService->updateConfig($opt, $value);
+				$updateOpt($opt, $value);
 			}
 
 			// Message

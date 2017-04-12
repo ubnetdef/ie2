@@ -103,6 +103,11 @@ class ScoreadminController extends ScoreEngineAppController {
 				$opt = (int) str_replace('opt', '', $opt);
 				if ( $opt < 0 || !is_numeric($opt) ) continue;
 
+				// Only USERPASS is an array
+				if ( is_array($value) ) {
+					$value = $value['user'].'||'.$value['pass'];
+				}
+
 				$this->TeamService->updateConfig($opt, $value);
 				$updateOpt($opt, $value);
 			}
