@@ -23,7 +23,17 @@ class ScoreboardController extends ScoreEngineAppController {
 	 * @url /score_engine/scoreboard/index
 	 */
 	public function index() {
-		$this->set('round', $this->Round->getLastRound());
 		$this->set('at_scoreboard', true);
+	}
+
+	/**
+	 * ScoreBoard API Content
+	 *
+	 * @url /scoreboard/api
+	 * @url /score_engine/scoreboard/api
+	 */
+	public function api() {
+		$this->layout = 'ajax';
+		$this->set('round', $this->Round->getLastRound());
 	}
 }

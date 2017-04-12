@@ -5,6 +5,7 @@
 
 // Scoreboard mapping
 Router::connect('/scoreboard', ['plugin' => 'ScoreEngine', 'controller' => 'scoreboard', 'action' => 'index']);
+Router::connect('/scoreboard/api', ['plugin' => 'ScoreEngine', 'controller' => 'scoreboard', 'action' => 'api']);
 
 // ScoreEngine admin mapping
 Router::connect('/admin/scoreengine', ['plugin' => 'ScoreEngine', 'controller' => 'scoreadmin', 'action' => 'index']);
