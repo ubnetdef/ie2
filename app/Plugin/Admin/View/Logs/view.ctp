@@ -2,7 +2,7 @@
 
 <div class="well">
 	<p>
-		<strong>Who</strong>: <?= $log['User']['username']; ?> (<?= $log['User']['Group']['name']; ?>)<br />
+		<strong>Who</strong>: <?= $log['User']['username']; ?><?= isset($log['User']['Group']['name']) ? ' ('.$log['User']['Group']['name'].')' : ''; ?><br />
 		<strong>IP</strong>: <?= $log['Log']['ip']; ?><br />
 		<strong>Type</strong>: <?= $log['Log']['type']; ?><br />
 		<strong>What</strong>: <?= $log['Log']['message']; ?><br />

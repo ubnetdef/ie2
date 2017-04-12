@@ -10,7 +10,9 @@
 	</tr>
 	<?php foreach ( $recent_logs AS $r ): ?>
 	<tr>
-		<td width="25%"><?= $r['User']['Group']['name']; ?> - <strong><?= $r['User']['username']; ?></strong></td>
+		<td width="25%">
+			<?= isset($r['User']['Group']['name']) ? $r['User']['Group']['name'].' - ' : ''; ?><strong><?= $r['User']['username']; ?></strong>
+		</td>
 		<td width="15%"><?= $this->Time->timeAgoInWords($r['Log']['time']); ?>
 		<td width="10%"><?= $r['Log']['type']; ?></td>
 		<td width="45%"><?= $r['Log']['message']; ?></td>
