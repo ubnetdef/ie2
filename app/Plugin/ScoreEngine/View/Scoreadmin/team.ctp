@@ -11,7 +11,7 @@
 	<div class="col-md-4">
 		<div class="panel panel-default">
 			<div class="panel-heading">
-				<?php echo $d['Service']['name']; ?>
+				<?php echo $d['Service']['name'] . ($d['Service']['enabled'] ? '' : ' (Disabled)'); ?>
 
 				<?php
 				if ( isset($latest[$d['Service']['name']]) ) {

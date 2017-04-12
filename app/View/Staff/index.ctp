@@ -1,5 +1,5 @@
 <?php
-$col_subrows = ((bool)env('FEATURE_SCOREENGINE') ? 'col-md-3' : 'col-md-6');
+$col_subrows = ((bool)env('FEATURE_SCOREENGINE') ? 'col-md-2' : 'col-md-6');
 
 $this->Html->scriptStart(['inline' => false, 'safe' => false]);
 echo 'setTimeout(window.location.reload.bind(window.location), 30 * 1000);';
@@ -9,14 +9,14 @@ $this->Html->scriptEnd();
 
 <div class="row">
 	<?php if ( (bool)env('FEATURE_SCOREENGINE') ): ?>
-	<div class="col-md-6">
+	<div class="col-md-8">
 		<h3>Uptime Overview</h3>
 		<?= $this->EngineOutputter->generateScoreBoard(); ?>
 	</div>
 	<?php endif; ?>
 
 	<div class="<?= $col_subrows; ?>">
-		<h3>Active Injects</h3>
+		<h3>Active</h3>
 		<div class="list-group">
 			<?php foreach ( $active_injects AS $i ): ?>
 			<a href="<?= $this->Html->url('/staff/inject/'.$i->getInjectId()); ?>" class="list-group-item<?= $i->isRecent() ? ' list-group-item-info' : ''; ?>"><?= $i->getTitle(); ?></a>
@@ -29,7 +29,7 @@ $this->Html->scriptEnd();
 	</div>
 	
 	<div class="<?= $col_subrows; ?>">
-		<h3>Recently Expired</h3>
+		<h3>Expired</h3>
 		<div class="list-group">
 			<?php foreach ( $recent_expired AS $i ): ?>
 			<a href="<?= $this->Html->url('/staff/inject/'.$i->getInjectId()); ?>" class="list-group-item<?= $i->isRecent() ? ' list-group-item-warning' : ''; ?>"><?= $i->getTitle(); ?></a>

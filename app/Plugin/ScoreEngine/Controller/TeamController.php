@@ -59,7 +59,8 @@ class TeamController extends ScoreEngineAppController {
 		$this->set('data', $this->Check->find('all', [
 			'conditions' => [
 				'team_id' => $this->team,
-				'service_id' => $sid
+				'service_id' => $sid,
+				'Service.enabled' => true,
 			],
 			'limit' => 20,
 			'order' => 'time DESC',
@@ -118,12 +119,14 @@ class TeamController extends ScoreEngineAppController {
 
 				if ( $canEdit($opt) ) {
 					// Do some hacky magic with IPs to check subnets
-					if ( preg_match(self::IP_REGEX, $value, $match) ) {
+					$oldVal = $getOpt($opt);
+
+					if ( preg_match(self::IP_REGEX, $oldVal, $match) ) {
 						$newSubnet = explode('.', $value);
 						array_pop($newSubnet);
 						$newSubnet = implode('.', $newSubnet);
 
-						$oldSubnet = explode('.', $getOpt($opt));
+						$oldSubnet = explode('.', $oldVal);
 						array_pop($oldSubnet);
 						$oldSubnet = implode('.', $oldSubnet);
 

@@ -91,7 +91,7 @@
 							$this->Misc->navbarItem('Grading Export', '/staff/export'),
 							((bool)env('FEATURE_SCOREENGINE') ? $this->Misc->navbarItem('ScoreEngine Export', '/admin/scoreengine/export', false) : ''),
 							'<li role="separator" class="divider"></li>',
-							((bool)env('FEATURE_SCOREENGINE') ? $this->Misc->navbarItem('ScoreEngine Manager', '/admin/scoreengine', false) : ''),
+							((bool)env('FEATURE_SCOREENGINE') ? $this->Misc->navbarItem('ScoreEngine Overview', '/admin/scoreengine', false) : ''),
 						]);
 					}
 

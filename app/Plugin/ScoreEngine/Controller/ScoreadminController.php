@@ -40,7 +40,7 @@ class ScoreadminController extends ScoreEngineAppController {
 
 		$tid = $team['Team']['id'];
 		$this->set('team', $team);
-		$this->set('data', $this->Check->getTeamChecks($tid));
+		$this->set('data', $this->Check->getTeamChecks($tid, false));
 		$this->set('latest', $this->Check->getLastTeamCheck($tid));
 	}
 
@@ -64,7 +64,7 @@ class ScoreadminController extends ScoreEngineAppController {
 		$this->set('data', $this->Check->find('all', [
 			'conditions' => [
 				'team_id' => $team['Team']['id'],
-				'service_id' => $sid
+				'service_id' => $sid,
 			],
 			'limit' => 20,
 			'order' => 'time DESC',
@@ -84,7 +84,7 @@ class ScoreadminController extends ScoreEngineAppController {
 		}
 
 		$this->set('team', $team);
-		$data = $this->TeamService->getData($team['Team']['id']);
+		$data = $this->TeamService->getData($team['Team']['id'], false);
 
 		$updateOpt = function($id, $value) use(&$data) {
 			foreach ( $data AS $group => &$options ) {

@@ -10,8 +10,8 @@ class ScoreboardController extends ScoreEngineAppController {
 
 		// Setup the ScoreEngine EngineOutputter
 		$this->helpers['ScoreEngine.EngineOutputter']['data'] = $this->Check->getChecksTable(
-			$this->Team->find('all'),
-			$this->Service->find('all')
+			$this->Team->findAllByEnabled(true),
+			$this->Service->findAllByEnabled(true)
 		);
 	}
 

@@ -10,23 +10,14 @@ class Check extends ScoreEngineAppModel {
 		'total'        => 'COUNT(Check.passed)',
 	];
 
-	public function getChecks() {
-		return $this->find('all', [
-			'fields' => [
-				'Check.total_passed', 'Check.total',
-				'Team.name',
-			],
-			'group' => [
-				'Check.team_id',
-			],
-			'order' => [
-				'Team.id',
-			],
-		]);
-	}
-
 	public function getChecksTable($teams, $services) {
 		$rtn = [];
+
+		$enabled_services = [];
+		foreach ( $services AS $s ) {
+			$enabled_services[] = $s['Service']['id'];
+		}
+
 		foreach ( $teams AS $t ) {
 			$team_name = $t['Team']['name'];
 
@@ -56,6 +47,8 @@ class Check extends ScoreEngineAppModel {
 		]);
 
 		foreach ( $data AS $d ) {
+			if ( !in_array($d['Service']['id'], $enabled_services) ) continue;
+
 			$team_name = $d['Team']['name'];
 			$service_name = $d['Service']['name'];
 
@@ -64,11 +57,11 @@ class Check extends ScoreEngineAppModel {
 		return $rtn;
 	}
 
-	public function getTeamChecks($tid) {
-		return $this->find('all', [
+	public function getTeamChecks($tid, $onlyEnabled=true) {
+		$conditions = [
 			'fields' => [
 				'Check.total_passed', 'Check.total',
-				'Service.name', 'Service.id',
+				'Service.name', 'Service.id', 'Service.enabled',
 			],
 			'conditions' => [
 				'Team.id' => $tid,
@@ -76,7 +69,13 @@ class Check extends ScoreEngineAppModel {
 			'group' => [
 				'Service.id',
 			],
-		]);
+		];
+
+		if ( $onlyEnabled ) {
+			$conditions['conditions']['Service.enabled'] = true;
+		}
+
+		return $this->find('all', $conditions);
 	}
 
 	public function getLastTeamCheck($tid) {
@@ -87,6 +86,7 @@ class Check extends ScoreEngineAppModel {
 
 			'conditions' => [
 				'Team.id' => $tid,
+				'Service.enabled' => true,
 				'Check.round = (SELECT MAX(number) FROM rounds WHERE completed = 1)',
 			],
 		]);

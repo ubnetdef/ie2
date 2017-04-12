@@ -6,20 +6,31 @@ class TeamService extends ScoreEngineAppModel {
 	public $belongsTo = ['ScoreEngine.Team', 'ScoreEngine.Service'];
 	public $recursive = 1;
 
-	public function getData($tid) {
-		$data = $this->find('all', [
+	public function getData($tid, $onlyEnabled=true) {
+		$conditions = [
 			'fields' => [
 				'TeamService.id', 'TeamService.key', 'TeamService.value',
 				'TeamService.edit', 'TeamService.hidden', 'Service.name', 'Service.id',
+				'Service.enabled',
 			],
 
 			'conditions' => [
 				'Team.id' => $tid,
 			],
-		]);
+		];
+
+		if ( $onlyEnabled ) {
+			$conditions['conditions']['Service.enabled'] = true;
+		}
+
+		$data = $this->find('all', $conditions);
 
 		$rtn = [];
 		foreach ( $data AS $d ) {
+			if ( !$d['Service']['enabled'] ) {
+				$d['Service']['name'] .= ' (Disabled)';
+			}
+
 			if ( !isset($rtn[$d['Service']['name']]) ) {
 				$rtn[$d['Service']['name']] = [];
 			}

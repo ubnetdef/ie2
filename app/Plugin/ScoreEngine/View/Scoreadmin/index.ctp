@@ -1,4 +1,4 @@
-<h2>Backend Panel - ScoreEngine Manager</h2>
+<h2>Backend Panel - ScoreEngine Overview</h2>
 
 <table class="table">
 	<thead>
