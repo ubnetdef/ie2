@@ -64,7 +64,7 @@ $this->Html->script('/vendor/bootstrap-datetimepicker/js/bootstrap-datetimepicke
 							<select class="form-control" id="inject_id" name="inject_id">
 								<?php foreach ( $injects AS $i ): ?>
 								<option value="<?= $i['Inject']['id']; ?>"<?= $i['Inject']['id'] == $inject ? ' selected="selected"' : ''; ?>>
-									<?= $i['Inject']['title']; ?>
+									<?= $i['Inject']['sequence']; ?>. <?= $i['Inject']['title']; ?>
 								</option>
 								<?php endforeach; ?>
 							</select>
@@ -92,7 +92,7 @@ $this->Html->script('/vendor/bootstrap-datetimepicker/js/bootstrap-datetimepicke
 								<option disabled>──────────</option>
 								<?php foreach ( $injects AS $i ): ?>
 								<option value="<?= $i['Inject']['id']; ?>"<?= $i['Inject']['id'] == $dep ? ' selected="selected"' : ''; ?>>
-									<?= $i['Inject']['title']; ?>
+									<?= $i['Inject']['sequence']; ?>. <?= $i['Inject']['title']; ?>
 								</option>
 								<?php endforeach; ?>
 							</select>
