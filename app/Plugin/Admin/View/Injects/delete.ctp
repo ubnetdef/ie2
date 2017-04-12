@@ -1,3 +1,8 @@
+<ol class="breadcrumb">
+	<li><a href="<?= $this->Html->url(['plugin' => 'admin', 'controller' => 'injects', 'action' => 'index']); ?>">Inject Manager</a></li>
+	<li class="active">Delete Inject</li>
+</ol>
+
 <h2>Backend Panel - Inject Manager</h2>
 
 <div class="row">

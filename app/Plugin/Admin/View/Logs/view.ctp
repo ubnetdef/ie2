@@ -1,3 +1,8 @@
+<ol class="breadcrumb">
+	<li><a href="<?= $this->Html->url(['plugin' => 'admin', 'controller' => 'logs', 'action' => 'index']); ?>">Log Manager</a></li>
+	<li class="active">View Log</li>
+</ol>
+
 <h2>Backend Panel - Log Manager</h2>
 
 <div class="well">

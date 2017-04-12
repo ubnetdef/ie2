@@ -1,3 +1,8 @@
+<ol class="breadcrumb">
+	<li><a href="<?= $this->Html->url(['plugin' => 'admin', 'controller' => 'groups', 'action' => 'index']); ?>">Group Manager</a></li>
+	<li class="active">Delete Group</li>
+</ol>
+
 <h2>Backend Panel - Group Manager</h2>
 
 <div class="row">

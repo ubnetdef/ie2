@@ -1,3 +1,8 @@
+<ol class="breadcrumb">
+	<li><a href="<?= $this->Html->url(['plugin' => 'BankWeb', 'controller' => 'products', 'action' => 'index']); ?>">Bank Products</a></li>
+	<li class="active">Purchase Confirmation</li>
+</ol>
+
 <div class="container">
 	<h2>Purchase Confirmation</h2>
 	<h3><?= $item['name']; ?></h3>

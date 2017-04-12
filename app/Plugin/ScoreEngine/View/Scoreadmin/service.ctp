@@ -1,3 +1,8 @@
+<ol class="breadcrumb">
+	<li><a href="<?= $this->Html->url(['plugin' => 'ScoreEngine', 'controller' => 'scoreadmin', 'action' => 'index']); ?>">ScoreEngine Overview</a></li>
+	<li class="active">Service Information</li>
+</ol>
+
 <h2>Backend Panel - Team Panel</h2>
 <h4><?= $team['Team']['name']; ?></h4>
 

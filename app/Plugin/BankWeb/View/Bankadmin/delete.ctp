@@ -1,3 +1,8 @@
+<ol class="breadcrumb">
+	<li><a href="<?= $this->Html->url(['plugin' => 'BankWeb', 'controller' => 'bankadmin', 'action' => 'index']); ?>">Bank Manager</a></li>
+	<li class="active">Delete Mapping</li>
+</ol>
+
 <h2>Backend Panel - BankWeb Manager</h2>
 
 <div class="row">
