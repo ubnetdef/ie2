@@ -89,6 +89,11 @@ class HintsController extends AdminAppController {
 			$res = $this->_validate();
 
 			if ( empty($res['errors']) ) {
+				// Fix parent_id
+				if ( $res['data']['parent_id'] == 0 ) {
+					$res['data']['parent_id'] = NULL;
+				}
+
 				$this->Hint->id = $id;
 				$this->Hint->save($res['data']);
 

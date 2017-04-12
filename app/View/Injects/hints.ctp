@@ -34,7 +34,7 @@
 					<?php elseif ( $hint_start > time() ): ?>
 
 					<td>
-						<button class="btn btn-primary unlock_hint" data-until="<?= $hint_start; ?>" data-hint="<?= $hint['Hint']['id']; ?>">
+						<button class="btn btn-primary countdown" data-until="<?= $hint_start; ?>" data-hint="<?= $hint['Hint']['id']; ?>">
 							Please wait <?= $hint_start - time(); ?> seconds
 						</button>
 					</td>

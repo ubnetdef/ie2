@@ -76,26 +76,12 @@
 
 <?php
 if ( (bool)env('FEATURE_HINT_SUBSYSTEM') && $hints > 0 ) {
+	$this->Html->script('/js/hint', ['inline' => false]);
+	$this->Html->scriptStart(['inline' => false, 'safe' => false]);
+	echo 'window.INJECT = '.$inject->getId().';';
+	echo '$(document).ready(Hint.init);';
+	$this->Html->scriptEnd();
+
 	echo $this->element('hint_modal', ['inject_title' => $inject->getTitle()]);
-	?>
-
-<script>
-$('.hint_modal').on('show.bs.modal', function (event) {
-	modal = $(this)
-
-	$.get('<?= $this->Html->url('/injects/hints/'.$inject->getId()); ?>').done(function(data) {
-		modal.find('.modal-body').html(data);
-	});
-});
-
-$(document).on('click', '.unlock_hint', function() {
-	hint_id = $(this).data('hint');
-	$.get('<?= $this->Html->url('/injects/unlock_hint/'.$inject->getId()); ?>/'+hint_id).done(function() {
-		$('.hint_modal').modal('show');
-	});
-});
-</script>
-
-	<?php
 }
 ?>
