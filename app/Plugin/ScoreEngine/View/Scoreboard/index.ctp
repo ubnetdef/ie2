@@ -9,13 +9,6 @@ function updateScoreboard() {
 }
 
 $(document).ready(function() {
-	$('.footer .container').append('<p><button class="btn btn-sm btn-primary hide_ui">Hide UI</button></p>');
-
-	$('.hide_ui').click(function() {
-		$('.navbar').hide();
-		$('.footer').hide();
-	});
-
 	updateScoreboard();
 	setTimeout(updateScoreboard, 30 * 1000);
 });

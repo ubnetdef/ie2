@@ -5,4 +5,9 @@ $(document).ready(function() {
 
 		$.get(window.BASE+"/pages/announcement_read/"+$aid);
 	});
+
+	$('.hide_ui').click(function() {
+		$('.navbar').hide();
+		$('.footer').hide();
+	});
 });

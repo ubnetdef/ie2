@@ -143,6 +143,10 @@
 
 <footer class="footer">
 	<div class="container">
+		<?php if ( $this->Auth->isStaff() ): ?>
+		<p><button class="btn btn-sm btn-primary hide_ui">Hide UI</button></p>
+		<?php endif; ?>
+		
 		<p class="text-muted pull-right">
 			ie<sup>2</sup> &mdash; <abbr title="<?= isset($version_long) ? $version_long : 'Unknown'; ?>">
 				<?= isset($version) ? $version : 'UNK'; ?>
