@@ -25,7 +25,7 @@
 			<td><?= $i->getInjectId(); ?></td>
 			<td><?= $i->getSequence(); ?></td>
 			<td>
-				<a href="<?= $this->Html->url('/schedule/flip/'.$i->getScheduleId()); ?>">
+				<a href="<?= $this->Html->url(['plugin' => 'admin', 'controller' => 'schedule', 'action' => 'flip', $i->getScheduleId()]); ?>">
 					<i class="glyphicon glyphicon-<?= $i->getScheduleActive() ? 'ok' : 'remove'; ?>"></i>
 				</a>
 			</td>
@@ -34,13 +34,13 @@
 			<td><?= $i->getManagerStartString(); ?></td>
 			<td><?= $i->getManagerEndString(); ?></td>
 			<td>
-				<a href="<?= $this->Html->url('/schedule/edit/'.$i->getScheduleId()); ?>" class="no-underline">
+				<a href="<?= $this->Html->url(['plugin' => 'admin', 'controller' => 'schedule', 'action' => 'edit', $i->getScheduleId()]); ?>" class="no-underline">
 					<i class="glyphicon glyphicon-edit"></i>
 				</a>
-				<a href="<?= $this->Html->url('/schedule/create/'.$i->getScheduleId()); ?>" class="no-underline">
+				<a href="<?= $this->Html->url(['plugin' => 'admin', 'controller' => 'schedule', 'action' => 'create', $i->getScheduleId()]); ?>" class="no-underline">
 					<i class="glyphicon glyphicon-share-alt"></i>
 				</a>
-				<a href="<?= $this->Html->url('/schedule/delete/'.$i->getScheduleId()); ?>" class="no-underline">
+				<a href="<?= $this->Html->url(['plugin' => 'admin', 'controller' => 'schedule', 'action' => 'delete', $i->getScheduleId()]); ?>" class="no-underline">
 					<i class="glyphicon glyphicon-remove"></i>
 				</a>
 			</td>
@@ -48,7 +48,7 @@
 		<?php endforeach; ?>
 		<tr>
 			<td colspan="9">
-				<a href="<?= $this->Html->url('/schedule/create'); ?>" class="btn btn-info pull-right">Schedule an Inject</a>
+				<a href="<?= $this->Html->url(['plugin' => 'admin', 'controller' => 'schedule', 'action' => 'create']); ?>" class="btn btn-info pull-right">Schedule an Inject</a>
 			</td>
 		</tr>
 	</tbody>

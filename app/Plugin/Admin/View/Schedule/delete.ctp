@@ -1,5 +1,5 @@
 <ol class="breadcrumb">
-	<li><a href="<?= $this->Html->url('/schedule/manager'); ?>">Schedule Manager</a></li>
+	<li><a href="<?= $this->Html->url(['plugin' => 'admin', 'controller' => 'schedule', 'action' => 'manager']); ?>">Schedule Manager</a></li>
 	<li class="active">Delete Schedule</li>
 </ol>
 

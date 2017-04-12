@@ -13,7 +13,7 @@ $this->Html->script('schedule', ['inline' => false]);
 $this->Html->scriptStart(['inline' => false, 'safe' => false]);
 echo 'window.START = '.($start * 1000).';';
 echo 'window.END = '.($end * 1000).';';
-echo 'window.SCHEDULE = "'.$this->Html->url('/schedule/api').'";';
+echo 'window.SCHEDULE = "'.$this->Html->url(['plugin' => 'admin', 'controller' => 'schedule', 'action' => 'api']).'";';
 $this->Html->scriptEnd();
 ?>
 

@@ -25,8 +25,8 @@ class ScheduleController extends AppController {
 	/**
 	 * Overview Page 
 	 *
-	 * @url /schedule
-	 * @url /schedule/index
+	 * @url /admin/schedule
+	 * @url /admin/schedule/index
 	 */
 	public function index() {
 		$bounds = $this->Schedule->getScheduleBounds();
@@ -38,7 +38,7 @@ class ScheduleController extends AppController {
 	/**
 	 * Overview API Page
 	 *
-	 * @url /schedule/api
+	 * @url /admin/schedule/api
 	 */
 	public function api() {
 		if (
@@ -89,7 +89,7 @@ class ScheduleController extends AppController {
 	/**
 	 * Manager Page
 	 *
-	 * @url /schedule/manager
+	 * @url /admin/schedule/manager
 	 */
 	public function manager() {
 		$this->set('injects', $this->Schedule->getAllSchedules(false));
@@ -98,8 +98,8 @@ class ScheduleController extends AppController {
 	/**
 	 * Create a schedule.
 	 *
-	 * @url /schedule/create
-	 * @url /schedule/create/<sid>
+	 * @url /admin/schedule/create
+	 * @url /admin/schedule/create/<sid>
 	 */
 	public function create($sid=false) {
 		if ( $this->request->is('post') ) {
@@ -137,10 +137,10 @@ class ScheduleController extends AppController {
 				);
 
 				$this->Flash->success($msg.'!');
-				return $this->redirect('/schedule/manager');
+				return $this->redirect(['plugin' => 'admin', 'controller' => 'schedule', 'action' => 'manager']);
 			} else {
 				$this->Flash->danger(sprintf('You are missing %s!', implode(', ', $missing)));
-				return $this->redirect('/schedule/create');
+				return $this->redirect(['plugin' => 'admin', 'controller' => 'schedule', 'action' => 'create']);
 			}
 		}
 
@@ -167,7 +167,7 @@ class ScheduleController extends AppController {
 	/**
 	 * Flip the status of a schedule
 	 *
-	 * @url /schedule/flip/<sid>
+	 * @url /admin/schedule/flip/<sid>
 	 */
 	public function flip($sid=false) {
 		$schedule = $this->Schedule->findById($sid);
@@ -195,13 +195,13 @@ class ScheduleController extends AppController {
 			$this->Flash->danger('Unknown Schedule ID');
 		}
 
-		return $this->redirect('/schedule/manager');
+		return $this->redirect(['plugin' => 'admin', 'controller' => 'schedule', 'action' => 'manager']);
 	}
 
 	/**
 	 * Edit a schedule.
 	 *
-	 * @url /schedule/edit/<sid>
+	 * @url /admin/schedule/edit/<sid>
 	 */
 	public function edit($sid) {
 		$schedule = $this->Schedule->findById($sid);
@@ -246,7 +246,7 @@ class ScheduleController extends AppController {
 				$this->Flash->danger('There are no changes to save');
 			}
 
-			return $this->redirect('/schedule/manager');
+			return $this->redirect(['plugin' => 'admin', 'controller' => 'schedule', 'action' => 'manager']);
 		}
 
 		// Load + setup the InjectStyler helper
@@ -264,7 +264,7 @@ class ScheduleController extends AppController {
 	/**
 	 * Delete a schedule. SPOOKY
 	 *
-	 * @url /schedule/delete/<sid>
+	 * @url /admin/schedule/delete/<sid>
 	 */
 	public function delete($sid) {
 		$schedule = $this->Schedule->findById($sid);
@@ -287,7 +287,7 @@ class ScheduleController extends AppController {
 			);
 
 			$this->Flash->success($msg);
-			return $this->redirect('/schedule/manager');
+			return $this->redirect(['plugin' => 'admin', 'controller' => 'schedule', 'action' => 'manager']);
 		}
 
 		// Load + setup the InjectStyler helper

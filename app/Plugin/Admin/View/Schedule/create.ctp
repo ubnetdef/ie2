@@ -1,5 +1,5 @@
 <ol class="breadcrumb">
-	<li><a href="<?= $this->Html->url('/schedule/manager'); ?>">Schedule Manager</a></li>
+	<li><a href="<?= $this->Html->url(['plugin' => 'admin', 'controller' => 'schedule', 'action' => 'manager']); ?>">Schedule Manager</a></li>
 	<?php if ( isset($schedule) ): ?>
 	<li class="active">Extend Schedule</li>
 	<?php else: ?>
@@ -37,7 +37,7 @@
 
 			<hr />
 
-			<?= $this->element('forms/schedule', [
+			<?= $this->element('Admin.schedule', [
 				'injects' => $injects,
 				'groups'  => $groups,
 				'sid'     => 0,
