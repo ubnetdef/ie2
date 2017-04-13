@@ -1,3 +1,14 @@
+<?php
+// Summernote
+$this->Html->css('/vendor/summernote/summernote', ['inline' => false]);
+$this->Html->script('/vendor/summernote/summernote.min', ['inline' => false]);
+
+// Datepicker
+$this->Html->script('/vendor/moment.min', ['inline' => false]);
+$this->Html->script('/vendor/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min', ['inline' => false]);
+$this->Html->css('/vendor/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min', ['inline' => false]);
+?>
+
 <h2>Backend Panel - Site Manager</h2>
 
 <div class="row">
@@ -123,11 +134,8 @@
 
 <script>
 $(document).ready(function() {
-	$('.wysiwyg').wysihtml5({
-		toolbar: {
-			html: true,
-			size: "xs",
-		},
+	$('.wysiwyg').summernote({
+		height: 200,
 	});
 
 	$('.datetimepicker').datetimepicker({
@@ -152,7 +160,7 @@ $(document).ready(function() {
 				$(target+' form input[name=key]').val(data.key);
 				$(target+' form textarea[name=value]').val(data.value);
 			} else {
-				$(target+' form textarea[name=content]').data('wysihtml5').editor.setValue(data.content);
+				$(target+' #content_editor').summernote('code', data.content);
 				$(target+' form input[name=active][value='+(data.active ? 1 : 0)+']').prop('checked', true);
 
 				if ( data.expiration > 0 ) {
@@ -175,7 +183,7 @@ $(document).ready(function() {
 			$(target+' form input[name=key]').val('');
 			$(target+' form textarea[name=value]').val('');
 		} else {
-			$(target+' form textarea[name=content]').data('wysihtml5').editor.setValue('');
+			$(target+' #content_editor').summernote('code', '');
 			$(target+' form input[name=expiration]').val('0');
 			$(target+' form input[name=active][value=0]').prop('checked', true);
 		}
@@ -191,6 +199,8 @@ $(document).ready(function() {
 				input.val(dtp.date().utc().unix());
 			}
 		});
+
+		$('#content').val($('#content_editor').summernote('code'));
 	});
 });
 </script>

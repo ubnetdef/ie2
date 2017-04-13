@@ -1,7 +1,7 @@
 <?php
-// Bootstrap WYSIWYG
-$this->Html->css('/vendor/bootstrap3-wysiwyg/bootstrap3-wysihtml5.min', ['inline' => false]);
-$this->Html->script('/vendor/bootstrap3-wysiwyg/bootstrap3-wysihtml5.all.min', ['inline' => false]);
+// Summernote
+$this->Html->css('/vendor/summernote/summernote', ['inline' => false]);
+$this->Html->script('/vendor/summernote/summernote.min', ['inline' => false]);
 
 // DateTimePicker
 $this->Html->css('/vendor/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min', ['inline' => false]);
@@ -23,14 +23,15 @@ $this->Html->script('/vendor/bootstrap-datetimepicker/js/bootstrap-datetimepicke
 	</div>
 
 	<div class="form-group">
-		<label for="content" class="col-sm-3 control-label">Content</label>
+		<label for="content_editor" class="col-sm-3 control-label">Content</label>
 		<div class="col-sm-9">
-			<textarea class="form-control wysiwyg" name="content" id="content" rows="10"></textarea>
+			<input type="hidden" name="content" id="content" />
+			<div id="content_editor" class="wysiwyg"></div>
 		</div>
 	</div>
 	<div class="row">
 		<div class="col-sm-9 col-sm-offset-3">
-			<p class="help-block">This will be shown to the assigned group.</p>
+			<p class="help-block">The well...hint content.</p>
 		</div>
 	</div>
 
@@ -118,11 +119,8 @@ $(document).ready(function() {
 		format: "H[h] mm[m] s[s]",
 	});
 
-	$('.wysiwyg').wysihtml5({
-		toolbar: {
-			html: true,
-			size: "xs",
-		},
+	$('.wysiwyg').summernote({
+		height: 200,
 	});
 
 	// Bind on form submit
@@ -136,10 +134,12 @@ $(document).ready(function() {
 				input.val(diff);
 			}
 		});
+
+		$('#content').val($('#content_editor').summernote('code'));
 	});
 
 	<?php if ( !empty($hint) ): ?>
-	$('#content').html('<?php echo addslashes($hint['Hint']['content']); ?>');
+	$('#content_editor').summernote('code', '<?= addslashes($hint['Hint']['content']); ?>');
 
 	$('#time_wait_datepicker').data('DateTimePicker').date(
 		moment().startOf('day').seconds(<?= $hint['Hint']['time_wait']; ?>)
