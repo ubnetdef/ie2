@@ -160,6 +160,7 @@ class InjectAbstraction implements JsonSerializable {
 	 */
 	public function getDuration() {
 		if ( $this->getEnd() == 0 ) return 0;
+		if ( $this->getStart() == 0 ) return 0;
 
 		$duration = ($this->getEnd() - $this->getStart());
 		return round($duration / 60);
