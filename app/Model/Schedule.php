@@ -50,11 +50,12 @@ class Schedule extends AppModel {
 
 			// Ordering is hard. Sorry.
 			// We'll do base ordering on the order.
-			// Then start times, then end times that aren't
+			// Following that, sequence number,
+			// and then end times that aren't
 			// forever.
 			'order' => [
 				'Schedule.order ASC',
-				'Schedule.start ASC',
+				'Inject.sequence ASC',
 				'(Schedule.end > 0) DESC',
 				'Schedule.end ASC',
 			],
