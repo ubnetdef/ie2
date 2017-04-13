@@ -1,12 +1,3 @@
-<?php
-$this->Html->css('/vendor/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min', ['inline' => false]);
-$this->Html->css('/vendor/bootstrap3-wysiwyg/bootstrap3-wysihtml5.min', ['inline' => false]);
-
-$this->Html->script('/vendor/moment.min', ['inline' => false]);
-$this->Html->script('/vendor/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min', ['inline' => false]);
-$this->Html->script('/vendor/bootstrap3-wysiwyg/bootstrap3-wysihtml5.all.min', ['inline' => false]);
-?>
-
 <div class="modal fade" id="announcementModal" tabindex="-1">
 	<div class="modal-dialog">
 		<div class="modal-content">
@@ -19,9 +10,10 @@ $this->Html->script('/vendor/bootstrap3-wysiwyg/bootstrap3-wysihtml5.all.min', [
 				</div>
 				<div class="modal-body">
 					<div class="form-group">
-						<label for="content" class="col-sm-2 control-label">Content</label>
+						<label for="content_editor" class="col-sm-2 control-label">Content</label>
 						<div class="col-sm-10">
-							<textarea class="form-control wysiwyg" rows="10" id="content" name="content"></textarea>
+							<input type="hidden" name="content" id="content" />
+							<div id="content_editor" class="wysiwyg"></div>
 						</div>
 					</div>
 

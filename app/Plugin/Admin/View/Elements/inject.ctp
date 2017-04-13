@@ -1,7 +1,7 @@
 <?php
-$this->Html->css('/vendor/bootstrap3-wysiwyg/bootstrap3-wysihtml5.min', ['inline' => false]);
+$this->Html->css('/vendor/summernote/summernote', ['inline' => false]);
 
-$this->Html->script('/vendor/bootstrap3-wysiwyg/bootstrap3-wysihtml5.all.min', ['inline' => false]);
+$this->Html->script('/vendor/summernote/summernote.min', ['inline' => false]);
 ?>
 
 <form method="post" class="form-horizontal" enctype="multipart/form-data">
@@ -18,9 +18,10 @@ $this->Html->script('/vendor/bootstrap3-wysiwyg/bootstrap3-wysihtml5.all.min', [
 	</div>
 
 	<div class="form-group">
-		<label for="content" class="col-sm-3 control-label">Content</label>
+		<label for="content_editor" class="col-sm-3 control-label">Content</label>
 		<div class="col-sm-9">
-			<textarea class="form-control wysiwyg" name="content" id="content" rows="10"></textarea>
+			<input type="hidden" name="content" id="content" />
+			<div id="content_editor" class="wysiwyg"></div>
 		</div>
 	</div>
 	<div class="row">
@@ -54,9 +55,10 @@ $this->Html->script('/vendor/bootstrap3-wysiwyg/bootstrap3-wysihtml5.all.min', [
 	</div>
 
 	<div class="form-group">
-		<label for="grading_guide" class="col-sm-3 control-label">Grading Guide</label>
+		<label for="grading_guide_editor" class="col-sm-3 control-label">Grading Guide</label>
 		<div class="col-sm-9">
-			<textarea class="form-control wysiwyg" name="grading_guide" id="grading_guide" rows="10"></textarea>
+			<input type="hidden" name="grading_guide" id="grading_guide" />
+			<div id="grading_guide_editor" class="wysiwyg"></div>
 		</div>
 	</div>
 	<div class="row">
@@ -155,11 +157,14 @@ $this->Html->script('/vendor/bootstrap3-wysiwyg/bootstrap3-wysihtml5.all.min', [
 
 <script>
 $(document).ready(function() {
-	$('.wysiwyg').wysihtml5({
-		toolbar: {
-			html: true,
-			size: "xs",
-		},
+	$('.wysiwyg').summernote({
+		height: 200,
+	});
+
+	// Bind on form submit
+	$('form').submit(function() {
+		$('#content').val($('#content_editor').summernote('code'));
+		$('#grading_guide').val($('#grading_guide_editor').summernote('code'));
 	});
 
 	$('.attachment_more').click(function() {
@@ -179,8 +184,8 @@ $(document).ready(function() {
 	});
 
 	<?php if ( !empty($inject) ): ?>
-	$('#content').html('<?php echo addslashes($inject['Inject']['content']); ?>');
-	$('#grading_guide').html('<?php echo addslashes($inject['Inject']['grading_guide']); ?>');
+	$('#content_editor').summernote('code', '<?= addslashes($inject['Inject']['content']); ?>');
+	$('#grading_guide_editor').summernote('code', '<?= addslashes($inject['Inject']['grading_guide']); ?>');
 	<?php endif; ?>
 });
 </script>
