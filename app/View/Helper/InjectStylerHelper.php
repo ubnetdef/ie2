@@ -53,11 +53,7 @@ class InjectStylerHelper extends AppHelper {
 	public function timeOutput($inject) {
 		$template = '<strong>Time</strong>: %s<br /><strong>Due</strong>: %s<br /><strong>Duration</strong>: %s Minutes';
 
-		// Duration infinite fix
-		$duration = $inject->getDuration();
-		if ( $duration == 0 ) $duration = '&infin;';
-
-		return sprintf($template, $inject->getStartString(), $inject->getEndString(), $duration);
+		return sprintf($template, $inject->getStartString(), $inject->getEndString(), $inject->getDurationString());
 	}
 
 	/**

@@ -124,7 +124,7 @@ class InjectAbstraction implements JsonSerializable {
 	public function getManagerStartString() {
 		if ( !$this->isFuzzy() || $this->getStart() == 0 ) return $this->getStartString();
 
-		return $this->_fuzzyDuration($this->getStart());
+		return $this->_fuzzyDuration('+', $this->getStart());
 	}
 
 	/**
@@ -149,7 +149,7 @@ class InjectAbstraction implements JsonSerializable {
 	public function getManagerEndString() {
 		if ( !$this->isFuzzy() || $this->getEnd() == 0 ) return $this->getEndString();
 
-		return $this->_fuzzyDuration($this->getEnd());
+		return $this->_fuzzyDuration('+', $this->getEnd());
 	}
 
 	/**
@@ -160,10 +160,21 @@ class InjectAbstraction implements JsonSerializable {
 	 */
 	public function getDuration() {
 		if ( $this->getEnd() == 0 ) return 0;
-		if ( $this->getStart() == 0 ) return 0;
+		if ( $this->getStart() == 0 ) return -1;
 
 		$duration = ($this->getEnd() - $this->getStart());
 		return round($duration / 60);
+	}
+	public function getDurationString() {
+		$duration = $this->getDuration();
+
+		if ( $duration < 0 ) {
+			return 'N/A';
+		} else if ( $duration == 0 ) {
+			return '&infin;'
+		} else {
+			return $this->_fuzzyDuration($duration);
+		}
 	}
 
 	/**
@@ -257,7 +268,7 @@ class InjectAbstraction implements JsonSerializable {
 	 * @param $time The time you're checking
 	 * @return string The fuzzy time
 	 */
-	private function _fuzzyDuration($time) {
+	private function _fuzzyDuration($prepend, $time) {
 		$start = new DateTime('@'.COMPETITION_START);
 		$end = new DateTime('@'.$time);
 		$diff = $end->diff($start);
@@ -283,7 +294,7 @@ class InjectAbstraction implements JsonSerializable {
 			}
 		}
 
-		return '+'.implode(', ', $string);
+		return $prepend.implode(', ', $string);
 	}
 
 	/**
