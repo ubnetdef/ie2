@@ -63,8 +63,19 @@ class Check extends ScoreEngineAppModel {
 				'Check.total_passed', 'Check.total',
 				'Service.name', 'Service.id', 'Service.enabled',
 			],
+			'joins' => [
+				[
+					'table' => 'rounds',
+					'alias' => 'Round',
+					'type'  => 'left',
+					'conditions' => [
+						'Round.number = Check.round',
+					],
+				]
+			],
 			'conditions' => [
 				'Team.id' => $tid,
+				'Round.completed' => true,
 			],
 			'group' => [
 				'Service.id',
