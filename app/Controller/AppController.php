@@ -96,7 +96,6 @@ class AppController extends Controller {
 			$parser = \WyriHaximus\HtmlCompress\Factory::construct();
 			$compressedHtml = $parser->compress($this->response->body());
 
-			$this->response->compress();
 			$this->response->body($compressedHtml);
 		}
 	}
