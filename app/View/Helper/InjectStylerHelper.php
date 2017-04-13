@@ -51,7 +51,7 @@ class InjectStylerHelper extends AppHelper {
 	 * @return string The time content
 	 */
 	public function timeOutput($inject) {
-		$template = '<strong>Time</strong>: %s<br /><strong>Due</strong>: %s<br /><strong>Duration</strong>: %s Minutes';
+		$template = '<strong>Time</strong>: %s<br /><strong>Due</strong>: %s<br /><strong>Duration</strong>: %s';
 
 		return sprintf($template, $inject->getStartString(), $inject->getEndString(), $inject->getDurationString());
 	}
