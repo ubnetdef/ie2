@@ -173,7 +173,7 @@ class InjectAbstraction implements JsonSerializable {
 		} else if ( $duration == 0 ) {
 			return '&infin;';
 		} else {
-			return $this->_fuzzyDuration($duration);
+			return $this->_fuzzyDuration('', $duration);
 		}
 	}
 
