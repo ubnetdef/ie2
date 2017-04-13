@@ -10,7 +10,7 @@ function updateScoreboard() {
 
 $(document).ready(function() {
 	updateScoreboard();
-	setTimeout(updateScoreboard, 30 * 1000);
+	setInterval(updateScoreboard, 30 * 1000);
 });
 <?php
 $this->Html->scriptEnd();

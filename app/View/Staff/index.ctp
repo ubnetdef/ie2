@@ -8,7 +8,7 @@ function loadCompetitionCentral() {
 }
 
 loadCompetitionCentral();
-setTimeout(loadCompetitionCentral, 30 * 1000);
+setInterval(loadCompetitionCentral, 30 * 1000);
 <?php
 $this->Html->scriptEnd();
 ?>
