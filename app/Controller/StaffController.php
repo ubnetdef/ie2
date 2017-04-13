@@ -271,6 +271,10 @@ class StaffController extends AppController {
 		// Grab all the injects
 		$seenInjects = [];
 		foreach ( $injects AS $i ) {
+			// We ignore injects with a sequence number of zero
+			if ( $i->getSequence() == 0 ) continue;
+
+			// One sequence number pls
 			if ( in_array($i->getSequence(), $seenInjects) ) continue;
 
 			$seenInjects[] = $i->getSequence();
