@@ -15,11 +15,14 @@ echo $this->Html->script('injectengine', array('inline' => false));
 		<div class="tab-content">
 			<div class="tab-pane fade in active" id="active_injects">
 				<div class="list-group">
+					<button type="button" class="list-group-item">Loading...</button>
+				</a>
 				</div>
 			</div>
 
 			<div class="tab-pane fade" id="all_injects">
 				<div class="list-group">
+					<button type="button" class="list-group-item">Loading...</button>
 				</div>
 			</div>
 		</div>
