@@ -13,7 +13,7 @@ $col_subrows = ((bool)env('FEATURE_SCOREENGINE') ? 'col-md-2' : 'col-md-6');
 	<div class="<?= $col_subrows; ?>">
 		<h3>Active</h3>
 		<div class="list-group">
-			<?php foreach ( $active_injects AS $i ): ?>
+			<?php foreach ( $active_injects AS $i ): if ( $i->isExpired() ) continue; ?>
 			<a href="<?= $this->Html->url('/staff/inject/'.$i->getInjectId()); ?>" class="list-group-item<?= $i->isRecent() ? ' list-group-item-info' : ''; ?>"><?= $i->getTitle(); ?></a>
 			<?php endforeach; ?>
 
