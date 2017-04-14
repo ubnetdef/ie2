@@ -46,7 +46,7 @@ InjectEngine = {
 					expired: false,
 					title: "No injects found",
 					start: "N/A",
-					end: "N/A"
+					end: "N/A",
 					id: 0,
 				}));
 			}
