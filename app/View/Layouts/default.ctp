@@ -144,7 +144,7 @@
 <footer class="footer">
 	<div class="container">
 		<?php if ( $this->Auth->isStaff() ): ?>
-		<p class="pull-left"><button class="btn btn-sm btn-primary hide_ui">Hide UI</button></p>
+		<p class="pull-left"><button class="btn btn-xs btn-default hide_ui">Hide UI</button></p>
 		<?php endif; ?>
 		
 		<p class="text-muted pull-right">
