@@ -4,6 +4,7 @@ InjectEngine = {
 	_updateInterval: null,
 
 	_tpl: null,
+	_tplEmpty: null,
 
 	init: function() {
 		console.log('InjectEngine-JS: Init');
@@ -11,6 +12,10 @@ InjectEngine = {
 		// Setup the template
 		src = $("#inject-list-tpl").html();
 		this._tpl = Handlebars.compile(src);
+
+		// Setup the template
+		src = $("#inject-list-empty-tpl").html();
+		this._tplEmpty = Handlebars.compile(src);
 
 		// Auto update every 5 seconds
 		this.update();
@@ -20,6 +25,7 @@ InjectEngine = {
 	update: function() {
 		injectURL = window.BASE+"injects";
 		tpl = this._tpl;
+		tplEmpty = this._tplEmpty;
 
 		$.getJSON(injectURL+"/api", function(data) {
 			// Clear out everything
@@ -41,14 +47,11 @@ InjectEngine = {
 			});
 
 			if ( $('#active_injects > div').children().length == 0 ) {
-				$('#active_injects > div').append(tpl({
-					submitted: false,
-					expired: false,
-					title: "No injects found",
-					start: "N/A",
-					end: "N/A",
-					id: 0,
-				}));
+				$('#active_injects > div').append(tplEmpty());
+			}
+
+			if ( $('#all_injects > div').children().length == 0 ) {
+				$('#all_injects > div').append(tplEmpty());
 			}
 		});
 	},
