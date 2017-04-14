@@ -40,7 +40,7 @@ InjectEngine = {
 				}
 			});
 
-			if ( $('#active_injects > div').length == 0 ) {
+			if ( $('#active_injects > div').children().length == 0 ) {
 				$('#active_injects > div').append(tpl({
 					submitted: false,
 					expired: false,
