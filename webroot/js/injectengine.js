@@ -39,6 +39,17 @@ InjectEngine = {
 					$('#active_injects > div').append(tpl($d));
 				}
 			});
+
+			if ( $('#active_injects > div').length == 0 ) {
+				$('#active_injects > div').append(tpl({
+					submitted: false,
+					expired: false,
+					title: "No injects found",
+					start: "N/A",
+					end: "N/A"
+					id: 0,
+				}));
+			}
 		});
 	},
 };
