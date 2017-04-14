@@ -76,9 +76,9 @@ class ScheduleController extends AppController {
 				'inject_id'  => $s->getInjectId(),
 				'text'       => $s->getTitle().' ('.$s->getGroupName().')',
 				'group'      => $s->getGroupName(),
-				'start_date' => $this->_date('d-m-Y G:i:s', $s->getStart() > 0 ? $s->getStart() : $bounds['min']),
+				'start_date' => tz_date('d-m-Y G:i:s', $s->getStart() > 0 ? $s->getStart() : $bounds['min']),
 				'start_ts'   => $s->getStart(),
-				'end_date'   => $this->_date('d-m-Y G:i:s', $s->getEnd() > 0 ? $s->getEnd() : $bounds['max']),
+				'end_date'   => tz_date('d-m-Y G:i:s', $s->getEnd() > 0 ? $s->getEnd() : $bounds['max']),
 				'end_ts'     => $s->getEnd(),
 			];
 		}

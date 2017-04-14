@@ -221,19 +221,4 @@ class AppController extends Controller {
 
 		return $result;
 	}
-
-	/**
-	 * Format a timestamp according to the
-	 *  user's timezone
-	 *
-	 * @param $format The format according to `date`
-	 * @param $ts The timestamp
-	 * @return string The formatted time from the timestamp
-	 */
-	protected function _date($format, $ts) {
-		$date = new DateTime('@'.$ts);
-		$date->setTimezone(new DateTimeZone(env('TIMEZONE_USER')));
-
-		return $date->format($format);
-	}
 }

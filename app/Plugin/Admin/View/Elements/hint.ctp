@@ -2,6 +2,8 @@
 // Summernote
 $this->Html->css('/vendor/summernote/summernote', ['inline' => false]);
 $this->Html->script('/vendor/summernote/summernote.min', ['inline' => false]);
+$this->Html->script('/vendor/summernote-cleaner/summernote-cleaner', ['inline' => false]);
+$this->Html->script('/js/summernote.config', ['inline' => false]);
 
 // DateTimePicker
 $this->Html->css('/vendor/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min', ['inline' => false]);
@@ -121,6 +123,7 @@ $(document).ready(function() {
 
 	$('.wysiwyg').summernote({
 		height: 200,
+		cleaner: window.SUMMERNOTE_CLEANER_CONFIG,
 	});
 
 	// Bind on form submit

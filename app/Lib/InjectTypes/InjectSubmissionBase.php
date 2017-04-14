@@ -108,6 +108,6 @@ abstract class InjectSubmissionBase {
 	 * @return string The date
 	 */
 	protected function _date($timestamp) {
-		return date('F j, Y \a\t g:iA', $timestamp);
+		return tz_date('F j, Y \a\t g:iA', $timestamp);
 	}
 }

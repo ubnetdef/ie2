@@ -1,7 +1,8 @@
 <?php
 $this->Html->css('/vendor/summernote/summernote', ['inline' => false]);
-
 $this->Html->script('/vendor/summernote/summernote.min', ['inline' => false]);
+$this->Html->script('/vendor/summernote-cleaner/summernote-cleaner', ['inline' => false]);
+$this->Html->script('/js/summernote.config', ['inline' => false]);
 ?>
 
 <form method="post" class="form-horizontal" enctype="multipart/form-data">
@@ -159,6 +160,7 @@ $this->Html->script('/vendor/summernote/summernote.min', ['inline' => false]);
 $(document).ready(function() {
 	$('.wysiwyg').summernote({
 		height: 200,
+		cleaner: window.SUMMERNOTE_CLEANER_CONFIG,
 	});
 
 	// Bind on form submit
@@ -184,8 +186,8 @@ $(document).ready(function() {
 	});
 
 	<?php if ( !empty($inject) ): ?>
-	$('#content_editor').summernote('code', '<?= addslashes($inject['Inject']['content']); ?>');
-	$('#grading_guide_editor').summernote('code', '<?= addslashes($inject['Inject']['grading_guide']); ?>');
+	$('#content_editor').summernote('code', <?= json_encode($inject['Inject']['content']); ?>);
+	$('#grading_guide_editor').summernote('code', <?= json_encode($inject['Inject']['grading_guide']); ?>);
 	<?php endif; ?>
 });
 </script>
