@@ -142,7 +142,7 @@ $(document).ready(function() {
 	});
 
 	<?php if ( !empty($hint) ): ?>
-	$('#content_editor').summernote('code', '<?= addslashes($hint['Hint']['content']); ?>');
+	$('#content_editor').summernote('code', <?= json_encode($hint['Hint']['content']); ?>);
 
 	$('#time_wait_datepicker').data('DateTimePicker').date(
 		moment().startOf('day').seconds(<?= $hint['Hint']['time_wait']; ?>)
