@@ -94,7 +94,12 @@ class StaffController extends AppController {
 			$this->set('round', $this->Round->getLastRound());
 		}
 
-		$this->set('active_injects', $this->Schedule->getInjects(env('GROUP_BLUE')));
+		$active_injects = $this->Schedule->getInjects(env('GROUP_BLUE'));
+		foreach ( $active_injects AS $i => $inject ) {
+			if ( $inject->isExpired() ) unset($active_injects[$i]);
+		}
+
+		$this->set('active_injects', $active_injects);
 		$this->set('recent_expired', $this->Schedule->getRecentExpired(env('GROUP_BLUE')));
 		$this->set('recent_logs', $this->Log->find('all', [
 			'fields' => [
