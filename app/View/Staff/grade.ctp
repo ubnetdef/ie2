@@ -28,6 +28,10 @@
 			<hr />
 
 			<?= $this->InjectStyler->contentOutput($submission['Inject']['content'], $this->Auth->item()); ?>
+
+			<hr />
+
+			<?= $submission['Inject']['grading_guide']; ?>
 		</div>
 	</div>
 	<div class="col-md-6">
