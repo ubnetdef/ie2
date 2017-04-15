@@ -33,6 +33,31 @@ class ScoreboardController extends ScoreEngineAppController {
 	}
 
 	/**
+	 * ScoreBoard Overview Page
+	 *
+	 * @url /scoreboard/overview
+	 * @url /score_engine/scoreboard/overview
+	 */
+	public function overview() {
+		// Require staff
+		$this->Auth->protect(env('GROUP_STAFF'));
+
+		$overview = $this->Check->find('all', [
+			'fields' => [
+				'Check.total_passed', 'Check.total',
+				'Team.name',
+			],
+			'group' => [
+				'Team.id',
+			],
+		]);
+
+		$this->set('at_staff', true);
+		$this->set('round', $this->Round->getLastRound());
+		$this->set('overview', $overview);
+	}
+
+	/**
 	 * ScoreBoard API Content
 	 *
 	 * @url /scoreboard/api

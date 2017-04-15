@@ -84,6 +84,7 @@
 					if ( $this->Auth->isStaff() ) {
 						echo $this->Misc->navbarDropdown('Competition Central', isset($at_staff), [
 							$this->Misc->navbarItem('Competition Overview', '/staff'),
+							$this->Misc->navbarItem('Scoreboard Overview', '/scoreboard/overview'),
 							'<li role="separator" class="divider"></li>',
 							$this->Misc->navbarItem('Grader Island', '/staff/graders'),
 							$this->Misc->navbarItem('Scheduler', '/admin/schedule'),
