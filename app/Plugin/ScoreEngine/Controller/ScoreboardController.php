@@ -51,7 +51,7 @@ class ScoreboardController extends ScoreEngineAppController {
 				'Team.id',
 			],
 			'order' => [
-				'Check.total_passed',
+				'Check.total_passed DESC',
 			],
 		]);
 
