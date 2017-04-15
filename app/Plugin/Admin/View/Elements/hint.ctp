@@ -2,7 +2,7 @@
 // Summernote
 $this->Html->css('/vendor/summernote/summernote', ['inline' => false]);
 $this->Html->script('/vendor/summernote/summernote.min', ['inline' => false]);
-//$this->Html->script('/vendor/summernote-cleaner/summernote-cleaner', ['inline' => false]);
+$this->Html->script('/vendor/summernote-cleaner/summernote-cleaner', ['inline' => false]);
 $this->Html->script('/js/summernote.config', ['inline' => false]);
 
 // DateTimePicker
