@@ -130,7 +130,7 @@ $this->Html->script('/js/summernote.config', ['inline' => false]);
 				<input type="hidden" name="attachments[<?= $a['id']; ?>]" value="true" />
 				<div class="col-xs-9">
 					<p class="form-control-static">
-						<a href="<?= $this->Html->url(['plugin' => 'admin', 'controller' => 'injects', 'action' => 'index', $a['id']]); ?>">
+						<a href="<?= $this->Html->url(['plugin' => '', 'controller' => 'attachment', 'action' => 'view', $a['id'], md5($a['id'].env('SECURITY_CIPHER_SEED'))]); ?>">
 						<?= $a['name']; ?>
 						</a>
 					</p>
