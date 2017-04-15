@@ -50,6 +50,9 @@ class ScoreboardController extends ScoreEngineAppController {
 			'group' => [
 				'Team.id',
 			],
+			'order' => [
+				'Check.total_passed',
+			],
 		]);
 
 		$this->set('at_staff', true);
