@@ -296,7 +296,7 @@ class StaffController extends AppController {
 		// Parse the (fun) data
 		$scores = [];
 		foreach ( $submissions AS $s ) {
-			$tn = $s['Group']['id'];
+			$tn = $s['Group']['team_number'];
 			$inject = $s['Inject']['sequence'];
 
 			if ( !isset($scores[$tn]) ) {
