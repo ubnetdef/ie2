@@ -429,8 +429,18 @@ class AppSchema extends CakeSchema {
 	}
 
 	public function after($event = array()) {
-		if ( !isset($event['create']) ) return;
+		switch ( true ) {
+			case (isset($event['create'])):
+				$this->_handleCreate($event);
+			break;
 
+			case (isset($event['update'])):
+				$this->_handleUpdate($event);
+			break;
+		}
+	}
+
+	private function _handleCreate($event) {
 		switch ( $event['create'] ) {
 			case 'config':
 				$this->_create('Config', [
@@ -518,6 +528,20 @@ class AppSchema extends CakeSchema {
 					'ip'      => '127.0.0.1',
 					'message' => 'InjectEngine was just installed.',
 				]);
+			break;
+		}
+	}
+
+	private function _handleUpdate($event) {
+		switch ( $event['update'] ) {
+			case 'submissions':
+				// We have to change BLOB -> LONGBLOB
+				ClassRegistry::init('submissions')->query('ALTER TABLE submissions MODIFY data LONGBLOB');
+			break;
+
+			case 'attachments':
+				// We have to change BLOB -> LONGBLOB
+				ClassRegistry::init('attachments')->query('ALTER TABLE attachments MODIFY data LONGBLOB');
 			break;
 		}
 	}
