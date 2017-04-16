@@ -303,7 +303,8 @@ class StaffController extends AppController {
 				$scores[$tn] = [];
 			}
 
-			$scores[$tn][$inject] = $s['Grade']['grade'] - $hintDeduction($tn, $s['Inject']['id']);
+			$grade = $s['Grade']['grade'] - $hintDeduction($tn, $s['Inject']['id']);
+			$scores[$tn][$inject] = $grade;
 		}
 
 		// Output the grades
