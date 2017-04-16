@@ -205,7 +205,10 @@ if (!env('APP_NAME')) {
  *
  */
 	Configure::write('Session', [
-		'defaults' => 'php'
+		'defaults'       => 'php'
+		'cookie'         => env('APP_NAME'),
+		'cookieTimeout'  => env('SESSION_COOKIE_TIMEOUT')
+		'autoRegenerate' => true,
 	]);
 
 /**
