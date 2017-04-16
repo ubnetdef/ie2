@@ -268,8 +268,11 @@ class Schedule extends AppModel {
 			'fields' => [
 				'Schedule.min'
 			],
+			'conditions' => [
+				'Schedule.active' => true,
+			],
 			'order' => [
-				'Schedule.min DESC'
+				'Schedule.min ASC',
 			],
 		]);
 
@@ -277,8 +280,11 @@ class Schedule extends AppModel {
 			'fields' => [
 				'Schedule.max'
 			],
+			'conditions' => [
+				'Schedule.active' => true,
+			],
 			'order' => [
-				'Schedule.max DESC'
+				'Schedule.max DESC',
 			],
 		]);
 
