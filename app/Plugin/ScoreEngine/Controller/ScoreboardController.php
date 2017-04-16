@@ -5,7 +5,7 @@ class ScoreboardController extends ScoreEngineAppController {
 	public $helpers = ['ScoreEngine.EngineOutputter'];
 	public $uses = [
 		'ScoreEngine.Check', 'ScoreEngine.Service', 'ScoreEngine.Team', 'ScoreEngine.Round',
-		'Config', 'Submission', 'Group'
+		'Config', 'Submission', 'Schedule', 'Group'
 	];
 
 	public function beforeRender() {
@@ -92,6 +92,13 @@ class ScoreboardController extends ScoreEngineAppController {
 	 */
 	public function api() {
 		$this->layout = 'ajax';
+
+		$active_injects = $this->Schedule->getInjects(env('GROUP_BLUE'));
+		foreach ( $active_injects AS $i => $inject ) {
+			if ( $inject->isExpired() ) unset($active_injects[$i]);
+		}
+
+		$this->set('active_injects', $active_injects);
 		$this->set('round', $this->Round->getLastRound());
 	}
 }
