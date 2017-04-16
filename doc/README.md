@@ -13,3 +13,6 @@ Welcome to the documentation for the Inject Engine.
 
 ### Admin Guide
 [Admin Guide Index](admin_guide/README.md)
+
+## Contributing
+[Contributing Index](contributing/README.md)
