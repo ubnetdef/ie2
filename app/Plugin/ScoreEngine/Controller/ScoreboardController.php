@@ -3,7 +3,10 @@ App::uses('ScoreEngineAppController', 'ScoreEngine.Controller');
 
 class ScoreboardController extends ScoreEngineAppController {
 	public $helpers = ['ScoreEngine.EngineOutputter'];
-	public $uses = ['Config', 'ScoreEngine.Check', 'ScoreEngine.Service', 'ScoreEngine.Team', 'ScoreEngine.Round'];
+	public $uses = [
+		'ScoreEngine.Check', 'ScoreEngine.Service', 'ScoreEngine.Team', 'ScoreEngine.Round',
+		'Config', 'Submission', 'Group'
+	];
 
 	public function beforeRender() {
 		parent::beforeRender();
@@ -42,10 +45,21 @@ class ScoreboardController extends ScoreEngineAppController {
 		// Require staff
 		$this->Auth->protect(env('GROUP_STAFF'));
 
+		// Generate team mappings
+		$group_names = $this->Group->find('all', [
+			'conditions' => [
+				'Group.team_number IS NOT NULL',
+			],
+		]);
+		$team_mappings = [];
+		foreach ( $group_names AS $g ) {
+			$team_mappings[$g['Group']['team_number']] = $g['Group']['name'];
+		}
+
+		// Grab the check overview
 		$overview = $this->Check->find('all', [
 			'fields' => [
-				'Check.total_passed', 'Check.total',
-				'Team.name',
+				'Check.total_passed', 'Check.total', 'Team.id',
 			],
 			'group' => [
 				'Team.id',
@@ -55,9 +69,19 @@ class ScoreboardController extends ScoreEngineAppController {
 			],
 		]);
 
+		// Grab the grade overview
+		$grades = $this->Submission->getGrades($this->Group->getChildren(env('GROUP_BLUE')));
+		$grade_team_mappings = [];
+		foreach ( $grades AS $g ) {
+			$grade_team_mappings[$g['Group']['team_number']] = $g['Submission']['total_grade'];
+		}
+
 		$this->set('at_staff', true);
 		$this->set('round', $this->Round->getLastRound());
 		$this->set('overview', $overview);
+		$this->set('grades', $grades);
+		$this->set('grade_team_mappings', $grade_team_mappings);
+		$this->set('team_mappings', $team_mappings);
 	}
 
 	/**

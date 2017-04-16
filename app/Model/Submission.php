@@ -183,4 +183,30 @@ class Submission extends AppModel {
 			],
 		]);
 	}
+
+	/**
+	 * Get Grade Totals
+	 *
+	 * @param $groups The groups you wish to get grades for
+	 * @return array The grades for all the groups
+	 */
+	public function getGrades($groups) {
+		$this->virtualFields['total_grade'] = 'SUM(Grade.grade)';
+
+		return $this->find('all', [
+			'fields' => [
+				'Submission.total_grade', 'Group.name', 'Group.team_number',
+			],
+			'conditions' => [
+				'Group.id'           => $groups,
+				'Submission.deleted' => false,
+			],
+			'group' => [
+				'Group.id'
+			],
+			'order' => [
+				'Submission.total_grade DESC',
+			],
+		]);
+	}
 }
