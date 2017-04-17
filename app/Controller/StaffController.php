@@ -164,9 +164,7 @@ class StaffController extends AppController {
 		if ( $this->request->is('post') ) {
 			if (
 				!isset($this->request->data['grade']) ||
-				!isset($this->request->data['comments']) ||
 				(empty($this->request->data['grade']) && $this->request->data['grade'] != 0) ||
-				empty($this->request->data['comments']) ||
 				$this->request->data['grade'] > $submission['Inject']['max_points']
 			) {
 				$this->Flash->danger('Incomplete data. Please try again.');
@@ -175,7 +173,7 @@ class StaffController extends AppController {
 
 			$data = [
 				'grade'    => $this->request->data['grade'],
-				'comments' => $this->request->data['comments'],
+				'comments' => isset($this->request->data['comments']) ? $this->request->data['comments'] : 'N/A',
 			];
 			$grade = $this->Grade->findBySubmissionId($sid);
 
