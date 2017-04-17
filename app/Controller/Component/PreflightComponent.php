@@ -183,7 +183,20 @@ class PreflightComponent extends Component {
 	 * Verifies the ScoreEngine is setup correctly
 	 */
 	public function checkScoreEngine() {
-		return true;
+		$tables = ['Check', 'Round', 'Service', 'Team', 'TeamService'];
+		$missing_tables = [];
+
+		foreach ( $tables AS $table ) {
+			$tbl = ClassRegistry::init('BankWeb.'.$table);
+
+			try {
+				$table->find('first');
+			} catch ( Exception $e ) {
+				$missing_tables[] = $table;
+			}
+		}
+
+		return !empty($missing_tables) ? 'ScoreEngine is not setup. Missing DB table(s): '.implode(', ', $missing_tables) : true;
 	}
 
 	/**
