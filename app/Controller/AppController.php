@@ -206,7 +206,7 @@ class AppController extends Controller {
         }
 
         // Sprintf it
-        $msg = sprintf($msg, $this->Auth->user('username'), $this->Auth->group('name'));
+        $msg = str_replace(['#USERNAME#', '#GROUP#'], [$this->Auth->user('username'), $this->Auth->group('name')], $msg);
 
         // Build the payload
         $payload = 'payload='.json_encode([

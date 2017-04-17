@@ -87,11 +87,9 @@ class BankWebSchema extends CakeSchema {
 		],
 		'completed_by' => [
 			'type' => 'integer',
-			'null' => false,
 		],
 		'completed_time' => [
 			'type' => 'integer',
-			'null' => false,
 		],
 		
 		'indexes' => [

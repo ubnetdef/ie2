@@ -5,7 +5,7 @@
 
 <div class="container">
 	<h2>Purchase Confirmation</h2>
-	<h3><?= $item['name']; ?></h3>
+	<h3><?= $item['Product']['name']; ?></h3>
 
 	<form class="form-horizontal" method="post">
 		<div class="form-group">
@@ -24,7 +24,7 @@
 		<div class="form-group">
 			<label for="srcAcc" class="col-sm-2 control-label">Item</label>
 			<div class="col-sm-10">
-				<input type="text" class="form-control" value="<?= $item['name']; ?>" readonly="readonly">
+				<input type="text" class="form-control" value="<?= $item['Product']['name']; ?>" readonly="readonly">
 			</div>
 		</div>
 
@@ -33,7 +33,7 @@
 			<div class="col-sm-10">
 				<div class="input-group">
 					<div class="input-group-addon">$</div>
-					<input type="text" class="form-control" id="amount" name="amount" value="<?= $item['cost']; ?>" readonly="readonly">
+					<input type="text" class="form-control" id="amount" name="amount" value="<?= $item['Product']['cost']; ?>" readonly="readonly">
 				</div>
 			</div>
 		</div>
