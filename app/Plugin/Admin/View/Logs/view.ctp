@@ -16,5 +16,5 @@
 
 	<hr />
 
-	<pre><?= json_encode(json_decode($log['Log']['data']), JSON_PRETTY_PRINT); ?></pre>
+	<pre><?= htmlentities(json_encode(json_decode($log['Log']['data']), JSON_PRETTY_PRINT)); ?></pre>
 </div>

@@ -190,7 +190,7 @@ class PreflightComponent extends Component {
 			$tbl = ClassRegistry::init('BankWeb.'.$table);
 
 			try {
-				$table->find('first');
+				$tbl->find('first');
 			} catch ( Exception $e ) {
 				$missing_tables[] = $table;
 			}
