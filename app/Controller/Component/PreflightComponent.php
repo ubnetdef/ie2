@@ -48,7 +48,7 @@ class PreflightComponent extends Component {
         // Additional checks for BankWeb
         if ((bool)env('FEATURE_BANKWEB')) {
             $this->checks[] = 'checkBankWeb';
-            $this->checks[] = 'checkBankWebTable';
+            $this->checks[] = 'checkBankWebDB';
 
             if ((bool)env('BANKWEB_SLACK_ENABLED')) {
                 $this->checks[] = 'checkBankWebSlack';
@@ -238,20 +238,28 @@ class PreflightComponent extends Component {
     }
 
     /**
-     * Check BankWeb Table
+     * Check BankWeb DB
      *
-     * That the BankWeb Table (account_mappings) exists
+     * That the BankWeb Tables exists
      */
-    public function checkBankWebTable() {
-        $table = ClassRegistry::init('BankWeb.AccountMapping');
+    public function checkBankWebDB() {
+        $tables = ['AccountMapping', 'Product', 'Purchase'];
+        $missing_tables = [];
 
-        try {
-            $table->find('first');
-        } catch (Exception $e) {
-            return 'BankWeb plugin is not setup - please run `./cake engine install_bankweb`';
+        foreach ( $tables AS $table ) {
+            $tbl = ClassRegistry::init('BankWeb.'.$table);
+
+            try {
+                $tbl->find('first');
+            } catch ( Exception $e ) {
+                $missing_tables[] = $table;
+            }
         }
 
-        return true;
+        return !empty($missing_tables) ?
+            'BankWeb is not setup. Missing DB table(s): '.implode(', ', $missing_tables).'. Please run `./cake engine install_bankweb`.'
+            :
+            true;
     }
 
     /**
