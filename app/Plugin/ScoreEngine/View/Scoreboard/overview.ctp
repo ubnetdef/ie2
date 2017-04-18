@@ -35,6 +35,9 @@ function drawScoreboard() {
 	data.addColumn('number', 'Successful Checks');
 	data.addColumn('number', 'Inject Score');
 	data.addRows([
+		[
+			'Check Team', <?= $max_check; ?>, <?= $max_grade; ?>
+		],
 		<?php foreach ( $overview AS $o ): ?>
 		[
 			'<?= $team_mappings[$o['Team']['id']]; ?>',

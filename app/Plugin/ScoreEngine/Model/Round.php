@@ -2,7 +2,6 @@
 App::uses('ScoreEngineAppModel', 'ScoreEngine.Model');
 
 class Round extends ScoreEngineAppModel {
-	
 	public function getLastRound() {
 		$round = $this->find('first', [
 			'fields' => [

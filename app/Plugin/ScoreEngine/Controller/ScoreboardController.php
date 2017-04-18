@@ -2,21 +2,10 @@
 App::uses('ScoreEngineAppController', 'ScoreEngine.Controller');
 
 class ScoreboardController extends ScoreEngineAppController {
-	public $helpers = ['ScoreEngine.EngineOutputter'];
 	public $uses = [
 		'ScoreEngine.Check', 'ScoreEngine.Service', 'ScoreEngine.Team', 'ScoreEngine.Round',
 		'Config', 'Submission', 'Schedule', 'Group'
 	];
-
-	public function beforeRender() {
-		parent::beforeRender();
-
-		// Setup the ScoreEngine EngineOutputter
-		$this->helpers['ScoreEngine.EngineOutputter']['data'] = $this->Check->getChecksTable(
-			$this->Team->findAllByEnabled(true),
-			$this->Service->findAllByEnabled(true)
-		);
-	}
 
 	/**
 	 * ScoreBoard Overview Page
@@ -57,17 +46,7 @@ class ScoreboardController extends ScoreEngineAppController {
 		}
 
 		// Grab the check overview
-		$overview = $this->Check->find('all', [
-			'fields' => [
-				'Check.total_passed', 'Check.total', 'Team.id',
-			],
-			'group' => [
-				'Team.id',
-			],
-			'order' => [
-				'Check.total_passed DESC',
-			],
-		]);
+		$overview = $this->Check->getMaxCheck(false);
 
 		// Grab the grade overview
 		$grades = $this->Submission->getGrades($this->Group->getChildren(env('GROUP_BLUE')));
@@ -76,12 +55,24 @@ class ScoreboardController extends ScoreEngineAppController {
 			$grade_team_mappings[$g['Group']['team_number']] = $g['Submission']['total_grade'];
 		}
 
+		// Grab the max check
+		$max_check = $this->Check->getMaxCheck(true);
+
+		// Grab the max grade
+		$injects = $this->Schedule->getInjects(env('GROUP_BLUE'));
+		$max_grade = 0;
+		foreach ( $injects AS $i ) {
+			$max_grade += $i->getInjectMaxPoints();
+		}
+
 		$this->set('at_staff', true);
 		$this->set('round', $this->Round->getLastRound());
 		$this->set('overview', $overview);
 		$this->set('grades', $grades);
 		$this->set('grade_team_mappings', $grade_team_mappings);
 		$this->set('team_mappings', $team_mappings);
+		$this->set('max_grade', $max_grade);
+		$this->set('max_check', $max_check[0]['Check']['total_passed']);
 	}
 
 	/**
@@ -97,6 +88,12 @@ class ScoreboardController extends ScoreEngineAppController {
 		foreach ( $active_injects AS $i => $inject ) {
 			if ( $inject->isExpired() ) unset($active_injects[$i]);
 		}
+
+		// Setup the ScoreEngine EngineOutputter
+		$this->helpers['ScoreEngine.EngineOutputter']['data'] = $this->Check->getChecksTable(
+			$this->Team->findAllByEnabledAndCheckTeam(true, false),
+			$this->Service->findAllByEnabled(true)
+		);
 
 		$this->set('active_injects', $active_injects);
 		$this->set('round', $this->Round->getLastRound());

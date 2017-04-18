@@ -47,10 +47,11 @@ class Check extends ScoreEngineAppModel {
 		]);
 
 		foreach ( $data AS $d ) {
-			if ( !in_array($d['Service']['id'], $enabled_services) ) continue;
-
 			$team_name = $d['Team']['name'];
 			$service_name = $d['Service']['name'];
+
+			if ( !in_array($d['Service']['id'], $enabled_services) ) continue;
+			if ( !isset($rtn[$team_name]) ) continue;
 
 			$rtn[$team_name][$service_name] = ((bool) $d['Check']['passed']);
 		}
@@ -108,5 +109,23 @@ class Check extends ScoreEngineAppModel {
 		}
 
 		return $rtn;
+	}
+
+	public function getMaxCheck($onlyCheckTeam=false) {
+		return $this->find('all', [
+			'fields' => [
+				'Check.total_passed', 'Check.total',
+				'Team.id', 'Team.check_team',
+			],
+			'conditions' => [
+				'Team.check_team' => $onlyCheckTeam,
+			],
+			'group' => [
+				'Team.id',
+			],
+			'order' => [
+				'Check.total_passed DESC',
+			],
+		]);
 	}
 }
