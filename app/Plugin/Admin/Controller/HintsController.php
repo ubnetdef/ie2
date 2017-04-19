@@ -50,7 +50,7 @@ class HintsController extends AdminAppController {
     public function create() {
         if ($this->request->is('post')) {
             // Validate the input
-            $res = $this->_validate();
+            $res = $this->validate();
 
             if (empty($res['errors'])) {
                 $this->Hint->create();
@@ -66,7 +66,7 @@ class HintsController extends AdminAppController {
                 $this->Flash->success('The hint has been created!');
                 return $this->redirect(['plugin' => 'admin', 'controller' => 'hints', 'action' => 'index']);
             } else {
-                $this->_errorFlash($res['errors']);
+                $this->errorFlash($res['errors']);
             }
         }
 
@@ -87,7 +87,7 @@ class HintsController extends AdminAppController {
 
         if ($this->request->is('post')) {
             // Validate the input
-            $res = $this->_validate();
+            $res = $this->validate();
 
             if (empty($res['errors'])) {
                 // Fix parent_id
@@ -111,7 +111,7 @@ class HintsController extends AdminAppController {
                 $this->Flash->success('The hint has been updated!');
                 return $this->redirect(['plugin' => 'admin', 'controller' => 'hints', 'action' => 'index']);
             } else {
-                $this->_errorFlash($res['errors']);
+                $this->errorFlash($res['errors']);
             }
         }
 

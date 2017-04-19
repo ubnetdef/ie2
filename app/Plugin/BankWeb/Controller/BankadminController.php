@@ -69,10 +69,10 @@ class BankadminController extends BankWebAppController {
         }
 
         // Validate the input
-        $res = $this->_validate();
+        $res = $this->validate();
 
         if (!empty($res['errors'])) {
-            $this->_errorFlash($res['errors']);
+            $this->errorFlash($res['errors']);
 
             return $this->redirect(['plugin' => 'bank_web', 'controller' => 'bankadmin', 'action' => 'index']);
         }

@@ -154,7 +154,7 @@ class AppController extends Controller {
      *
      * @return array [errors,validated_data]
      */
-    protected function _validate() {
+    protected function validate() {
         // Validate the input
         $errors = [];
         $modify = [];
@@ -192,7 +192,7 @@ class AppController extends Controller {
      * @param $errors Array of the errors
      * @return void
      */
-    protected function _errorFlash($errors) {
+    protected function errorFlash($errors) {
         $this->Flash->danger('The following errors have occured:<br />'.implode('<br />', $errors));
     }
 
@@ -200,7 +200,7 @@ class AppController extends Controller {
      * Sends a slack message
      *
      */
-    protected function _sendSlack($msg, $extra = []) {
+    protected function sendSlack($msg, $extra = []) {
         if (!env('SLACK_ENDPOINT')) { return;
         }
 

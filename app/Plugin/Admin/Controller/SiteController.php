@@ -71,10 +71,10 @@ class SiteController extends AdminAppController {
                 new Rules\NotEmpty()
             ),
         ];
-        $res = $this->_validate();
+        $res = $this->validate();
 
         if (!empty($res['errors'])) {
-            $this->_errorFlash($res['errors']);
+            $this->errorFlash($res['errors']);
 
             return $this->redirect(['plugin' => 'admin', 'controller' => 'site', 'action' => 'index']);
         }
@@ -140,10 +140,10 @@ class SiteController extends AdminAppController {
                 new Rules\Digit()
             ),
         ];
-        $res = $this->_validate();
+        $res = $this->validate();
 
         if (!empty($res['errors'])) {
-            $this->_errorFlash($res['errors']);
+            $this->errorFlash($res['errors']);
 
             return $this->redirect(['plugin' => 'admin', 'controller' => 'site', 'action' => 'index']);
         }
