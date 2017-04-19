@@ -2,152 +2,154 @@
 App::uses('ScoreEngineAppController', 'ScoreEngine.Controller');
 
 class TeamController extends ScoreEngineAppController {
-	public $uses = ['ScoreEngine.Check', 'ScoreEngine.TeamService'];
+    public $uses = ['ScoreEngine.Check', 'ScoreEngine.TeamService'];
 
-	/**
-	 * The current user's team number
-	 */
-	private $team;
+    /**
+     * The current user's team number
+     */
+    private $team;
 
-	/**
-	 * IP Regex
-	 *
-	 * Source: http://stackoverflow.com/a/20270082
-	 */
-	const IP_REGEX = "/\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/";
+    /**
+     * IP Regex
+     *
+     * Source: http://stackoverflow.com/a/20270082
+     */
+    const IP_REGEX = "/\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/";
 
-	/**
-	 * Before Filter
-	 *
-	 * Locks the page to blue teams' group,
-	 * as well as sets up the user's team number
-	 */
-	public function beforeFilter() {
-		parent::beforeFilter();
-		
-		// Only blue teams may access
-		$this->Auth->protect(env('GROUP_BLUE'));
+    /**
+     * Before Filter
+     *
+     * Locks the page to blue teams' group,
+     * as well as sets up the user's team number
+     */
+    public function beforeFilter() {
+        parent::beforeFilter();
 
-		// Set the team number
-		$this->team = $this->Auth->group('team_number');
-	}
+        // Only blue teams may access
+        $this->Auth->protect(env('GROUP_BLUE'));
 
-	/**
-	 * Team Overview Page
-	 *
-	 * @url /team
-	 * @url /score_engine/team
-	 * @url /score_engine/team/index
-	 */
-	public function index() {
-		$this->set('data', $this->Check->getTeamChecks($this->team));
-		$this->set('latest', $this->Check->getLastTeamCheck($this->team));
-	}
+        // Set the team number
+        $this->team = $this->Auth->group('team_number');
+    }
 
-	/**
-	 * Service Overview Page
-	 *
-	 * @url /team/service/<sid>
-	 * @url /score_engine/team/service/<sid>
-	 */
-	public function service($sid=false) {
-		if ( $sid === false || !is_numeric($sid) ) {
-			throw new NotFoundException('Unknown service');
-		}
+    /**
+     * Team Overview Page
+     *
+     * @url /team
+     * @url /score_engine/team
+     * @url /score_engine/team/index
+     */
+    public function index() {
+        $this->set('data', $this->Check->getTeamChecks($this->team));
+        $this->set('latest', $this->Check->getLastTeamCheck($this->team));
+    }
 
-		$this->Check->virtualFields = [];
-		$this->set('data', $this->Check->find('all', [
-			'conditions' => [
-				'team_id' => $this->team,
-				'service_id' => $sid,
-				'Service.enabled' => true,
-			],
-			'limit' => 20,
-			'order' => 'time DESC',
-		]));
-	}
+    /**
+     * Service Overview Page
+     *
+     * @url /team/service/<sid>
+     * @url /score_engine/team/service/<sid>
+     */
+    public function service($sid = false) {
+        if ($sid === false || !is_numeric($sid)) {
+            throw new NotFoundException('Unknown service');
+        }
 
-	/**
-	 * Config Edit Page
-	 *
-	 * @url /team/edit
-	 * @url /score_engine/team/edit
-	 */
-	public function config() {
-		$data = $this->TeamService->getData($this->team);
+        $this->Check->virtualFields = [];
+        $this->set('data', $this->Check->find('all', [
+            'conditions' => [
+                'team_id' => $this->team,
+                'service_id' => $sid,
+                'Service.enabled' => true,
+            ],
+            'limit' => 20,
+            'order' => 'time DESC',
+        ]));
+    }
 
-		$canEdit = function($id) use($data) {
-			foreach ( $data AS $group => $options ) {
-				foreach ( $options AS $opt ) {
-					if ( $opt['id'] == $id ) {
-						return $opt['edit'];
-					}
-				}
-			}
+    /**
+     * Config Edit Page
+     *
+     * @url /team/edit
+     * @url /score_engine/team/edit
+     */
+    public function config() {
+        $data = $this->TeamService->getData($this->team);
 
-			return false;
-		};
+        $canEdit = function ($id) use ($data) {
+            foreach ($data as $group => $options) {
+                foreach ($options as $opt) {
+                    if ($opt['id'] == $id) {
+                        return $opt['edit'];
+                    }
+                }
+            }
 
-		$getOpt = function($id) use(&$data) {
-			foreach ( $data AS $group => &$options ) {
-				foreach ( $options AS $opt ) {
-					if ( $opt['id'] == $id ) {
-						return $opt['value'];
-					}
-				}
-			}
+            return false;
+        };
 
-			return false;
-		};
+        $getOpt = function ($id) use (&$data) {
+            foreach ($data as $group => &$options) {
+                foreach ($options as $opt) {
+                    if ($opt['id'] == $id) {
+                        return $opt['value'];
+                    }
+                }
+            }
 
-		$updateOpt = function($id, $value) use(&$data) {
-			foreach ( $data AS $group => &$options ) {
-				foreach ( $options AS &$opt ) {
-					if ( $opt['id'] == $id ) {
-						$opt['value'] = $value;
-					}
-				}
-			}
+            return false;
+        };
 
-			return false;
-		};
+        $updateOpt = function ($id, $value) use (&$data) {
+            foreach ($data as $group => &$options) {
+                foreach ($options as &$opt) {
+                    if ($opt['id'] == $id) {
+                        $opt['value'] = $value;
+                    }
+                }
+            }
 
-		if ( $this->request->is('post') ) {
-			foreach ( $this->request->data AS $opt => $value ) {
-				$opt = (int) str_replace('opt', '', $opt);
-				if ( $opt < 0 || !is_numeric($opt) ) continue;
-				if ( !$canEdit($opt) ) continue;
+            return false;
+        };
 
-				// Only USERPASS is an array
-				if ( is_array($value) ) {
-					$value = $value['user'].'||'.$value['pass'];
-				}
+        if ($this->request->is('post')) {
+            foreach ($this->request->data as $opt => $value) {
+                $opt = (int) str_replace('opt', '', $opt);
+                if ($opt < 0 || !is_numeric($opt)) { continue;
+                }
+                if (!$canEdit($opt)) { continue;
+                }
 
-				// Do some hacky magic with IPs to check subnets
-				$oldVal = $getOpt($opt);
+                // Only USERPASS is an array
+                if (is_array($value)) {
+                    $value = $value['user'].'||'.$value['pass'];
+                }
 
-				if ( preg_match(self::IP_REGEX, $oldVal, $match) ) {
-					$newSubnet = explode('.', $value);
-					array_pop($newSubnet);
-					$newSubnet = implode('.', $newSubnet);
+                // Do some hacky magic with IPs to check subnets
+                $oldVal = $getOpt($opt);
 
-					$oldSubnet = explode('.', $oldVal);
-					array_pop($oldSubnet);
-					$oldSubnet = implode('.', $oldSubnet);
+                if (preg_match(self::IP_REGEX, $oldVal, $match)) {
+                    $newSubnet = explode('.', $value);
+                    array_pop($newSubnet);
+                    $newSubnet = implode('.', $newSubnet);
 
-					if ( $newSubnet != $oldSubnet ) {
-						continue;
-					}
-				}
+                    $oldSubnet = explode('.', $oldVal);
+                    array_pop($oldSubnet);
+                    $oldSubnet = implode('.', $oldSubnet);
 
-				$this->TeamService->updateConfig($opt, $value);
-				$updateOpt($opt, $value);
-			}
+                    if ($newSubnet != $oldSubnet) {
+                        continue;
+                    }
+                }
 
-			// Message
-			$this->Flash->success('Updated Score Engine Config!');
-		}
+                $this->TeamService->updateConfig($opt, $value);
+                $updateOpt($opt, $value);
+            }
 
-		$this->set('data', $data);
-	}
+            // Message
+            $this->Flash->success('Updated Score Engine Config!');
+        }
+
+        $this->set('data', $data);
+    }
 }

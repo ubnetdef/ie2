@@ -16,4 +16,3 @@ Router::connect('/admin/bank/:action/*', ['plugin' => 'BankWeb', 'controller' =>
 Router::connect('/bank/:controller', ['plugin' => 'BankWeb']);
 Router::connect('/bank/:controller/:action', ['plugin' => 'BankWeb']);
 Router::connect('/bank/:controller/:action/**', ['plugin' => 'BankWeb']);
-

@@ -6,6 +6,6 @@ App::uses('AppModel', 'Model');
  *
  */
 class UsedHint extends AppModel {
-	public $belongsTo = ['Hint'];
-	public $recursive = 1;
+    public $belongsTo = ['Hint'];
+    public $recursive = 1;
 }

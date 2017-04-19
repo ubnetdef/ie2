@@ -22,25 +22,25 @@ $ds = DIRECTORY_SEPARATOR;
 $dispatcher = 'Cake' . $ds . 'Console' . $ds . 'ShellDispatcher.php';
 
 if (function_exists('ini_set')) {
-	$root = dirname(dirname(dirname(__FILE__))) . $ds . 'vendor' . $ds . 'cakephp';
+    $root = dirname(dirname(dirname(__FILE__))) . $ds . 'vendor' . $ds . 'cakephp';
 
-	// the following line differs from its sibling
-	// /lib/Cake/Console/Templates/skel/Console/cake.php
-	ini_set('include_path', $root . $ds . 'cakephp' . $ds . 'lib' . PATH_SEPARATOR . ini_get('include_path'));
+    // the following line differs from its sibling
+    // /lib/Cake/Console/Templates/skel/Console/cake.php
+    ini_set('include_path', $root . $ds . 'cakephp' . $ds . 'lib' . PATH_SEPARATOR . ini_get('include_path'));
 }
 
 define('TMP', dirname(dirname(dirname(__FILE__))) . $ds . 'tmp' . $ds);
 define('WWW_ROOT', dirname(dirname(dirname(__FILE__))) . $ds . 'webroot' . $ds);
 
 if (!include $dispatcher) {
-	trigger_error('Could not locate CakePHP core files.', E_USER_ERROR);
+    trigger_error('Could not locate CakePHP core files.', E_USER_ERROR);
 }
 unset($dispatcher, $root, $ds);
 
 // Make passing "--working ." to the shell obsolete, when invoking Console/cake.php directly
 if (!in_array('--working', $argv)) {
-	$argv[] = '--working';
-	$argv[] = dirname(dirname(__FILE__));
+    $argv[] = '--working';
+    $argv[] = dirname(dirname(__FILE__));
 }
 
 return ShellDispatcher::run($argv);

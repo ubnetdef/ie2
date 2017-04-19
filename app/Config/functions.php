@@ -7,7 +7,7 @@
  * @return str The encoded string
  */
 function encode_quotes($str) {
-	return str_replace(['"', "'", '&'], ['&quot;', '&apos;', '&amp;'], $str);
+    return str_replace(['"', "'", '&'], ['&quot;', '&apos;', '&amp;'], $str);
 }
 
 /**
@@ -19,8 +19,8 @@ function encode_quotes($str) {
  * @return string The formatted time from the timestamp
  */
 function tz_date($format, $ts) {
-	$date = new DateTime('@'.$ts);
-	$date->setTimezone(new DateTimeZone(env('TIMEZONE_USER')));
+    $date = new DateTime('@'.$ts);
+    $date->setTimezone(new DateTimeZone(env('TIMEZONE_USER')));
 
-	return $date->format($format);
+    return $date->format($format);
 }
