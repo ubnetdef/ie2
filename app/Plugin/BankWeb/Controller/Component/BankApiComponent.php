@@ -50,7 +50,7 @@ class BankApiComponent extends Component {
         $result = $this->request('login', ['username' => $this->username, 'password' => $this->password]);
 
         if ($result['code'] != 200) {
-            throw new BankException('Bank Error: '.$result['message']);
+            throw new InternalErrorException('Bank Error: '.$result['message']);
         }
 
         $this->session = $result['session'];
@@ -81,7 +81,7 @@ class BankApiComponent extends Component {
         ]);
 
         if ($result['code'] != 200) {
-            throw new BankException('Bank Error: '.$result['message']);
+            throw new InternalErrorException('Bank Error: '.$result['message']);
         }
         return true;
     }
@@ -105,7 +105,7 @@ class BankApiComponent extends Component {
         ]);
 
         if ($result['code'] != 200) {
-            throw new BankException('Bank Error: '.$result['message']);
+            throw new InternalErrorException('Bank Error: '.$result['message']);
         }
         return $result['transactions'];
     }
@@ -132,7 +132,7 @@ class BankApiComponent extends Component {
         ]);
 
         if ($result['code'] != 200) {
-            throw new BankException('Bank Error: '.$result['message']);
+            throw new InternalErrorException('Bank Error: '.$result['message']);
         }
         return true;
     }
@@ -153,7 +153,7 @@ class BankApiComponent extends Component {
         ]);
 
         if ($result['code'] != 200) {
-            throw new BankException('Bank Error: '.$result['message']);
+            throw new InternalErrorException('Bank Error: '.$result['message']);
         }
         return $result['accounts'];
     }
@@ -176,7 +176,7 @@ class BankApiComponent extends Component {
         ]);
 
         if ($result['code'] != 200) {
-            throw new BankException('Bank Error: '.$result['message']);
+            throw new InternalErrorException('Bank Error: '.$result['message']);
         }
         return true;
     }
@@ -221,7 +221,4 @@ class BankApiComponent extends Component {
 
         return json_decode($result, true);
     }
-}
-
-class BankException extends InternalErrorException {
 }
