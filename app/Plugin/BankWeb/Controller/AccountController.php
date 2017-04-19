@@ -26,9 +26,10 @@ class AccountController extends BankWebAppController {
      * @url /bank/account/create
      */
     public function create() {
-        if (!$this->request->is('post') ||
-            !isset($this->request->data['pin']) ||
-            !is_numeric($this->request->data['pin'])) {
+        if (!$this->request->is('post')
+            || !isset($this->request->data['pin'])
+            || !is_numeric($this->request->data['pin'])
+        ) {
             $this->Flash->danger('Please ensure your PIN is numeric!');
             return $this->redirect(['plugin' => 'bank_web', 'controller' => 'account', 'action' => 'index']);
         }
@@ -56,15 +57,15 @@ class AccountController extends BankWebAppController {
             return $this->redirect(['plugin' => 'bank_web', 'controller' => 'account', 'action' => 'index']);
         }
 
-        if ($this->request->is('post') &&
-            isset($this->request->data['srcAcc']) &&
-            is_numeric($this->request->data['srcAcc']) &&
-            isset($this->request->data['dstAcc']) &&
-            is_numeric($this->request->data['dstAcc']) &&
-            isset($this->request->data['amount']) &&
-            is_numeric($this->request->data['amount']) &&
-            isset($this->request->data['pin']) &&
-            is_numeric($this->request->data['pin'])
+        if ($this->request->is('post')
+            && isset($this->request->data['srcAcc'])
+            && is_numeric($this->request->data['srcAcc'])
+            && isset($this->request->data['dstAcc'])
+            && is_numeric($this->request->data['dstAcc'])
+            && isset($this->request->data['amount'])
+            && is_numeric($this->request->data['amount'])
+            && isset($this->request->data['pin'])
+            && is_numeric($this->request->data['pin'])
         ) {
             try {
                 $res = $this->BankApi->transfer(
@@ -111,11 +112,11 @@ class AccountController extends BankWebAppController {
             return $this->redirect(['plugin' => 'bank_web', 'controller' => 'account', 'action' => 'index']);
         }
 
-        if ($this->request->is('post') &&
-            isset($this->request->data['pin']) &&
-            is_numeric($this->request->data['pin']) &&
-            isset($this->request->data['newpin']) &&
-            is_numeric($this->request->data['newpin'])
+        if ($this->request->is('post')
+            && isset($this->request->data['pin'])
+            && is_numeric($this->request->data['pin'])
+            && isset($this->request->data['newpin'])
+            && is_numeric($this->request->data['newpin'])
         ) {
             try {
                 $res = $this->BankApi->changePin($id, $this->request->data['pin'], $this->request->data['newpin']);

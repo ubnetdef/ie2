@@ -2,6 +2,7 @@
 App::uses('AdminAppController', 'Admin.Controller');
 
 class LogsController extends AdminAppController {
+
     public $uses = ['Log'];
 
     public $paginate = [

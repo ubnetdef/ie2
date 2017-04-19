@@ -2,6 +2,7 @@
 namespace InjectTypes;
 
 class FileSubmission extends InjectSubmissionBase {
+
     private $acceptedExtensions = ['pdf', 'doc', 'docx'];
 
     public function getID() {

@@ -2,6 +2,7 @@
 namespace InjectTypes;
 
 class Manager {
+
     protected $types = [];
 
     public function __construct($types) {

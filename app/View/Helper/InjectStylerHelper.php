@@ -2,6 +2,7 @@
 App::uses('AppHelper', 'View/Helper');
 
 class InjectStylerHelper extends AppHelper {
+
     /**
      * Instance of \InjectTypes\Manager
      */

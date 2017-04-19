@@ -7,7 +7,9 @@ App::uses('Security', 'Utility');
  *
  */
 class User extends AppModel {
+
     public $belongsTo = ['Group'];
+
     public $recursive = 1;
 
     /**

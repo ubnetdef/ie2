@@ -3,6 +3,7 @@ App::uses('Controller', 'Controller');
 use Respect\Validation\Exceptions\NestedValidationException;
 
 class AppController extends Controller {
+
     public $components = [
         'Auth',
         'Flash' => [
@@ -20,6 +21,7 @@ class AppController extends Controller {
     ];
 
     public $uses = ['Announcement', 'Config', 'Log'];
+
     public $helpers = ['Auth', 'Misc', 'Session'];
 
     protected $validators = [];

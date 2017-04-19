@@ -3,6 +3,7 @@ App::uses('AppController', 'Controller');
 App::uses('InjectAbstraction', 'Lib');
 
 class ScheduleController extends AppController {
+
     public $uses = ['Config', 'Inject', 'Group', 'Schedule'];
 
     /**
@@ -41,9 +42,9 @@ class ScheduleController extends AppController {
      * @url /admin/schedule/api
      */
     public function api() {
-        if ($this->request->is('post') &&
-            isset($this->request->data['changes']) &&
-            is_array($this->request->data['changes'])
+        if ($this->request->is('post')
+            && isset($this->request->data['changes'])
+            && is_array($this->request->data['changes'])
         ) {
             foreach ($this->request->data['changes'] as $c) {
                 $schedule = $this->Schedule->findById($c['id']);

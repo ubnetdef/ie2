@@ -2,6 +2,7 @@
 App::uses('ClassRegistry', 'Utility');
 
 class BankWebSchema extends CakeSchema {
+
     public $account_mappings = [
         'id' => [
             'type' => 'integer',

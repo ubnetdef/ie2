@@ -6,7 +6,9 @@ App::uses('AppModel', 'Model');
  *
  */
 class Hint extends AppModel {
+
     public $belongsTo = ['Inject'];
+
     public $recursive = 1;
 
     /**

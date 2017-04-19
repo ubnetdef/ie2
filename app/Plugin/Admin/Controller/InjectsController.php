@@ -3,6 +3,7 @@ App::uses('AdminAppController', 'Admin.Controller');
 use Respect\Validation\Rules;
 
 class InjectsController extends AdminAppController {
+
     public $uses = ['Attachment', 'Config', 'Inject', 'Schedule'];
 
     public function beforeFilter() {

@@ -3,6 +3,7 @@ App::uses('AdminAppController', 'Admin.Controller');
 use Respect\Validation\Rules;
 
 class UsersController extends AdminAppController {
+
     public $uses = ['User', 'Group'];
 
     public function beforeFilter() {

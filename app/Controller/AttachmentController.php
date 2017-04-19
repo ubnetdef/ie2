@@ -2,6 +2,7 @@
 App::uses('AppController', 'Controller');
 
 class AttachmentController extends AppController {
+
     public $uses = ['Attachment', 'Schedule'];
 
     /**

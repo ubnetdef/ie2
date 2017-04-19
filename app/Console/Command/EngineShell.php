@@ -8,6 +8,7 @@ App::uses('AppShell', 'Console/Command');
  * for the InjectEngine.  Here be (some) dragons.
  */
 class EngineShell extends AppShell {
+
     public $uses = ['Group', 'User'];
 
     /**

@@ -2,8 +2,11 @@
 App::uses('ScoreEngineAppModel', 'ScoreEngine.Model');
 
 class TeamService extends ScoreEngineAppModel {
+
     public $useTable = 'team_service';
+
     public $belongsTo = ['ScoreEngine.Team', 'ScoreEngine.Service'];
+
     public $recursive = 1;
 
     public function getData($tid, $onlyEnabled = true) {

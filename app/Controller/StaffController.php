@@ -3,6 +3,7 @@ App::uses('AppController', 'Controller');
 App::uses('InjectAbstraction', 'Lib');
 
 class StaffController extends AppController {
+
     public $uses = [
         'Config', 'Inject', 'UsedHint', 'Hint', 'Log',
         'Grade', 'Group', 'Schedule', 'Submission',
@@ -163,9 +164,9 @@ class StaffController extends AppController {
         }
 
         if ($this->request->is('post')) {
-            if (!isset($this->request->data['grade']) ||
-                (empty($this->request->data['grade']) && $this->request->data['grade'] != 0) ||
-                $this->request->data['grade'] > $submission['Inject']['max_points']
+            if (!isset($this->request->data['grade'])
+                || (empty($this->request->data['grade']) && $this->request->data['grade'] != 0)
+                || $this->request->data['grade'] > $submission['Inject']['max_points']
             ) {
                 $this->Flash->danger('Incomplete data. Please try again.');
                 return $this->redirect('/staff/grade/'.$sid);

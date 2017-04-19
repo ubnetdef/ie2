@@ -2,11 +2,15 @@
 App::uses('Component', 'Controller');
 
 class BankApiComponent extends Component {
+
     private $server;
+
     private $timeout;
 
     private $username = null;
+
     private $password = null;
+
     private $session = null;
 
     /**

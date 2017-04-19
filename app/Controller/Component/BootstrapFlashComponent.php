@@ -2,6 +2,7 @@
 App::uses('FlashComponent', 'Controller/Component');
 
 class BootstrapFlashComponent extends FlashComponent {
+
     private $bootstrapFlashClasses = ['success', 'info', 'warning', 'danger'];
 
     public function __call($name, $args) {

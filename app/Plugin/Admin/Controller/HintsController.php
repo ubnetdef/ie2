@@ -3,6 +3,7 @@ App::uses('AdminAppController', 'Admin.Controller');
 use Respect\Validation\Rules;
 
 class HintsController extends AdminAppController {
+
     public $uses = ['Hint', 'Inject'];
 
     public function beforeFilter() {

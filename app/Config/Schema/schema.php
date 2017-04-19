@@ -2,6 +2,7 @@
 App::uses('ClassRegistry', 'Utility');
 
 class AppSchema extends CakeSchema {
+
     public $config = [
         'id' => [
             'type' => 'integer',

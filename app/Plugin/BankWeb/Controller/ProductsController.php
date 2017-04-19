@@ -2,6 +2,7 @@
 App::uses('BankWebAppController', 'BankWeb.Controller');
 
 class ProductsController extends BankWebAppController {
+
     /**
      * Array of products loaded from the
      * env variable 'BANKWEB_PRODUCTS'
@@ -45,11 +46,11 @@ class ProductsController extends BankWebAppController {
             throw new NotFoundException('Unknown product');
         }
 
-        if ($this->request->is('post') &&
-            isset($this->request->data['srcAcc']) &&
-            is_numeric($this->request->data['srcAcc']) &&
-            isset($this->request->data['pin']) &&
-            is_numeric($this->request->data['pin'])
+        if ($this->request->is('post')
+            && isset($this->request->data['srcAcc'])
+            && is_numeric($this->request->data['srcAcc'])
+            && isset($this->request->data['pin'])
+            && is_numeric($this->request->data['pin'])
         ) {
             try {
                 $res = $this->BankApi->transfer(

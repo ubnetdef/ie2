@@ -2,7 +2,9 @@
 App::uses('BankWebAppModel', 'BankWeb.Model');
 
 class AccountMapping extends BankWebAppModel {
+
     public $belongsTo = ['Group'];
+
     public $recursive = 1;
 
     public function getAccount($groups) {

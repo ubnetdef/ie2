@@ -2,6 +2,7 @@
 App::uses('AppController', 'Controller');
 
 class InjectsController extends AppController {
+
     public $uses = ['Config', 'Hint', 'UsedHint', 'Schedule', 'Submission'];
 
     private $groups = [];

@@ -7,6 +7,7 @@ App::uses('Inflector', 'Utility');
  * This represents a specific inject
  */
 class InjectAbstraction implements JsonSerializable {
+
     /**
      * Copy of the data returned from the
      * Schedule model

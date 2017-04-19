@@ -6,6 +6,7 @@ App::uses('AppModel', 'Model');
  *
  */
 class Config extends AppModel {
+
     /**
      * Override the table for this model.
      * Otherwise, CakePHP would use "configs"

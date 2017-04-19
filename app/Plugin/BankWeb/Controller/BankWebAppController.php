@@ -2,7 +2,9 @@
 App::uses('AppController', 'Controller');
 
 class BankWebAppController extends AppController {
+
     public $components = ['BankWeb.BankApi'];
+
     public $uses = ['BankWeb.AccountMapping'];
 
     public function beforeFilter() {

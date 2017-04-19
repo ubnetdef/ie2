@@ -4,6 +4,7 @@ App::uses('Component', 'Controller');
 App::uses('Security', 'Utility');
 
 class PreflightComponent extends Component {
+
     /**
      * Array of all the checks that should
      * be ran.
@@ -75,14 +76,14 @@ class PreflightComponent extends Component {
      */
     public function verifySecurityKeys() {
         // Pls no defaults
-        if (empty(Configure::read('Security.salt')) ||
-            Configure::read('Security.salt') === 'DYhG93b0qyJfIxfs2guVoUubWwvniR2G0FgaC9mi'
+        if (empty(Configure::read('Security.salt'))
+            || Configure::read('Security.salt') === 'DYhG93b0qyJfIxfs2guVoUubWwvniR2G0FgaC9mi'
         ) {
             return 'Please update the Security.salt config value';
         }
 
-        if (empty(Configure::read('Security.cipherSeed')) ||
-            Configure::read('Security.cipherSeed') === '76859309657453542496749683645'
+        if (empty(Configure::read('Security.cipherSeed'))
+            || Configure::read('Security.cipherSeed') === '76859309657453542496749683645'
         ) {
             return 'Please update the Security.cipherSeed config value.';
         }

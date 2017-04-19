@@ -3,6 +3,7 @@ App::uses('AdminAppController', 'Admin.Controller');
 use Respect\Validation\Rules;
 
 class SiteController extends AdminAppController {
+
     public $uses = ['Announcement', 'Config'];
 
     /**

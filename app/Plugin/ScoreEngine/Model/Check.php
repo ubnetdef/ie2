@@ -2,7 +2,9 @@
 App::uses('ScoreEngineAppModel', 'ScoreEngine.Model');
 
 class Check extends ScoreEngineAppModel {
+
     public $belongsTo = ['ScoreEngine.Service', 'ScoreEngine.Team'];
+
     public $recursive = 1;
 
     public $virtualFields = [

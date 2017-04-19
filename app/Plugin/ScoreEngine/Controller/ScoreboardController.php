@@ -2,6 +2,7 @@
 App::uses('ScoreEngineAppController', 'ScoreEngine.Controller');
 
 class ScoreboardController extends ScoreEngineAppController {
+
     public $uses = [
         'ScoreEngine.Check', 'ScoreEngine.Service', 'ScoreEngine.Team', 'ScoreEngine.Round',
         'Config', 'Submission', 'Schedule', 'Group'

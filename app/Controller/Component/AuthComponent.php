@@ -3,7 +3,9 @@ App::uses('Component', 'Controller');
 App::uses('Security', 'Utility');
 
 class AuthComponent extends Component {
+
     public $components = ['Cookie', 'Session'];
+
     public $uses = ['User'];
 
     protected $controller;
