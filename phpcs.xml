@@ -3,11 +3,7 @@
 	<description>ie2 coding standard</description>
 
 	<file>./app</file>
-
-<!--
-	<arg name="report" value="summary"/>
 	<arg value="sp"/>
--->
 
 	<!-- Use PSR2 as a base -->
 	<rule ref="PSR2">
@@ -43,5 +39,8 @@
 	<!-- Ignore valid class name due to CakePHP -->
 	<rule ref="Squiz.Classes.ValidClassName.NotCamelCaps">
 		<exclude-pattern>./app/Config/database.php</exclude-pattern>
+	</rule>
+	<rule ref="PSR1.Methods.CamelCapsMethodName.NotCamelCaps">
+		<exclude-pattern>/app/Console/Command/EngineShell.php</exclude-pattern>
 	</rule>
 </ruleset>
