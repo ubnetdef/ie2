@@ -77,48 +77,22 @@ class TeamController extends ScoreEngineAppController {
     public function config() {
         $data = $this->TeamService->getData($this->team);
 
-        $canEdit = function ($id) use ($data) {
-            foreach ($data as $group => $options) {
-                foreach ($options as $opt) {
-                    if ($opt['id'] == $id) {
-                        return $opt['edit'];
-                    }
-                }
+        // Generate mappings
+        $mappings = [];
+        foreach ($data as $group => $options) {
+            foreach ($options as $opt) {
+                $mappings[$opt['id']] = $opt;
             }
-
-            return false;
-        };
-
-        $getOpt = function ($id) use (&$data) {
-            foreach ($data as $group => &$options) {
-                foreach ($options as $opt) {
-                    if ($opt['id'] == $id) {
-                        return $opt['value'];
-                    }
-                }
-            }
-
-            return false;
-        };
-
-        $updateOpt = function ($id, $value) use (&$data) {
-            foreach ($data as $group => &$options) {
-                foreach ($options as &$opt) {
-                    if ($opt['id'] == $id) {
-                        $opt['value'] = $value;
-                    }
-                }
-            }
-
-            return false;
-        };
+        }
 
         if ($this->request->is('post')) {
             foreach ($this->request->data as $opt => $value) {
                 $opt = (int)str_replace('opt', '', $opt);
-                if ($opt < 0 || !is_numeric($opt)) { continue;
+                if ($opt < 0 || !is_numeric($opt)) {
+                    continue;
                 }
-                if (!$canEdit($opt)) { continue;
+                if (!$mappings[$opt]['edit']) {
+                    continue;
                 }
 
                 // Only USERPASS is an array
@@ -127,7 +101,7 @@ class TeamController extends ScoreEngineAppController {
                 }
 
                 // Do some hacky magic with IPs to check subnets
-                $oldVal = $getOpt($opt);
+                $oldVal = $mappings[$opt]['value'];
 
                 if (preg_match(self::IP_REGEX, $oldVal, $match)) {
                     $newSubnet = explode('.', $value);
@@ -144,11 +118,11 @@ class TeamController extends ScoreEngineAppController {
                 }
 
                 $this->TeamService->updateConfig($opt, $value);
-                $updateOpt($opt, $value);
             }
 
             // Message
             $this->Flash->success('Updated Score Engine Config!');
+            $this->redirect(['plugin' => 'ScoreEngine', 'controller' => 'team', 'action' => 'config']);
         }
 
         $this->set('data', $data);

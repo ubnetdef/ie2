@@ -259,30 +259,32 @@ class StaffController extends AppController {
         $out = [];
 
         // Lookup for hint deductions
-        $hintDeduction = function ($team, $inject) use ($used_hints) {
-            $deduction = 0;
+        $hintDeductions = [];
+        foreach ($used_hints as $h) {
+            $team_id = $h['UsedHint']['group_id'];
+            $inject_id = $h['Hint']['inject_id'];
 
-            foreach ($used_hints as $h) {
-                if ($h['UsedHint']['group_id'] != $team) { continue;
-                }
-                if ($h['Hint']['inject_id'] != $inject) { continue;
-                }
-
-                $deduction += $h['Hint']['cost'];
+            if (!isset($hintDeductions[$team_id])) {
+                $hintDeductions[$team_id] = [];
+            }
+            if (!isset($hintDeductions[$team_id][$inject_id])) {
+                $hintDeductions[$team_id][$inject_id] = 0;
             }
 
-            return $deduction;
-        };
+            $hintDeductions[$team_id][$inject_id] += $h['Hint']['cost'];
+        }
 
         // Grab all the injects
         $seenInjects = [];
         foreach ($injects as $i) {
             // We ignore injects with a sequence number of zero
-            if ($i->getSequence() == 0) { continue;
+            if ($i->getSequence() == 0) {
+                continue;
             }
 
             // One sequence number pls
-            if (in_array($i->getSequence(), $seenInjects)) { continue;
+            if (in_array($i->getSequence(), $seenInjects)) {
+                continue;
             }
 
             $seenInjects[] = $i->getSequence();
@@ -300,13 +302,19 @@ class StaffController extends AppController {
         $scores = [];
         foreach ($submissions as $s) {
             $tn = $s['Group']['team_number'];
+            $in = $s['Inject']['id'];
             $inject = $s['Inject']['sequence'];
 
             if (!isset($scores[$tn])) {
                 $scores[$tn] = [];
             }
 
-            $grade = $s['Grade']['grade'] - $hintDeduction($tn, $s['Inject']['id']);
+            $deduction = 0;
+            if (isset($hintDeductions[$tn]) && isset($hintDeductions[$tn][$in])) {
+                $deduction = $hintDeductions[$tn][$in];
+            }
+
+            $grade = $s['Grade']['grade'] - $deduction;
             $scores[$tn][$inject] = $grade;
         }
 

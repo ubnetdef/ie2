@@ -52,9 +52,11 @@ class Check extends ScoreEngineAppModel {
             $team_name = $d['Team']['name'];
             $service_name = $d['Service']['name'];
 
-            if (!in_array($d['Service']['id'], $enabled_services)) { continue;
+            if (!in_array($d['Service']['id'], $enabled_services)) {
+                continue;
             }
-            if (!isset($rtn[$team_name])) { continue;
+            if (!isset($rtn[$team_name])) {
+                continue;
             }
 
             $rtn[$team_name][$service_name] = ((bool)$d['Check']['passed']);

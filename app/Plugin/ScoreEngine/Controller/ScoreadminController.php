@@ -106,7 +106,8 @@ class ScoreadminController extends ScoreEngineAppController {
         if ($this->request->is('post')) {
             foreach ($this->request->data as $opt => $value) {
                 $opt = (int)str_replace('opt', '', $opt);
-                if ($opt < 0 || !is_numeric($opt)) { continue;
+                if ($opt < 0 || !is_numeric($opt)) {
+                    continue;
                 }
 
                 // Only USERPASS is an array

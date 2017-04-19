@@ -230,7 +230,8 @@ class InjectsController extends AppController {
         // Find said hint, make sure we can unlock it
         $hint_title = '-error-';
         foreach ($hints as $h) {
-            if ($h['Hint']['id'] != $id) { continue;
+            if ($h['Hint']['id'] != $id) {
+                continue;
             }
 
             if ($h['Hint']['unlocked']) {

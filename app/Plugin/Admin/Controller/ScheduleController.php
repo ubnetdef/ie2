@@ -48,14 +48,16 @@ class ScheduleController extends AppController {
         ) {
             foreach ($this->request->data['changes'] as $c) {
                 $schedule = $this->Schedule->findById($c['id']);
-                if (empty($schedule)) { continue;
+                if (empty($schedule)) {
+                    continue;
                 }
 
                 $start = ($schedule['Schedule']['fuzzy'] ? $c['start'] - COMPETITION_START : $c['start']);
                 $end = ($schedule['Schedule']['fuzzy'] ? $c['end'] - COMPETITION_START : $c['end']);
 
                 // Bad time - we don't want negatives
-                if (0 > $start || 0 > $end) { continue;
+                if (0 > $start || 0 > $end) {
+                    continue;
                 }
 
                 $this->Schedule->id = $c['id'];
@@ -108,7 +110,8 @@ class ScheduleController extends AppController {
             $create = [];
             $missing = [];
             foreach (array_keys($this->Schedule->schema()) as $key) {
-                if (in_array($key, ['id'])) { continue;
+                if (in_array($key, ['id'])) {
+                    continue;
                 }
 
                 if (!isset($this->request->data[$key])) {
@@ -226,9 +229,11 @@ class ScheduleController extends AppController {
 
             $update = [];
             foreach ($schedule['Schedule'] as $k => $v) {
-                if (!isset($this->request->data[$k])) { continue;
+                if (!isset($this->request->data[$k])) {
+                    continue;
                 }
-                if ($this->request->data[$k] == $v) { continue;
+                if ($this->request->data[$k] == $v) {
+                    continue;
                 }
 
                 $update[$k] = $this->request->data[$k];

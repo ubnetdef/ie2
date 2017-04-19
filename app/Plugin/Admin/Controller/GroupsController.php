@@ -32,7 +32,8 @@ class GroupsController extends AdminAppController {
     public function index() {
         $mappings = [];
         foreach ($this->Group->find('all') as $g) {
-            if ($g['Group']['team_number'] === null) { continue;
+            if ($g['Group']['team_number'] === null) {
+                continue;
             }
 
             $mappings[$g['Group']['id']] = $g['Group']['team_number'];
