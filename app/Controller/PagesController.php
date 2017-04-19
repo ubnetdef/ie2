@@ -24,7 +24,8 @@ class PagesController extends AppController {
      * @url /pages/announcement_read
      */
     public function announcement_read($aid = false) {
-        if ($aid == false || !is_numeric($aid)) { return $this->ajaxResponse(null);
+        if ($aid == false || !is_numeric($aid)) {
+            return $this->ajaxResponse(null);
         }
 
         $read = $this->Session->consume('read_announcements');

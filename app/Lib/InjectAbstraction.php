@@ -122,7 +122,8 @@ class InjectAbstraction implements JsonSerializable {
         return ($this->getStart() > 0 ? tz_date(self::DATE_FORMAT, $this->getStart()) : self::STR_IMMEDIATELY);
     }
     public function getManagerStartString() {
-        if (!$this->isFuzzy() || $this->getStart() == 0) { return $this->getStartString();
+        if (!$this->isFuzzy() || $this->getStart() == 0) {
+            return $this->getStartString();
         }
 
         return $this->fuzzyDuration('+', $this->getStart());
@@ -147,7 +148,8 @@ class InjectAbstraction implements JsonSerializable {
         return ($this->getEnd() > 0 ? tz_date(self::DATE_FORMAT, $this->getEnd()) : self::STR_NEVER);
     }
     public function getManagerEndString() {
-        if (!$this->isFuzzy() || $this->getEnd() == 0) { return $this->getEndString();
+        if (!$this->isFuzzy() || $this->getEnd() == 0) {
+            return $this->getEndString();
         }
 
         return $this->fuzzyDuration('+', $this->getEnd());
@@ -160,9 +162,11 @@ class InjectAbstraction implements JsonSerializable {
      * form of minutes
      */
     public function getDuration() {
-        if ($this->getEnd() == 0) { return 0;
+        if ($this->getEnd() == 0) {
+            return 0;
         }
-        if ($this->getStart() == 0) { return -1;
+        if ($this->getStart() == 0) {
+            return -1;
         }
 
         $duration = ($this->getEnd() - $this->getStart());
@@ -219,9 +223,8 @@ class InjectAbstraction implements JsonSerializable {
      * @return mixed The data you're looking for
      */
     public function __call($name, $args) {
-        if (count($args) > 0) { return;
-        }
-        if (substr($name, 0, 3) != 'get') { return;
+        if (count($args) > 0 || substr($name, 0, 3) != 'get') {
+            return;
         }
 
         $key = Inflector::underscore(substr($name, 3));

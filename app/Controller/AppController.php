@@ -201,7 +201,8 @@ class AppController extends Controller {
      *
      */
     protected function sendSlack($msg, $extra = []) {
-        if (!env('SLACK_ENDPOINT')) { return;
+        if (!env('SLACK_ENDPOINT')) {
+            return;
         }
 
         // Sprintf it

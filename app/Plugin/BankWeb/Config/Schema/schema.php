@@ -34,7 +34,8 @@ class BankWebSchema extends CakeSchema {
     }
 
     public function after($event = []) {
-        if (!isset($event['create'])) { return;
+        if (!isset($event['create'])) {
+            return;
         }
 
         switch ($event['create']) {

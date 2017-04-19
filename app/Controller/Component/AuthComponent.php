@@ -62,20 +62,24 @@ class AuthComponent extends Component {
         $user = $UserModel->findByUsername($username);
 
         // Does the user exist?
-        if (empty($user)) { return false;
+        if (empty($user)) {
+            return false;
         }
 
         // Do we have the right password?
         $actual_password = $user['User']['password'];
-        if (Security::hash($password, 'blowfish', $actual_password) !== $actual_password) { return false;
+        if (Security::hash($password, 'blowfish', $actual_password) !== $actual_password) {
+            return false;
         }
 
         // Is the user active?
-        if ($user['User']['active'] == 0) { return false;
+        if ($user['User']['active'] == 0) {
+            return false;
         }
 
         // Is the user expired?
-        if ($this->isExpired($user['User']['expiration'])) { return false;
+        if ($this->isExpired($user['User']['expiration'])) {
+            return false;
         }
 
         // Save the data

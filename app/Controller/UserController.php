@@ -11,7 +11,8 @@ class UserController extends AppController {
      * @url /user/login
      */
     public function login() {
-        if ($this->Auth->loggedIn()) { return $this->redirect('/');
+        if ($this->Auth->loggedIn()) {
+            return $this->redirect('/');
         }
 
         $username = '';
