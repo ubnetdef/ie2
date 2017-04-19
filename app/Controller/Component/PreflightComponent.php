@@ -75,10 +75,15 @@ class PreflightComponent extends Component {
      */
     public function verifySecurityKeys() {
         // Pls no defaults
-        if (empty(Configure::read('Security.salt')) or Configure::read('Security.salt') === 'DYhG93b0qyJfIxfs2guVoUubWwvniR2G0FgaC9mi') {
+        if (empty(Configure::read('Security.salt')) ||
+            Configure::read('Security.salt') === 'DYhG93b0qyJfIxfs2guVoUubWwvniR2G0FgaC9mi'
+        ) {
             return 'Please update the Security.salt config value';
         }
-        if (empty(Configure::read('Security.cipherSeed')) or Configure::read('Security.cipherSeed') === '76859309657453542496749683645') {
+
+        if (empty(Configure::read('Security.cipherSeed')) ||
+            Configure::read('Security.cipherSeed') === '76859309657453542496749683645'
+        ) {
             return 'Please update the Security.cipherSeed config value.';
         }
 
@@ -196,7 +201,8 @@ class PreflightComponent extends Component {
             }
         }
 
-        return !empty($missing_tables) ? 'ScoreEngine is not setup. Missing DB table(s): '.implode(', ', $missing_tables) : true;
+        $missing = implode(', ', $missing_tables);
+        return !empty($missing_tables) ? 'ScoreEngine is not setup. Missing DB table(s): '.$missing : true;
     }
 
     /**
@@ -205,7 +211,13 @@ class PreflightComponent extends Component {
      * Verifies some env variables are set, and that 'BANKWEB_PRODUCTS' exists
      */
     public function checkBankWeb() {
-        foreach (['BANKAPI_SERVER', 'BANKAPI_TIMEOUT', 'BANKWEB_PRODUCTS', 'BANKWEB_WHITETEAM_ACCOUNT', 'BANKWEB_PUBLIC_APIINFO'] as $key) {
+        foreach ([
+            'BANKAPI_SERVER',
+            'BANKAPI_TIMEOUT',
+            'BANKWEB_PRODUCTS',
+            'BANKWEB_WHITETEAM_ACCOUNT',
+            'BANKWEB_PUBLIC_APIINFO'
+        ] as $key) {
             if (env($key) === null) {
                 return sprintf('Please setup the variable "%s" to use the BankWeb Feature.', $key);
             }

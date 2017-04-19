@@ -83,7 +83,16 @@ class EngineShell extends AppShell {
         // Create some users
         $this->out('Creating the initial users......', 0);
         foreach ($this->users as $u) {
-            $this->dispatchShell('engine', 'create_user', $u['userpass'], $u['group'], '--quiet', '--yes', '--password', $u['userpass']);
+            $this->dispatchShell(
+                'engine',
+                'create_user',
+                $u['userpass'],
+                $u['group'],
+                '--quiet',
+                '--yes',
+                '--password',
+                $u['userpass']
+            );
         }
         $this->out('DONE!');
 
@@ -266,7 +275,8 @@ class EngineShell extends AppShell {
                 'parser' => [
                     'arguments' => [
                         'parent' => [
-                            'help' => 'The parent of the group you wish to create. If you wish to create a root group, use "root" here.',
+                            'help' => 'The parent of the group you wish to create. '.
+                                'If you wish to create a root group, use "root" here.',
                             'required' => true,
                         ],
                         'name' => [

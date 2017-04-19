@@ -43,7 +43,6 @@ class SiteController extends AdminAppController {
 
             default:
                 throw new MethodNotAllowedException();
-            break;
         }
 
         return $this->ajaxResponse($data);
@@ -90,7 +89,15 @@ class SiteController extends AdminAppController {
 
             $msg = sprintf('Edited config value "%s"', $config['Config']['key']);
 
-            $this->logMessage('config', $msg, ['old_config' => $config['Config'], 'new_config' => $res['data']], $config['Config']['id']);
+            $this->logMessage(
+                'config',
+                $msg,
+                [
+                    'old_config' => $config['Config'],
+                    'new_config' => $res['data']
+                ],
+                $config['Config']['id']
+            );
             $this->Flash->success($msg.'!');
         } else {
             // Fix the data

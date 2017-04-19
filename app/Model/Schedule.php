@@ -262,7 +262,8 @@ class Schedule extends AppModel {
      */
     public function getScheduleBounds($round = true) {
         $this->virtualFields['min'] = 'IF(Schedule.fuzzy = 1, Schedule.start + '.COMPETITION_START.', Schedule.start)';
-        $this->virtualFields['max'] = 'IF(Schedule.fuzzy = 1 AND Schedule.end > 0, Schedule.end + '.COMPETITION_START.', Schedule.end)';
+        $this->virtualFields['max'] = 'IF(Schedule.fuzzy = 1 AND Schedule.end > 0, '.
+                    'Schedule.end + '.COMPETITION_START.', Schedule.end)';
 
         $min = $this->find('first', [
             'fields' => [

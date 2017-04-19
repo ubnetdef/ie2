@@ -28,15 +28,17 @@ TEMPLATE;
         $tpl = '<ul class="list-group">';
 
         foreach ($submissions as $s) {
-            $urlDelete = $this->_url('/injects/delete/'.$s['Submission']['id']);
-            $urlDownload = $this->_url('/injects/submission/'.$s['Submission']['id']);
+            $urlDelete = $this->url('/injects/delete/'.$s['Submission']['id']);
+            $urlDownload = $this->url('/injects/submission/'.$s['Submission']['id']);
             $d = json_decode($s['Submission']['data'], true);
 
             $tpl .= '<li class="list-group-item">'.
                         '<h4 class="list-group-item-heading">'.
-                        'Submission on '.$this->_date($s['Submission']['created']).
+                        'Submission on '.$this->date($s['Submission']['created']).
                         '<a href="'.$urlDelete.'" class="btn btn-info pull-right">Delete</a></h4>'.
-                        '<p class="list-group-item-text">File: <a href="'.$urlDownload.'" target="_blank">'.$d['filename'].'</a></p>'.
+                        '<p class="list-group-item-text">'.
+                        'File: <a href="'.$urlDownload.'" target="_blank">'.$d['filename'].'</a>'.
+                        '</p>'.
                     '</li>';
         }
 
@@ -52,9 +54,10 @@ TEMPLATE;
 
     public function getGraderTemplate($s) {
         $data = json_decode($s['Submission']['data'], true);
-        $url = $this->_url('/staff/submission/'.$s['Submission']['id']);
+        $url = $this->url('/staff/submission/'.$s['Submission']['id']);
 
-        $rtn = '<a href="'.$url.'" class="btn btn-block btn-info" target="_blank">Submission Download ('.$data['filename'].')</a>';
+        $rtn = '<a href="'.$url.'" class="btn btn-block btn-info" target="_blank">'.
+                    'Submission Download ('.$data['filename'].')</a>';
         if ($data['extension'] != 'pdf') {
             return $rtn;
         }

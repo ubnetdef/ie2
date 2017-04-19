@@ -2,10 +2,10 @@
 App::uses('FlashComponent', 'Controller/Component');
 
 class BootstrapFlashComponent extends FlashComponent {
-    private $_bootstrapFlashClasses = ['success', 'info', 'warning', 'danger'];
+    private $bootstrapFlashClasses = ['success', 'info', 'warning', 'danger'];
 
     public function __call($name, $args) {
-        if (in_array($name, $this->_bootstrapFlashClasses)) {
+        if (in_array($name, $this->bootstrapFlashClasses)) {
             // Duplicating most of the parent::__call functionality
             $options = [
                 'element' => 'bootstrap_default',

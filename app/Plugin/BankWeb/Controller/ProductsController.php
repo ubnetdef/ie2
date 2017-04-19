@@ -52,7 +52,12 @@ class ProductsController extends BankWebAppController {
             is_numeric($this->request->data['pin'])
         ) {
             try {
-                $res = $this->BankApi->transfer($_POST['srcAcc'], env('BANKWEB_WHITETEAM_ACCOUNT'), $product['cost'], $_POST['pin']);
+                $res = $this->BankApi->transfer(
+                    $_POST['srcAcc'],
+                    env('BANKWEB_WHITETEAM_ACCOUNT'),
+                    $product['cost'],
+                    $_POST['pin']
+                );
             } catch (Exception $e) {
                 $this->Flash->danger($e->getMessage());
             }

@@ -198,7 +198,11 @@ class UsersController extends AdminAppController {
 
         $this->logMessage(
             'users',
-            sprintf('Flipped the status user "%s" to %sactive', $user['User']['username'], $user['User']['active'] ? 'in' : ''),
+            sprintf(
+                'Flipped the status user "%s" to %sactive',
+                $user['User']['username'],
+                $user['User']['active'] ? 'in' : ''
+            ),
             [
                 'old_status' => $user['User']['active'],
                 'new_status' => !$user['User']['active'],

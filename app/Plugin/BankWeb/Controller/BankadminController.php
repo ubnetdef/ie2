@@ -87,7 +87,15 @@ class BankadminController extends BankWebAppController {
 
             $msg = sprintf('Edited account mapping for user "%s"', $data['AccountMapping']['username']);
 
-            $this->logMessage('bank', $msg, ['old_mapping' => $data['AccountMapping'], 'new_mapping' => $res['data']], $data['AccountMapping']['id']);
+            $this->logMessage(
+                'bank',
+                $msg,
+                [
+                    'old_mapping' => $data['AccountMapping'],
+                    'new_mapping' => $res['data']
+                ],
+                $data['AccountMapping']['id']
+            );
             $this->Flash->success($msg.'!');
         } else {
             // Fix the data

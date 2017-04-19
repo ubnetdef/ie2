@@ -47,8 +47,10 @@ class Hint extends AppModel {
         // Add some helper data like if it's unlocked,
         // or a dependency is met
         foreach ($data as &$d) {
+            $dependency_met = ($d['Hint']['parent_id'] != null) ? $unlockedHints[$d['Hint']['parent_id']] : true;
+
             $d['Hint']['unlocked'] = $unlockedHints[$d['Hint']['id']];
-            $d['Hint']['dependency_met'] = ($d['Hint']['parent_id'] != null) ? $unlockedHints[$d['Hint']['parent_id']] : true;
+            $d['Hint']['dependency_met'] = $dependency_met;
         }
 
         return $data;

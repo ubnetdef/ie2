@@ -180,7 +180,11 @@ class ScheduleController extends AppController {
                 'active' => !($schedule['Schedule']['active']),
             ]);
 
-            $msg = sprintf('%sctivated inject "%s"', ($schedule['Schedule']['active'] ? 'Dea' : 'A'), $schedule['Inject']['title']);
+            $msg = sprintf(
+                '%sctivated inject "%s"',
+                ($schedule['Schedule']['active'] ? 'Dea' : 'A'),
+                $schedule['Inject']['title']
+            );
 
             $this->logMessage(
                 'schedule',

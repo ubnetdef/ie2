@@ -98,7 +98,7 @@ abstract class InjectSubmissionBase {
      * @param $url The url
      * @return string The full url
      */
-    protected function _url($url) {
+    protected function url($url) {
         return \Router::url($url);
     }
 
@@ -108,7 +108,7 @@ abstract class InjectSubmissionBase {
      * @param $timestamp The timestamp
      * @return string The date
      */
-    protected function _date($timestamp) {
+    protected function date($timestamp) {
         return tz_date('F j, Y \a\t g:iA', $timestamp);
     }
 }

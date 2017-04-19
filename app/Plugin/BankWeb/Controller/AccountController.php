@@ -26,7 +26,9 @@ class AccountController extends BankWebAppController {
      * @url /bank/account/create
      */
     public function create() {
-        if (!$this->request->is('post') || !isset($this->request->data['pin']) || !is_numeric($this->request->data['pin'])) {
+        if (!$this->request->is('post') ||
+            !isset($this->request->data['pin']) ||
+            !is_numeric($this->request->data['pin'])) {
             $this->Flash->danger('Please ensure your PIN is numeric!');
             return $this->redirect(['plugin' => 'bank_web', 'controller' => 'account', 'action' => 'index']);
         }

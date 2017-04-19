@@ -232,11 +232,14 @@ class InjectsController extends AppController {
             if ($h['Hint']['id'] != $id) { continue;
             }
 
-            if ($h['Hint']['unlocked']) { return $this->ajaxResponse(true);
+            if ($h['Hint']['unlocked']) {
+                return $this->ajaxResponse(true);
             }
-            if (!$h['Hint']['dependency_met']) { return $this->ajaxResponse(false);
+            if (!$h['Hint']['dependency_met']) {
+                return $this->ajaxResponse(false);
             }
-            if ($h['Hint']['time_wait'] > 0 && $inject->getStart() + $h['Hint']['time_wait'] > time()) { return $this->ajaxResponse(false);
+            if ($h['Hint']['time_wait'] > 0 && $inject->getStart() + $h['Hint']['time_wait'] > time()) {
+                return $this->ajaxResponse(false);
             }
 
             $hint_title = $h['Hint']['title'];

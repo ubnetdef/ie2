@@ -104,7 +104,9 @@ class InjectStylerHelper extends AppHelper {
         }
 
         if ($this->inject->getSubmissionCount() >= $this->inject->getMaxSubmissions()) {
-            return ($this->inject->getMaxSubmissions() > 1 ? sprintf(self::TYPE_OUTPUT_TPL, 'Max submissions reached.') : sprintf(self::TYPE_OUTPUT_TPL, 'This inject has already been submitted.'));
+            $tpl_max = sprintf(self::TYPE_OUTPUT_TPL, 'Max submissions reached.');
+            $tpl_sub = sprintf(self::TYPE_OUTPUT_TPL, 'This inject has already been submitted.');
+            return ($this->inject->getMaxSubmissions() > 1 ? $tpl_max : $tpl_sub);
         }
 
         return 'Unknown error';

@@ -33,7 +33,7 @@ TEMPLATE;
 
             $tpl .= '<li class="list-group-item">'.
                         '<h4 class="list-group-item-heading">'.
-                        'Submission on '.$this->_date($s['Submission']['created']).
+                        'Submission on '.$this->date($s['Submission']['created']).
                         '<a href="'.$url.'" class="btn btn-info pull-right">Delete</a></h4>'.
                         '<p class="list-group-item-text">'.nl2br($s['Submission']['data']).'</p>'.
                     '</li>';

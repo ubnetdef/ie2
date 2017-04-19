@@ -25,12 +25,12 @@ TEMPLATE;
         $tpl = '<ul class="list-group">';
 
         foreach ($submissions as $s) {
-            $urlDelete = $this->_url('/injects/delete/'.$s['Submission']['id']);
+            $urlDelete = $this->url('/injects/delete/'.$s['Submission']['id']);
             $d = json_decode($s['Submission']['data'], true);
 
             $tpl .= '<li class="list-group-item">'.
                         '<h4 class="list-group-item-heading">'.
-                        'Manual Check Requested on '.$this->_date($s['Submission']['created']).
+                        'Manual Check Requested on '.$this->date($s['Submission']['created']).
                         '<a href="'.$urlDelete.'" class="btn btn-info pull-right">Delete</a></h4>'.
                     '</li>';
         }

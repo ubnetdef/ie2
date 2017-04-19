@@ -28,7 +28,7 @@ class AuthComponent extends Component {
      */
     public function initialize(Controller $controller) {
         // If we're logged in, make sure we haven't expired
-        if ($this->loggedIn() && $this->_isExpired($this->user('expiration'))) {
+        if ($this->loggedIn() && $this->isExpired($this->user('expiration'))) {
             $this->logout();
         }
 
@@ -43,7 +43,7 @@ class AuthComponent extends Component {
      * Checks if a timestamp has passed ('expired')
      *
      */
-    private function _isExpired($expiration) {
+    private function isExpired($expiration) {
         return ($expiration > 0) ? (time() > $expiration) : false;
     }
 
@@ -73,7 +73,7 @@ class AuthComponent extends Component {
         }
 
         // Is the user expired?
-        if ($this->_isExpired($user['User']['expiration'])) { return false;
+        if ($this->isExpired($user['User']['expiration'])) { return false;
         }
 
         // Save the data
