@@ -257,7 +257,7 @@ class PreflightComponent extends Component {
         }
 
         $missing_tpl = 'BankWeb is not setup. Missing DB table(s): '.implode(', ', $missing_tables)
-            .'. Please run `./cake engine install_bankweb`.'
+            .'. Please run `./cake engine install_bankweb`.';
 
         return !empty($missing_tables) ? $missing_tpl : true;
     }
