@@ -18,6 +18,10 @@
 
 		<!-- Disable newline after opening brace -->
 		<exclude name="Squiz.ControlStructures.ControlSignature.NewlineAfterOpenBrace" />
+
+		<!-- Ignore some warnings due to CakePHP -->
+		<exclude name="PSR1.Classes.ClassDeclaration.MissingNamespace" />
+		<exclude name="PSR1.Files.SideEffects.FoundWithSymbols" />
 	</rule>
 	<rule ref="Generic.Functions.OpeningFunctionBraceKernighanRitchie" />
 
@@ -35,4 +39,9 @@
 
 	<!-- Verify that operators have valid spacing surrounding them -->
 	<rule ref="Squiz.WhiteSpace.OperatorSpacing"></rule>
+
+	<!-- Ignore valid class name due to CakePHP -->
+	<rule ref="Squiz.Classes.ValidClassName.NotCamelCaps">
+		<exclude-pattern>./app/Config/database.php</exclude-pattern>
+	</rule>
 </ruleset>

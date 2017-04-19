@@ -44,6 +44,12 @@ class I18nSchema extends CakeSchema {
         'foreign_key' => ['type' => 'integer', 'null' => false, 'length' => 10, 'key' => 'index'],
         'field' => ['type' => 'string', 'null' => false, 'key' => 'index'],
         'content' => ['type' => 'text', 'null' => true, 'default' => null],
-        'indexes' => ['PRIMARY' => ['column' => 'id', 'unique' => 1], 'locale' => ['column' => 'locale', 'unique' => 0], 'model' => ['column' => 'model', 'unique' => 0], 'row_id' => ['column' => 'foreign_key', 'unique' => 0], 'field' => ['column' => 'field', 'unique' => 0]]
+        'indexes' => [
+            'PRIMARY' => ['column' => 'id', 'unique' => 1],
+            'locale' => ['column' => 'locale', 'unique' => 0],
+            'model' => ['column' => 'model', 'unique' => 0],
+            'row_id' => ['column' => 'foreign_key', 'unique' => 0],
+            'field' => ['column' => 'field', 'unique' => 0]
+        ]
     ];
 }

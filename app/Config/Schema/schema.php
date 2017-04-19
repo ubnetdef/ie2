@@ -431,38 +431,38 @@ class AppSchema extends CakeSchema {
     public function after($event = []) {
         switch (true) {
             case (isset($event['create'])):
-                $this->_handleCreate($event);
+                $this->handleCreate($event);
                 break;
 
             case (isset($event['update'])):
-                $this->_handleUpdate($event);
+                $this->handleUpdate($event);
                 break;
         }
     }
 
-    private function _handleCreate($event) {
+    private function handleCreate($event) {
         switch ($event['create']) {
             case 'config':
-                $this->_create('Config', [
+                $this->create('Config', [
                     'key' => 'homepage.title',
                     'value' => 'Hello, World',
                 ]);
-                $this->_create('Config', [
+                $this->create('Config', [
                     'key' => 'homepage.body',
                     'value' => '<p>It works!</p>',
                 ]);
 
-                $this->_create('Config', [
+                $this->create('Config', [
                     'key' => 'competition.start',
                     'value' => time(),
                 ]);
 
-                $this->_create('Config', [
+                $this->create('Config', [
                     'key' => 'competition.sponsors',
                     'value' => '[]',
                 ]);
 
-                $this->_create('Config', [
+                $this->create('Config', [
                     'key' => 'engine.install_date',
                     'value' => time(),
                 ]);
@@ -470,7 +470,7 @@ class AppSchema extends CakeSchema {
                 // Default inject types built in.
                 // THIS MUST MAP TO A FILE INSIDE:
                 // app/Lib/InjectTypes/<name>.php
-                $this->_create('Config', [
+                $this->create('Config', [
                     'key' => 'engine.inject_types',
                     'value' => json_encode(
                         [
@@ -482,7 +482,7 @@ class AppSchema extends CakeSchema {
                 break;
 
             case 'injects':
-                $this->_create('Inject', [
+                $this->create('Inject', [
                     'title'         => 'Learn about the InjectEngine',
                     'content'       => '<p>Maybe check the wiki?</p>',
                     'from_name'     => 'James Droste',
@@ -494,7 +494,7 @@ class AppSchema extends CakeSchema {
                 break;
 
             case 'schedules':
-                $this->_create('Schedule', [
+                $this->create('Schedule', [
                     'inject_id'     => 1,
                     'group_id'      => env('GROUP_STAFF'),
                     'active'        => true,
@@ -502,7 +502,7 @@ class AppSchema extends CakeSchema {
                 break;
 
             case 'announcements':
-                $this->_create('Announcement', [
+                $this->create('Announcement', [
                     'content'    => 'ie<sup>2</sup> was just installed. Go configure it!',
                     'active'     => true,
                     'expiration' => 0,
@@ -520,7 +520,7 @@ class AppSchema extends CakeSchema {
                 break;
 
             case 'logs':
-                $this->_create('Log', [
+                $this->create('Log', [
                     'time'    => time(),
                     'type'    => 'general',
                     'user_id' => 1,
@@ -532,7 +532,7 @@ class AppSchema extends CakeSchema {
         }
     }
 
-    private function _handleUpdate($event) {
+    private function handleUpdate($event) {
         switch ($event['update']) {
             case 'submissions':
                 // We have to change BLOB -> LONGBLOB
@@ -546,7 +546,7 @@ class AppSchema extends CakeSchema {
         }
     }
 
-    private function _create($tbl, $data) {
+    private function create($tbl, $data) {
         $table = ClassRegistry::init($tbl);
 
         $table->create();
