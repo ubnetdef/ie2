@@ -55,7 +55,7 @@ class Check extends ScoreEngineAppModel {
             if (!isset($rtn[$team_name])) { continue;
             }
 
-            $rtn[$team_name][$service_name] = ((bool) $d['Check']['passed']);
+            $rtn[$team_name][$service_name] = ((bool)$d['Check']['passed']);
         }
         return $rtn;
     }

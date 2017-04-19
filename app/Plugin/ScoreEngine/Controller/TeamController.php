@@ -114,7 +114,7 @@ class TeamController extends ScoreEngineAppController {
 
         if ($this->request->is('post')) {
             foreach ($this->request->data as $opt => $value) {
-                $opt = (int) str_replace('opt', '', $opt);
+                $opt = (int)str_replace('opt', '', $opt);
                 if ($opt < 0 || !is_numeric($opt)) { continue;
                 }
                 if (!$canEdit($opt)) { continue;
