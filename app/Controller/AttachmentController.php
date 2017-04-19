@@ -2,52 +2,53 @@
 App::uses('AppController', 'Controller');
 
 class AttachmentController extends AppController {
-	public $uses = ['Attachment', 'Schedule'];
 
-	/**
-	 * Dynamic Index Page 
-	 *
-	 * @url /attachment
-	 * @url /attachment/index
-	 */
-	public function index() {
-		return $this->redirect(['controller' => 'pages', 'action' => 'index']);
-	}
+    public $uses = ['Attachment', 'Schedule'];
 
-	/**
-	 * Attachment View 
-	 *
-	 * @url /attachment/view/<schedule_id>/<attachment_id>/<access_key>
-	 */
-	public function view($aid=false, $access_key=false) {
-		$attachment = $this->Attachment->findById($aid);
-		if ( empty($attachment) ) {
-			throw new NotFoundException('Unknown attachment');
-		}
+    /**
+     * Dynamic Index Page
+     *
+     * @url /attachment
+     * @url /attachment/index
+     */
+    public function index() {
+        return $this->redirect(['controller' => 'pages', 'action' => 'index']);
+    }
 
-		$data = json_decode($attachment['Attachment']['data'], true);
-		$download = (isset($this->params['url']['download']) && $this->params['url']['download'] == true);
+    /**
+     * Attachment View
+     *
+     * @url /attachment/view/<schedule_id>/<attachment_id>/<access_key>
+     */
+    public function view($aid = false, $access_key = false) {
+        $attachment = $this->Attachment->findById($aid);
+        if (empty($attachment)) {
+            throw new NotFoundException('Unknown attachment');
+        }
 
-		// Verify the "access_key"
-		if ( $access_key != md5($aid.env('SECURITY_CIPHER_SEED')) ) {
-			throw new ForbiddenException('Invalid access key');
-		}
+        $data = json_decode($attachment['Attachment']['data'], true);
+        $download = (isset($this->params['url']['download']) && $this->params['url']['download'] == true);
 
-		// Let's verify our data is correct
-		if ( md5(base64_decode($data['data'])) !== $data['hash'] ) {
-			throw new InternalErrorException('Data storage failure');
-		}
+        // Verify the "access_key"
+        if ($access_key != md5($aid.env('SECURITY_CIPHER_SEED'))) {
+            throw new ForbiddenException('Invalid access key');
+        }
 
-		// Create the new response for the data
-		$response = new CakeResponse();
-		$response->type($data['extension']);
-		$response->body(base64_decode($data['data']));
-		$response->disableCache();
+        // Let's verify our data is correct
+        if (md5(base64_decode($data['data'])) !== $data['hash']) {
+            throw new InternalErrorException('Data storage failure');
+        }
 
-		$type = ($download ? 'attachment' : 'inline');
-		$filename = $attachment['Attachment']['name'];
-		$response->header('Content-Disposition', $type.'; filename="'.$filename.'"');
+        // Create the new response for the data
+        $response = new CakeResponse();
+        $response->type($data['extension']);
+        $response->body(base64_decode($data['data']));
+        $response->disableCache();
 
-		return $response;
-	}
+        $type = ($download ? 'attachment' : 'inline');
+        $filename = $attachment['Attachment']['name'];
+        $response->header('Content-Disposition', $type.'; filename="'.$filename.'"');
+
+        return $response;
+    }
 }

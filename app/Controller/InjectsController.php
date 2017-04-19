@@ -2,258 +2,267 @@
 App::uses('AppController', 'Controller');
 
 class InjectsController extends AppController {
-	public $uses = ['Config', 'Hint', 'UsedHint', 'Schedule', 'Submission'];
 
-	private $groups = [];
+    public $uses = ['Config', 'Hint', 'UsedHint', 'Schedule', 'Submission'];
 
-	public function beforeFilter() {
-		parent::beforeFilter();
+    private $groups = [];
 
-		// Enforce logins
-		$this->Auth->protect();
+    public function beforeFilter() {
+        parent::beforeFilter();
 
-		// Mark the tab as active
-		$this->set('at_injects', true);
+        // Enforce logins
+        $this->Auth->protect();
 
-		// Administrator blue team override
-		$this->groups = $this->Auth->item('groups');
-		if ( $this->Auth->isStaff() ) {
-			$this->groups[] = (int) env('GROUP_BLUE');
-		}
+        // Mark the tab as active
+        $this->set('at_injects', true);
 
-		// Load + setup the InjectStyler helper
-		$this->helpers[] = 'InjectStyler';
-		$this->helpers['InjectStyler'] = [
-			'types'  => $this->Config->getInjectTypes(),
-			'inject' => new stdClass(), // Nothing...for now
-		];
-	}
+        // Administrator blue team override
+        $this->groups = $this->Auth->item('groups');
+        if ($this->Auth->isStaff()) {
+            $this->groups[] = (int)env('GROUP_BLUE');
+        }
 
-	/**
-	 * Inject Inbox Page 
-	 *
-	 * @url /injects
-	 * @url /injects/index
-	 */
-	public function index() {
-		if ( (bool)env('INJECT_INBOX_STREAM_VIEW') ) {
-			$this->set('injects', $this->Schedule->getInjects($this->groups));
-			return $this->render('index_stream');
-		} else {
-			return $this->render('index_list');
-		}
-	}
+        // Load + setup the InjectStyler helper
+        $this->helpers[] = 'InjectStyler';
+        $this->helpers['InjectStyler'] = [
+            'types'  => $this->Config->getInjectTypes(),
+            'inject' => new stdClass(), // Nothing...for now
+        ];
+    }
 
-	/**
-	 * API Endpoint for Injects
-	 *
-	 * The Inject Inbox Page will call
-	 * this endpoint every xx seconds.
-	 *
-	 * @url /injects/api
-	 */
-	public function api() {
-		return $this->ajaxResponse([
-			'injects' => $this->Schedule->getInjects($this->groups),
-		]);
-	}
+    /**
+     * Inject Inbox Page
+     *
+     * @url /injects
+     * @url /injects/index
+     */
+    public function index() {
+        if ((bool)env('INJECT_INBOX_STREAM_VIEW')) {
+            $this->set('injects', $this->Schedule->getInjects($this->groups));
+            return $this->render('index_stream');
+        } else {
+            return $this->render('index_list');
+        }
+    }
 
-	/**
-	 * Inject View Page
-	 *
-	 * @url /injects/view/<schedule_id>
-	 */
-	public function view($sid=false) {
-		$inject = $this->Schedule->getInject($sid, $this->groups);
-		if ( empty($inject) ) {
-			throw new NotFoundException('Unknown inject');
-		}
+    /**
+     * API Endpoint for Injects
+     *
+     * The Inject Inbox Page will call
+     * this endpoint every xx seconds.
+     *
+     * @url /injects/api
+     */
+    public function api() {
+        return $this->ajaxResponse([
+            'injects' => $this->Schedule->getInjects($this->groups),
+        ]);
+    }
 
-		$submissions = $this->Submission->getSubmissions($inject->getInjectId(), $this->Auth->group('id'));
+    /**
+     * Inject View Page
+     *
+     * @url /injects/view/<schedule_id>
+     */
+    public function view($sid = false) {
+        $inject = $this->Schedule->getInject($sid, $this->groups);
+        if (empty($inject)) {
+            throw new NotFoundException('Unknown inject');
+        }
 
-		// Setup the InjectStyler helper with the latest inject
-		$this->helpers['InjectStyler']['inject'] = $inject;
+        $submissions = $this->Submission->getSubmissions($inject->getInjectId(), $this->Auth->group('id'));
 
-		$this->set('hints', $this->Hint->find('count', ['conditions' => ['inject_id' => $inject->getInjectId()]]));
-		$this->set('inject', $inject);
-		$this->set('submissions', $submissions);
-	}
+        // Setup the InjectStyler helper with the latest inject
+        $this->helpers['InjectStyler']['inject'] = $inject;
 
-	/**
-	 * Inject Submission Endpoint
-	 *
-	 * @url /injects/submit
-	 */
-	public function submit() {
-		if ( !$this->request->is('post') || !isset($this->request->data['id'])) {
-			throw new MethodNotAllowedException('Unauthorized');
-		}
+        $this->set('hints', $this->Hint->find('count', ['conditions' => ['inject_id' => $inject->getInjectId()]]));
+        $this->set('inject', $inject);
+        $this->set('submissions', $submissions);
+    }
 
-		$inject = $this->Schedule->getInject($this->request->data['id'], $this->groups);
-		if ( empty($inject) ) {
-			throw new NotFoundException('Unknown inject');
-		}
-		if ( !$inject->isAcceptingSubmissions() ) {
-			throw new UnauthorizedException('Inject is no longer accepting submissions');
-		}
+    /**
+     * Inject Submission Endpoint
+     *
+     * @url /injects/submit
+     */
+    public function submit() {
+        if (!$this->request->is('post') || !isset($this->request->data['id'])) {
+            throw new MethodNotAllowedException('Unauthorized');
+        }
 
-		// Create a new InjectType Manager
-		$typeManager = new InjectTypes\Manager($this->Config->getInjectTypes());
-		$injectType = $typeManager->get($inject->getType());
+        $inject = $this->Schedule->getInject($this->request->data['id'], $this->groups);
+        if (empty($inject)) {
+            throw new NotFoundException('Unknown inject');
+        }
+        if (!$inject->isAcceptingSubmissions()) {
+            throw new UnauthorizedException('Inject is no longer accepting submissions');
+        }
 
-		if ( !$injectType->validateSubmission($inject, $this->request->data) ) {
-			throw new BadRequestException('Non-valid submission');
-		}
+        // Create a new InjectType Manager
+        $typeManager = new InjectTypes\Manager($this->Config->getInjectTypes());
+        $injectType = $typeManager->get($inject->getType());
 
-		// We're good! Save it!
-		$this->Submission->create();
-		$this->Submission->save([
-			'inject_id' => $inject->getInjectId(),
-			'user_id'   => $this->Auth->user('id'),
-			'group_id'  => $this->Auth->group('id'),
-			'created'   => time(),
-			'data'      => $injectType->handleSubmission($inject, $this->request->data),
-		]);
+        if (!$injectType->validateSubmission($inject, $this->request->data)) {
+            throw new BadRequestException('Non-valid submission');
+        }
 
-		$this->logMessage(
-			'submission',
-			sprintf('Created submission for Inject #%d', $inject->getSequence()),
-			[],
-			$this->Submission->id
-		);
-		$this->Flash->success('Successfully submitted!');
-		return $this->redirect('/injects/view/'.$inject->getScheduleId());
-	}
+        // We're good! Save it!
+        $this->Submission->create();
+        $this->Submission->save([
+            'inject_id' => $inject->getInjectId(),
+            'user_id'   => $this->Auth->user('id'),
+            'group_id'  => $this->Auth->group('id'),
+            'created'   => time(),
+            'data'      => $injectType->handleSubmission($inject, $this->request->data),
+        ]);
 
-	/**
-	 * Delete Inject Submission
-	 *
-	 * @url /injects/delete/<sid>
-	 */
-	public function delete($sid=false) {
-		$submission = $this->Submission->findById($sid);
-		if ( empty($submission) || !in_array($submission['Group']['id'], $this->groups) ) {
-			throw new NotFoundException('Unknown submission');
-		}
+        $this->logMessage(
+            'submission',
+            sprintf('Created submission for Inject #%d', $inject->getSequence()),
+            [],
+            $this->Submission->id
+        );
+        $this->Flash->success('Successfully submitted!');
+        return $this->redirect('/injects/view/'.$inject->getScheduleId());
+    }
 
-		$this->Submission->id = $submission['Submission']['id'];
-		$this->Submission->save([
-			'deleted' => true,
-		]);
+    /**
+     * Delete Inject Submission
+     *
+     * @url /injects/delete/<sid>
+     */
+    public function delete($sid = false) {
+        $submission = $this->Submission->findById($sid);
+        if (empty($submission) || !in_array($submission['Group']['id'], $this->groups)) {
+            throw new NotFoundException('Unknown submission');
+        }
 
-		$this->logMessage(
-			'submission',
-			sprintf('Deleted submission #%d on Inject #%d', $sid, $submission['Inject']['sequence']),
-			[
-				'user' => $this->Auth->user('username'),
-			],
-			$sid
-		);
-		$this->Flash->success('Successfully deleted the submission!');
-		$this->redirect($this->referer());
-	}
+        $this->Submission->id = $submission['Submission']['id'];
+        $this->Submission->save([
+            'deleted' => true,
+        ]);
 
-	/**
-	 * View (download) Submission
-	 *
-	 * @url /injects/submission/<sid>
-	 */
-	public function submission($sid=false) {
-		$submission = $this->Submission->getSubmission($sid, $this->Auth->group('id'), true);
-		if ( empty($submission) ) {
-			throw new NotFoundException('Unknown submission');
-		}
+        $this->logMessage(
+            'submission',
+            sprintf('Deleted submission #%d on Inject #%d', $sid, $submission['Inject']['sequence']),
+            [
+                'user' => $this->Auth->user('username'),
+            ],
+            $sid
+        );
+        $this->Flash->success('Successfully deleted the submission!');
+        $this->redirect($this->referer());
+    }
 
-		$data = json_decode($submission['Submission']['data'], true);
-		$download = (isset($this->params['url']['download']) && $this->params['url']['download'] == true);
+    /**
+     * View (download) Submission
+     *
+     * @url /injects/submission/<sid>
+     */
+    public function submission($sid = false) {
+        $submission = $this->Submission->getSubmission($sid, $this->Auth->group('id'), true);
+        if (empty($submission)) {
+            throw new NotFoundException('Unknown submission');
+        }
 
-		// Let's verify our data is correct
-		if ( md5(base64_decode($data['data'])) !== $data['hash'] ) {
-			throw new InternalErrorException('Data storage failure');
-		}
+        $data = json_decode($submission['Submission']['data'], true);
+        $download = (isset($this->params['url']['download']) && $this->params['url']['download'] == true);
 
-		// Create the new response for the data
-		$response = new CakeResponse();
-		$response->type($data['extension']);
-		$response->body(base64_decode($data['data']));
-		$response->disableCache();
+        // Let's verify our data is correct
+        if (md5(base64_decode($data['data'])) !== $data['hash']) {
+            throw new InternalErrorException('Data storage failure');
+        }
 
-		$type = ($download ? 'attachment' : 'inline');
-		$filename = $data['filename'];
-		$response->header('Content-Disposition', $type.'; filename="'.$filename.'"');
+        // Create the new response for the data
+        $response = new CakeResponse();
+        $response->type($data['extension']);
+        $response->body(base64_decode($data['data']));
+        $response->disableCache();
 
-		return $response;
-	}
+        $type = ($download ? 'attachment' : 'inline');
+        $filename = $data['filename'];
+        $response->header('Content-Disposition', $type.'; filename="'.$filename.'"');
 
-	/**
-	 * API Endpoint for Hints
-	 *
-	 * Gets all the unlocked hints for an inject
-	 *
-	 * @url /injects/hints/<schedule_id>
-	 */
-	public function hints($id=false) {
-		$inject = $this->Schedule->getInject($id, $this->groups);
-		if ( empty($inject) ) {
-			throw new NotFoundException('Unknown inject');
-		}
+        return $response;
+    }
 
-		$hints = $this->Hint->getHints($inject->getInjectId(), $this->Auth->group('id'));
-		if ( empty($hints) ) {
-			throw new NotFoundException('Unknown inject');
-		}
+    /**
+     * API Endpoint for Hints
+     *
+     * Gets all the unlocked hints for an inject
+     *
+     * @url /injects/hints/<schedule_id>
+     */
+    public function hints($id = false) {
+        $inject = $this->Schedule->getInject($id, $this->groups);
+        if (empty($inject)) {
+            throw new NotFoundException('Unknown inject');
+        }
 
-		$this->layout = 'ajax';
-		$this->set('inject', $inject);
-		$this->set('hints', $hints);
-	}
+        $hints = $this->Hint->getHints($inject->getInjectId(), $this->Auth->group('id'));
+        if (empty($hints)) {
+            throw new NotFoundException('Unknown inject');
+        }
 
-	/**
-	 * API Endpoint to Unlock a Hint
-	 *
-	 * Unlocks a hint
-	 *
-	 * @url /injects/unlock_hint/<hint_id>
-	 */
-	public function unlock_hint($sid=false, $id=false) {
-		$inject = $this->Schedule->getInject($sid, $this->groups);
-		if ( empty($inject) ) {
-			return $this->ajaxResponse(false);
-		}
+        $this->layout = 'ajax';
+        $this->set('inject', $inject);
+        $this->set('hints', $hints);
+    }
 
-		$hints = $this->Hint->getHints($inject->getInjectId(), $this->Auth->group('id'));
-		if ( empty($hints) ) {
-			return $this->ajaxResponse(false);
-		}
+    /**
+     * API Endpoint to Unlock a Hint
+     *
+     * Unlocks a hint
+     *
+     * @url /injects/unlock_hint/<hint_id>
+     */
+    public function unlock_hint($sid = false, $id = false) {
+        $inject = $this->Schedule->getInject($sid, $this->groups);
+        if (empty($inject)) {
+            return $this->ajaxResponse(false);
+        }
 
-		// Find said hint, make sure we can unlock it
-		$hint_title = '-error-';
-		foreach ( $hints AS $h ) {
-			if ( $h['Hint']['id'] != $id ) continue;
+        $hints = $this->Hint->getHints($inject->getInjectId(), $this->Auth->group('id'));
+        if (empty($hints)) {
+            return $this->ajaxResponse(false);
+        }
 
-			if ( $h['Hint']['unlocked'] ) return $this->ajaxResponse(true);
-			if ( !$h['Hint']['dependency_met'] ) return $this->ajaxResponse(false);
-			if ( $h['Hint']['time_wait'] > 0 && $inject->getStart()+$h['Hint']['time_wait'] > time() ) return $this->ajaxResponse(false);
+        // Find said hint, make sure we can unlock it
+        $hint_title = '-error-';
+        foreach ($hints as $h) {
+            if ($h['Hint']['id'] != $id) {
+                continue;
+            }
 
-			$hint_title = $h['Hint']['title'];
-		}
+            if ($h['Hint']['unlocked']) {
+                return $this->ajaxResponse(true);
+            }
+            if (!$h['Hint']['dependency_met']) {
+                return $this->ajaxResponse(false);
+            }
+            if ($h['Hint']['time_wait'] > 0 && $inject->getStart() + $h['Hint']['time_wait'] > time()) {
+                return $this->ajaxResponse(false);
+            }
 
-		// If we got here, we're good
-		$this->UsedHint->create();
-		$this->UsedHint->save([
-			'hint_id'  => $id,
-			'user_id'  => $this->Auth->user('id'),
-			'group_id' => $this->Auth->group('id'),
-			'time'     => time(),
-		]);
+            $hint_title = $h['Hint']['title'];
+        }
 
-		$this->logMessage(
-			'hint',
-			sprintf('Unlocked Hint "%s" for Inject #%d', $hint_title, $inject->getSequence()),
-			[],
-			$id
-		);
+        // If we got here, we're good
+        $this->UsedHint->create();
+        $this->UsedHint->save([
+            'hint_id'  => $id,
+            'user_id'  => $this->Auth->user('id'),
+            'group_id' => $this->Auth->group('id'),
+            'time'     => time(),
+        ]);
 
-		return $this->ajaxResponse(true);
-	}
+        $this->logMessage(
+            'hint',
+            sprintf('Unlocked Hint "%s" for Inject #%d', $hint_title, $inject->getSequence()),
+            [],
+            $id
+        );
+
+        return $this->ajaxResponse(true);
+    }
 }

@@ -25,11 +25,11 @@
  */
 
 App::build(
-	[
-		'Plugin' => [ROOT . '/Plugin/', ROOT . '/app/Plugin/'],
-		'Vendor' => [ROOT . '/vendor/', ROOT . '/app/Vendor/']
-	],
-	App::RESET
+    [
+        'Plugin' => [ROOT . '/Plugin/', ROOT . '/app/Plugin/'],
+        'Vendor' => [ROOT . '/vendor/', ROOT . '/app/Vendor/']
+    ],
+    App::RESET
 );
 
 /**
@@ -59,8 +59,8 @@ App::build(
  */
 
 /**
- * Custom Inflector rules, can be set to correctly pluralize or singularize table, model, controller names or whatever other
- * string is passed to the inflection functions
+ * Custom Inflector rules, can be set to correctly pluralize or singularize table, model,
+ * controller names or whatever other string is passed to the inflection functions
  *
  * Inflector::rules('singular', array('rules' => array(), 'irregular' => array(), 'uninflected' => array()));
  * Inflector::rules('plural', array('rules' => array(), 'irregular' => array(), 'uninflected' => array()));
@@ -79,48 +79,53 @@ App::build(
 App::uses('CakeEventManager', 'Event');
 
 if (php_sapi_name() !== 'cli' && Configure::read('debug') > 0 && in_array('DebugKit', App::objects('plugin'))) {
-	CakePlugin::load('DebugKit');
+    CakePlugin::load('DebugKit');
 
-	// Auto attack DebugKit's toolbar on every controller
-	CakeEventManager::instance()->attach(function ($event) {
-		$controller = $event->subject();
+    // Auto attack DebugKit's toolbar on every controller
+    CakeEventManager::instance()->attach(function ($event) {
+        $controller = $event->subject();
 
-		$controller->Toolbar = $controller->Components->load(
-			'DebugKit.Toolbar'
-		);
-	}, 'Controller.initialize');
+        $controller->Toolbar = $controller->Components->load(
+            'DebugKit.Toolbar'
+        );
+    }, 'Controller.initialize');
 }
 
 // Dynamically load ScoreEngine plugin
-if ( Configure::read('ie.feature.scoreengine') ) {
-	CakePlugin::load('ScoreEngine', ['routes' => true]);
+if (Configure::read('ie.feature.scoreengine')) {
+    CakePlugin::load('ScoreEngine', ['routes' => true]);
 }
 
 // Dynamically load BankWeb plugin
-if ( Configure::read('ie.feature.bankweb') ) {
-	CakePlugin::load('BankWeb', ['routes' => true]);
+if (Configure::read('ie.feature.bankweb')) {
+    CakePlugin::load('BankWeb', ['routes' => true]);
 }
 
 // Admin Plugin
 CakePlugin::load('Admin');
 
 /**
- * You can attach event listeners to the request lifecycle as Dispatcher Filter . By Default CakePHP bundles two filters:
+ * You can attach event listeners to the request lifecycle as Dispatcher Filter . By Default
+ * CakePHP bundles two filters:
  *
- * - AssetDispatcher filter will serve your asset files (css, images, js, etc) from your themes and plugins
- * - CacheDispatcher filter will read the Cache.check configure variable and try to serve cached content generated from controllers
+ * - AssetDispatcher filter will serve your asset files (css, images, js, etc) from your
+ * themes and plugins
+ * - CacheDispatcher filter will read the Cache.check configure variable and try to serve cached
+ * content generated from controllers
  *
  * Feel free to remove or add filters as you see fit for your application. A few examples:
  *
  * Configure::write('Dispatcher.filters', array(
- *		'MyCacheFilter', //  will use MyCacheFilter class from the Routing/Filter package in your app.
- *		'MyPlugin.MyFilter', // will use MyFilter class from the Routing/Filter package in MyPlugin plugin.
- * 		array('callable' => $aFunction, 'on' => 'before', 'priority' => 9), // A valid PHP callback type to be called on beforeDispatch
- *		array('callable' => $anotherMethod, 'on' => 'after'), // A valid PHP callback type to be called on afterDispatch
+ *      'MyCacheFilter', //  will use MyCacheFilter class from the Routing/Filter package in your app.
+ *      'MyPlugin.MyFilter', // will use MyFilter class from the Routing/Filter package in MyPlugin plugin.
+ *
+ *      // A valid PHP callback type to be called on beforeDispatch
+ *      array('callable' => $aFunction, 'on' => 'before', 'priority' => 9),
+ *      array('callable' => $anotherMethod, 'on' => 'after'), // A valid PHP callback type to be called on afterDispatch
  *
  * ));
  */
 Configure::write('Dispatcher.filters', [
-	'AssetDispatcher',
-	'CacheDispatcher'
+    'AssetDispatcher',
+    'CacheDispatcher'
 ]);

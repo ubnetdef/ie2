@@ -2,113 +2,115 @@
 App::uses('AppController', 'Controller');
 
 class UserController extends AppController {
-	public $uses = ['Config', 'Group', 'User'];
 
-	/**
-	 * User Login Page 
-	 *
-	 * @url /user/login
-	 */
-	public function login() {
-		if ( $this->Auth->loggedIn() ) return $this->redirect('/');
-		
-		$username = '';
+    public $uses = ['Config', 'Group', 'User'];
 
-		if ( $this->request->is('post') ) {
-			$username = $this->request->data['username'];
-			$password = $this->request->data['password'];
+    /**
+     * User Login Page
+     *
+     * @url /user/login
+     */
+    public function login() {
+        if ($this->Auth->loggedIn()) { return $this->redirect('/');
+        }
 
-			if ( $this->Auth->login($username, $password) ) {
-				$this->logMessage('users', 'User has logged in');
+        $username = '';
 
-				return $this->redirect($this->Auth->redirectURL());
-			}
+        if ($this->request->is('post')) {
+            $username = $this->request->data['username'];
+            $password = $this->request->data['password'];
 
-			$this->logMessage('users', sprintf('Failed login for "%s"', htmlentities($username)));
-			$this->Flash->danger('Unknown username or password!');
-		}
+            if ($this->Auth->login($username, $password)) {
+                $this->logMessage('users', 'User has logged in');
 
-		$this->set('at_login', true);
-		$this->set('username', $username);
-	}
+                return $this->redirect($this->Auth->redirectURL());
+            }
 
-	/**
-	 * User Logout Page 
-	 *
-	 * @url /user/logout
-	 */
-	public function logout() {
-		$this->Auth->protect();
-		$this->Auth->logout();
+            $this->logMessage('users', sprintf('Failed login for "%s"', htmlentities($username)));
+            $this->Flash->danger('Unknown username or password!');
+        }
 
-		return $this->redirect('/');
-	}
+        $this->set('at_login', true);
+        $this->set('username', $username);
+    }
 
-	/**
-	 * User Profile Page 
-	 *
-	 * @url /user/profile
-	 */
-	public function profile() {
-		$this->Auth->protect();
+    /**
+     * User Logout Page
+     *
+     * @url /user/logout
+     */
+    public function logout() {
+        $this->Auth->protect();
+        $this->Auth->logout();
 
-		$canChangePassword = ($this->Auth->isBlueTeam() ? (bool)env('FEATURE_BLUE_PASSWORD_CHANGES') : true);
+        return $this->redirect('/');
+    }
 
-		if ( $this->request->is('post') && $canChangePassword ) {
-			// Update Password
-			$old_password  = $this->request->data['old_password'];
-			$new_password  = $this->request->data['new_password'];
-			$new_password2 = $this->request->data['new_password2'];
+    /**
+     * User Profile Page
+     *
+     * @url /user/profile
+     */
+    public function profile() {
+        $this->Auth->protect();
 
-			if ( $new_password != $new_password2 ) {
-				$this->Flash->danger('Your new password does not match.');
-			} else {
-				// Fetch the current password
-				$user = $this->User->findById($this->Auth->user('id'));
-				$cur_password = $user['User']['password'];
+        $canChangePassword = ($this->Auth->isBlueTeam() ? (bool)env('FEATURE_BLUE_PASSWORD_CHANGES') : true);
 
-				if ( Security::hash($old_password, 'blowfish', $cur_password) === $cur_password ) {
-					// Update password
-					$this->User->id = $this->Auth->user('id');
-					$this->User->save([
-						'password' => $new_password,
-					]);
+        if ($this->request->is('post') && $canChangePassword) {
+            // Update Password
+            $old_password  = $this->request->data['old_password'];
+            $new_password  = $this->request->data['new_password'];
+            $new_password2 = $this->request->data['new_password2'];
 
-					// Log it
-					$this->logMessage('users', 'Updated his/her password');
+            if ($new_password != $new_password2) {
+                $this->Flash->danger('Your new password does not match.');
+            } else {
+                // Fetch the current password
+                $user = $this->User->findById($this->Auth->user('id'));
+                $cur_password = $user['User']['password'];
 
-					// Message it
-					$this->Flash->success('Profile updated!');
-				} else {
-					$this->Flash->danger('You entered the wrong current password.');
-				}
-			}
-		}
+                if (Security::hash($old_password, 'blowfish', $cur_password) === $cur_password) {
+                    // Update password
+                    $this->User->id = $this->Auth->user('id');
+                    $this->User->save([
+                        'password' => $new_password,
+                    ]);
 
-		$this->set('at_profile', true);
-		$this->set('password_change_enabled', $canChangePassword);
-		$this->set('group_path', $this->Group->getGroupPath($this->Auth->group('id')));
-	}
+                    // Log it
+                    $this->logMessage('users', 'Updated his/her password');
 
-	/**
-	 * User Emulation Clear Page 
-	 *
-	 * @url /user/emulate_clear
-	 */
-	public function emulate_clear() {
-		$this->Auth->protect();
+                    // Message it
+                    $this->Flash->success('Profile updated!');
+                } else {
+                    $this->Flash->danger('You entered the wrong current password.');
+                }
+            }
+        }
 
-		if ( $this->Auth->item('emulating') == true ) {
-			$oldUID = $this->Auth->user('id');
-			$oldUser = $this->Auth->user('username');
+        $this->set('at_profile', true);
+        $this->set('password_change_enabled', $canChangePassword);
+        $this->set('group_path', $this->Group->getGroupPath($this->Auth->group('id')));
+    }
 
-			$this->Auth->emulateExit();
+    /**
+     * User Emulation Clear Page
+     *
+     * @url /user/emulate_clear
+     */
+    public function emulate_clear() {
+        $this->Auth->protect();
 
-			$msg = sprintf('Finished emulating user %s', $oldUser);
-			$this->logMessage('emulate', $msg, [], $oldUID);
-			$this->Flash->success($msg.'!');
-		}
+        if ($this->Auth->item('emulating') == true) {
+            $oldUID = $this->Auth->user('id');
+            $oldUser = $this->Auth->user('username');
 
-		return $this->redirect('/');
-	}
+            $this->Auth->emulateExit();
+
+            $msg = sprintf('Finished emulating user %s', $oldUser);
+            $this->logMessage('emulate', $msg, [], $oldUID);
+            $this->Flash->success($msg.'!');
+        }
+
+        return $this->redirect('/');
+    }
 }

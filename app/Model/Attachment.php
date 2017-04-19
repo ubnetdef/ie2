@@ -6,5 +6,5 @@ App::uses('AppModel', 'Model');
  *
  */
 class Attachment extends AppModel {
-	
+
 }

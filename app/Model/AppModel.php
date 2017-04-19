@@ -38,13 +38,12 @@ class AppModel extends Model {
  *
  * @var int
  */
-	public $recursive = -1;
+    public $recursive = -1;
 
 /**
  * behaviors used by model
  *
  * @var array
  */
-	public $actsAs = ['Containable'];
-
+    public $actsAs = ['Containable'];
 }

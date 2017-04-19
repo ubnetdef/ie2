@@ -4,260 +4,273 @@ App::uses('Component', 'Controller');
 App::uses('Security', 'Utility');
 
 class PreflightComponent extends Component {
-	/**
-	 * Array of all the checks that should
-	 * be ran.
-	 */
-	protected $checks = [
-		'verifySecurityKeys', 'checkDatabaseConnection',
-		'checkGroupMappings', 'checkInjectTypes',
-	];
 
-	/**
-	 * PreflightComponent Initialize Hook
-	 * 
-	 * This will only be ran once per hour.
-	 * It will run through the application, ensuring
-	 * it has been configured properly.
-	 */
-	public function initialize(Controller $controller) {
-		// Disable preflight on DEBUG
-		if ( env('DEBUG') == 2 || !file_exists(ROOT.'/.env') ) {
-			return;
-		}
+    /**
+     * Array of all the checks that should
+     * be ran.
+     */
+    protected $checks = [
+        'verifySecurityKeys', 'checkDatabaseConnection',
+        'checkGroupMappings', 'checkInjectTypes',
+    ];
 
-		// Calculate the hash of the config file. Don't run Preflight if it
-		// hasn't changed
-		$hash = md5(file_get_contents(ROOT.'/.env'));
-		if ( Cache::read('preflight_check') == $hash ) {
-			return;
-		}
+    /**
+     * PreflightComponent Initialize Hook
+     *
+     * This will only be ran once per hour.
+     * It will run through the application, ensuring
+     * it has been configured properly.
+     */
+    public function initialize(Controller $controller) {
+        // Disable preflight on DEBUG
+        if (env('DEBUG') == 2 || !file_exists(ROOT.'/.env')) {
+            return;
+        }
 
-		// Disable preflight on the Admin plugin (otherwise, how would we fix issues)
-		if ( $controller->request->params['plugin'] == 'admin' ) {
-			return;
-		}
+        // Calculate the hash of the config file. Don't run Preflight if it
+        // hasn't changed
+        $hash = md5(file_get_contents(ROOT.'/.env'));
+        if (Cache::read('preflight_check') == $hash) {
+            return;
+        }
 
-		// Additional checks for ScoreEngine
-		if ( (bool)env('FEATURE_SCOREENGINE') ) {
-			$this->checks[] = 'checkScoringDB';
-			$this->checks[] = 'checkScoreEngine';
-		}
+        // Disable preflight on the Admin plugin (otherwise, how would we fix issues)
+        if ($controller->request->params['plugin'] == 'admin') {
+            return;
+        }
 
-		// Additional checks for BankWeb
-		if ( (bool)env('FEATURE_BANKWEB') ) {
-			$this->checks[] = 'checkBankWeb';
-			$this->checks[] = 'checkBankWebTable';
+        // Additional checks for ScoreEngine
+        if ((bool)env('FEATURE_SCOREENGINE')) {
+            $this->checks[] = 'checkScoringDB';
+            $this->checks[] = 'checkScoreEngine';
+        }
 
-			if ( (bool)env('BANKWEB_SLACK_ENABLED') ) {
-				$this->checks[] = 'checkBankWebSlack';
-			}
-		}
+        // Additional checks for BankWeb
+        if ((bool)env('FEATURE_BANKWEB')) {
+            $this->checks[] = 'checkBankWeb';
+            $this->checks[] = 'checkBankWebTable';
 
-		foreach ( $this->checks AS $check ) {
-			$passedOrErrorMessage = $this->$check();
+            if ((bool)env('BANKWEB_SLACK_ENABLED')) {
+                $this->checks[] = 'checkBankWebSlack';
+            }
+        }
 
-			if ( $passedOrErrorMessage !== true ) {
-				throw new InternalErrorException('Preflight Error: '.$passedOrErrorMessage);
-			}
-		}
+        foreach ($this->checks as $check) {
+            $passedOrErrorMessage = $this->$check();
 
-		// If we got here, we can save and cache the result
-		Cache::write('preflight_check', $hash);
-	}
+            if ($passedOrErrorMessage !== true) {
+                throw new InternalErrorException('Preflight Error: '.$passedOrErrorMessage);
+            }
+        }
 
-	/**
-	 * Verify Security Keys
-	 * 
-	 * Ensures 'Security.salt' and 'Security.cipherSeed' are both non-empty and
-	 * non-default values.
-	 * @return boolean If the check passed
-	 */
-	public function verifySecurityKeys() {
-		// Pls no defaults
-		if (empty(Configure::read('Security.salt')) OR Configure::read('Security.salt') === 'DYhG93b0qyJfIxfs2guVoUubWwvniR2G0FgaC9mi') {
-			return 'Please update the Security.salt config value';
-		}
-		if (empty(Configure::read('Security.cipherSeed')) OR Configure::read('Security.cipherSeed') === '76859309657453542496749683645') {
-			return 'Please update the Security.cipherSeed config value.';
-		}
+        // If we got here, we can save and cache the result
+        Cache::write('preflight_check', $hash);
+    }
 
-		return true;
-	}
+    /**
+     * Verify Security Keys
+     *
+     * Ensures 'Security.salt' and 'Security.cipherSeed' are both non-empty and
+     * non-default values.
+     * @return boolean If the check passed
+     */
+    public function verifySecurityKeys() {
+        // Pls no defaults
+        if (empty(Configure::read('Security.salt'))
+            || Configure::read('Security.salt') === 'DYhG93b0qyJfIxfs2guVoUubWwvniR2G0FgaC9mi'
+        ) {
+            return 'Please update the Security.salt config value';
+        }
 
-	/**
-	 * Check Database Connection
-	 * 
-	 * Ensures the database connection to the InjectEngine
-	 * is working
-	 * @return boolean If the check passed
-	 */
-	public function checkDatabaseConnection() {
-		App::uses('ConnectionManager', 'Model');
+        if (empty(Configure::read('Security.cipherSeed'))
+            || Configure::read('Security.cipherSeed') === '76859309657453542496749683645'
+        ) {
+            return 'Please update the Security.cipherSeed config value.';
+        }
 
-		// Check database connection for the InjectEngine
-		$conn = ConnectionManager::getDataSource('default');
-		if ( !$conn->isConnected() ) {
-			return 'Unable to connect to the InjectEngine Database';
-		}
+        return true;
+    }
 
-		return true;
-	}
+    /**
+     * Check Database Connection
+     *
+     * Ensures the database connection to the InjectEngine
+     * is working
+     * @return boolean If the check passed
+     */
+    public function checkDatabaseConnection() {
+        App::uses('ConnectionManager', 'Model');
 
-	/**
-	 * Check Group Mappings
-	 * 
-	 * Ensures 'GROUP_STAFF', 'GROUP_BLUE', 'GROUP_ADMINS', and 'GROUP_WHITE'
-	 * have valid group mappings.
-	 * @return boolean If the check passed
-	 */
-	public function checkGroupMappings() {
-		$GroupModel = ClassRegistry::init('Group');
+        // Check database connection for the InjectEngine
+        $conn = ConnectionManager::getDataSource('default');
+        if (!$conn->isConnected()) {
+            return 'Unable to connect to the InjectEngine Database';
+        }
 
-		// Check the group mappings
-		foreach ( ['GROUP_STAFF', 'GROUP_BLUE', 'GROUP_ADMINS', 'GROUP_WHITE'] AS $group ) {
-			$gid = env($group);
+        return true;
+    }
 
-			if ( empty($gid) ) {
-				return 'Please setup a group mapping for '.$group;
-			}
+    /**
+     * Check Group Mappings
+     *
+     * Ensures 'GROUP_STAFF', 'GROUP_BLUE', 'GROUP_ADMINS', and 'GROUP_WHITE'
+     * have valid group mappings.
+     * @return boolean If the check passed
+     */
+    public function checkGroupMappings() {
+        $GroupModel = ClassRegistry::init('Group');
 
-			if ( empty($GroupModel->findById($gid))  ) {
-				return sprintf('Invalid GID mapping for %s (GID: %d)', $group, $gid);
-			}
-		}
+        // Check the group mappings
+        foreach (['GROUP_STAFF', 'GROUP_BLUE', 'GROUP_ADMINS', 'GROUP_WHITE'] as $group) {
+            $gid = env($group);
 
-		return true;
-	}
+            if (empty($gid)) {
+                return 'Please setup a group mapping for '.$group;
+            }
 
-	/**
-	 * Check Inject Types
-	 *
-	 * Verifies that all the inject types listed in 'engine.inject_types'
-	 * exist and are callable.
-	 */
-	public function checkInjectTypes() {
-		$ConfigModel = ClassRegistry::init('Config');
-		$injectTypes = json_decode($ConfigModel->getKey('engine.inject_types'));
+            if (empty($GroupModel->findById($gid))) {
+                return sprintf('Invalid GID mapping for %s (GID: %d)', $group, $gid);
+            }
+        }
 
-		if ( json_last_error() != JSON_ERROR_NONE ) {
-			return sprintf('JSON Error decoding "engine.inject_types": %s', json_last_error_msg());
-		}
+        return true;
+    }
 
-		// Should this be a warning?
-		if ( empty($injectTypes) ) {
-			return 'No inject types are configured (See config key: engine.inject_types)';
-		}
+    /**
+     * Check Inject Types
+     *
+     * Verifies that all the inject types listed in 'engine.inject_types'
+     * exist and are callable.
+     */
+    public function checkInjectTypes() {
+        $ConfigModel = ClassRegistry::init('Config');
+        $injectTypes = json_decode($ConfigModel->getKey('engine.inject_types'));
 
-		foreach ( $injectTypes AS $type ) {
-			$className = sprintf('InjectTypes\\%s', $type);
+        if (json_last_error() != JSON_ERROR_NONE) {
+            return sprintf('JSON Error decoding "engine.inject_types": %s', json_last_error_msg());
+        }
 
-			if ( !class_exists($className) ) {
-				return sprintf('Unknown inject type "%s" - does this file exist in "app/Vendor/InjectTypes"?', $type);
-			}
-		}
+        // Should this be a warning?
+        if (empty($injectTypes)) {
+            return 'No inject types are configured (See config key: engine.inject_types)';
+        }
 
-		return true;
-	}
+        foreach ($injectTypes as $type) {
+            $className = sprintf('InjectTypes\\%s', $type);
 
-	/**
-	 * Check ScoreEngine DB
-	 *
-	 * Verifies the ScoreEngine DB is setup correctly
-	 */
-	public function checkScoringDB() {
-		App::uses('ConnectionManager', 'Model');
+            if (!class_exists($className)) {
+                return sprintf('Unknown inject type "%s" - does this file exist in "app/Vendor/InjectTypes"?', $type);
+            }
+        }
 
-		// Check database connection for the InjectEngine
-		$conn = ConnectionManager::getDataSource('scoreengine');
-		if ( !$conn->isConnected() ) {
-			return 'Unable to connect to the ScoreEngine Database';
-		}
+        return true;
+    }
 
-		return true;
-	}
+    /**
+     * Check ScoreEngine DB
+     *
+     * Verifies the ScoreEngine DB is setup correctly
+     */
+    public function checkScoringDB() {
+        App::uses('ConnectionManager', 'Model');
 
-	/**
-	 * Check ScoreEngine
-	 *
-	 * Verifies the ScoreEngine is setup correctly
-	 */
-	public function checkScoreEngine() {
-		$tables = ['Check', 'Round', 'Service', 'Team', 'TeamService'];
-		$missing_tables = [];
+        // Check database connection for the InjectEngine
+        $conn = ConnectionManager::getDataSource('scoreengine');
+        if (!$conn->isConnected()) {
+            return 'Unable to connect to the ScoreEngine Database';
+        }
 
-		foreach ( $tables AS $table ) {
-			$tbl = ClassRegistry::init('BankWeb.'.$table);
+        return true;
+    }
 
-			try {
-				$tbl->find('first');
-			} catch ( Exception $e ) {
-				$missing_tables[] = $table;
-			}
-		}
+    /**
+     * Check ScoreEngine
+     *
+     * Verifies the ScoreEngine is setup correctly
+     */
+    public function checkScoreEngine() {
+        $tables = ['Check', 'Round', 'Service', 'Team', 'TeamService'];
+        $missing_tables = [];
 
-		return !empty($missing_tables) ? 'ScoreEngine is not setup. Missing DB table(s): '.implode(', ', $missing_tables) : true;
-	}
+        foreach ($tables as $table) {
+            $tbl = ClassRegistry::init('BankWeb.'.$table);
 
-	/**
-	 * Check BankWeb
-	 *
-	 * Verifies some env variables are set, and that 'BANKWEB_PRODUCTS' exists
-	 */
-	public function checkBankWeb() {
-		foreach ( ['BANKAPI_SERVER', 'BANKAPI_TIMEOUT', 'BANKWEB_PRODUCTS', 'BANKWEB_WHITETEAM_ACCOUNT', 'BANKWEB_PUBLIC_APIINFO'] AS $key ) {
-			if ( env($key) === null ) {
-				return sprintf('Please setup the variable "%s" to use the BankWeb Feature.', $key);
-			}
-		}
+            try {
+                $tbl->find('first');
+            } catch (Exception $e) {
+                $missing_tables[] = $table;
+            }
+        }
 
-		$products = ROOT . DS . env('BANKWEB_PRODUCTS');
-		if ( !file_exists($products) ) {
-			return sprintf('Please make sure the file "%s" exists (as set in "BANKWEB_PRODUCTS")', $products);
-		}
+        $missing = implode(', ', $missing_tables);
+        return !empty($missing_tables) ? 'ScoreEngine is not setup. Missing DB table(s): '.$missing : true;
+    }
 
-		$contents = json_decode(file_get_contents($products));
-		if ( json_last_error() != JSON_ERROR_NONE ) {
-			return sprintf('JSON Error with "BANKWEB_PRODUCTS" - %s', json_last_error_msg());
-		}
+    /**
+     * Check BankWeb
+     *
+     * Verifies some env variables are set, and that 'BANKWEB_PRODUCTS' exists
+     */
+    public function checkBankWeb() {
+        foreach ([
+            'BANKAPI_SERVER',
+            'BANKAPI_TIMEOUT',
+            'BANKWEB_PRODUCTS',
+            'BANKWEB_WHITETEAM_ACCOUNT',
+            'BANKWEB_PUBLIC_APIINFO'
+        ] as $key) {
+            if (env($key) === null) {
+                return sprintf('Please setup the variable "%s" to use the BankWeb Feature.', $key);
+            }
+        }
 
-		return true;
-	}
+        $products = ROOT . DS . env('BANKWEB_PRODUCTS');
+        if (!file_exists($products)) {
+            return sprintf('Please make sure the file "%s" exists (as set in "BANKWEB_PRODUCTS")', $products);
+        }
 
-	/**
-	 * Check BankWeb Table
-	 *
-	 * That the BankWeb Table (account_mappings) exists
-	 */
-	public function checkBankWebTable() {
-		$table = ClassRegistry::init('BankWeb.AccountMapping');
+        $contents = json_decode(file_get_contents($products));
+        if (json_last_error() != JSON_ERROR_NONE) {
+            return sprintf('JSON Error with "BANKWEB_PRODUCTS" - %s', json_last_error_msg());
+        }
 
-		try {
-			$table->find('first');
-		} catch ( Exception $e ) {
-			return 'BankWeb plugin is not setup - please run `./cake engine install_bankweb`';
-		}
+        return true;
+    }
 
-		return true;
-	}
+    /**
+     * Check BankWeb Table
+     *
+     * That the BankWeb Table (account_mappings) exists
+     */
+    public function checkBankWebTable() {
+        $table = ClassRegistry::init('BankWeb.AccountMapping');
 
-	/**
-	 * Check BankWeb Slack Configuration
-	 *
-	 * Verify that BankWeb's slack configuration is correct
-	 */
-	public function checkBankWebSlack() {
-		$url = env('SLACK_ENDPOINT');
+        try {
+            $table->find('first');
+        } catch (Exception $e) {
+            return 'BankWeb plugin is not setup - please run `./cake engine install_bankweb`';
+        }
 
-		$ch = curl_init(env('SLACK_ENDPOINT'));
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-		curl_exec($ch);
-		$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-		curl_close($ch);
+        return true;
+    }
 
-		if ( $http_code != 400 ) {
-			return 'Invalid slack endpoint setup. Please verify that your Slack URL is correct.';
-		}
-		return true;
-	}
+    /**
+     * Check BankWeb Slack Configuration
+     *
+     * Verify that BankWeb's slack configuration is correct
+     */
+    public function checkBankWebSlack() {
+        $url = env('SLACK_ENDPOINT');
+
+        $ch = curl_init(env('SLACK_ENDPOINT'));
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_exec($ch);
+        $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+
+        if ($http_code != 400) {
+            return 'Invalid slack endpoint setup. Please verify that your Slack URL is correct.';
+        }
+        return true;
+    }
 }

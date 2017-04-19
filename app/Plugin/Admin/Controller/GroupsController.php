@@ -3,143 +3,146 @@ App::uses('AdminAppController', 'Admin.Controller');
 use Respect\Validation\Rules;
 
 class GroupsController extends AdminAppController {
-	public $uses = ['Group'];
 
-	public function beforeFilter() {
-		parent::beforeFilter();
+    public $uses = ['Group'];
 
-		$this->validators = [
-			'name' => new Rules\AllOf(
-				new Rules\Alnum('-_'),
-				new Rules\NotEmpty()
-			),
-			'team_number' => new Rules\Optional(
-				new Rules\Digit()
-			),
-			'parent_id' => new Rules\Optional(
-				new Rules\Digit()
-			),
-		];
-	}
+    public function beforeFilter() {
+        parent::beforeFilter();
 
-	/**
-	 * Group List Page 
-	 *
-	 * @url /admin/group
-	 * @url /admin/group/index
-	 */
-	public function index() {
-		$mappings = [];
-		foreach ( $this->Group->find('all') AS $g ) {
-			if ( $g['Group']['team_number'] === NULL ) continue;
+        $this->validators = [
+            'name' => new Rules\AllOf(
+                new Rules\Alnum('-_'),
+                new Rules\NotEmpty()
+            ),
+            'team_number' => new Rules\Optional(
+                new Rules\Digit()
+            ),
+            'parent_id' => new Rules\Optional(
+                new Rules\Digit()
+            ),
+        ];
+    }
 
-			$mappings[$g['Group']['id']] = $g['Group']['team_number'];
-		}
+    /**
+     * Group List Page
+     *
+     * @url /admin/group
+     * @url /admin/group/index
+     */
+    public function index() {
+        $mappings = [];
+        foreach ($this->Group->find('all') as $g) {
+            if ($g['Group']['team_number'] === null) {
+                continue;
+            }
 
-		$this->set('mappings', $mappings);
-		$this->set('groups', $this->Group->generateTreeList(null, null, null, '-- '));
-	}
+            $mappings[$g['Group']['id']] = $g['Group']['team_number'];
+        }
 
-	/**
-	 * Create Group 
-	 *
-	 * @url /admin/group/create
-	 */
-	public function create() {
-		if ( $this->request->is('post') ) {
-			// Validate the input
-			$res = $this->_validate();
+        $this->set('mappings', $mappings);
+        $this->set('groups', $this->Group->generateTreeList(null, null, null, '-- '));
+    }
 
-			if ( empty($res['errors']) ) {
-				$this->Group->create();
-				$this->Group->save($res['data']);
+    /**
+     * Create Group
+     *
+     * @url /admin/group/create
+     */
+    public function create() {
+        if ($this->request->is('post')) {
+            // Validate the input
+            $res = $this->validate();
 
-				$this->logMessage(
-					'groups',
-					sprintf('Created group "%s"', $created['name']),
-					[],
-					$this->Group->id
-				);
+            if (empty($res['errors'])) {
+                $this->Group->create();
+                $this->Group->save($res['data']);
 
-				$this->Flash->success('The group has been created!');
-				return $this->redirect(['plugin' => 'admin', 'controller' => 'groups', 'action' => 'index']);
-			} else {
-				$this->_errorFlash($res['errors']);
-			}
-		}
+                $this->logMessage(
+                    'groups',
+                    sprintf('Created group "%s"', $created['name']),
+                    [],
+                    $this->Group->id
+                );
 
-		$this->set('groups', $this->Group->generateTreeList(null, null, null, '-- '));
-	}
+                $this->Flash->success('The group has been created!');
+                return $this->redirect(['plugin' => 'admin', 'controller' => 'groups', 'action' => 'index']);
+            } else {
+                $this->errorFlash($res['errors']);
+            }
+        }
 
-	/**
-	 * Edit Group 
-	 *
-	 * @url /admin/group/edit/<gid>
-	 */
-	public function edit($gid=false) {
-		$group = $this->Group->findById($gid);
-		if ( empty($group) ) {
-			throw new NotFoundException('Unknown group');
-		}
+        $this->set('groups', $this->Group->generateTreeList(null, null, null, '-- '));
+    }
 
-		if ( $this->request->is('post') ) {
-			// Validate the input
-			$res = $this->_validate();
+    /**
+     * Edit Group
+     *
+     * @url /admin/group/edit/<gid>
+     */
+    public function edit($gid = false) {
+        $group = $this->Group->findById($gid);
+        if (empty($group)) {
+            throw new NotFoundException('Unknown group');
+        }
 
-			if ( empty($res['errors']) ) {
-				$this->Group->id = $gid;
-				$this->Group->save($res['data']);
+        if ($this->request->is('post')) {
+            // Validate the input
+            $res = $this->validate();
 
-				$this->logMessage(
-					'groups',
-					sprintf('Updated group "%s"', $group['Group']['name']),
-					[
-						'old_group' => $group['Group'],
-						'new_group' => $res['data'],
-					],
-					$uid
-				);
+            if (empty($res['errors'])) {
+                $this->Group->id = $gid;
+                $this->Group->save($res['data']);
 
-				$this->Flash->success('The user has been updated!');
-				return $this->redirect(['plugin' => 'admin', 'controller' => 'groups', 'action' => 'index']);
-			} else {
-				$this->_errorFlash($res['errors']);
-			}
-		}
+                $this->logMessage(
+                    'groups',
+                    sprintf('Updated group "%s"', $group['Group']['name']),
+                    [
+                        'old_group' => $group['Group'],
+                        'new_group' => $res['data'],
+                    ],
+                    $uid
+                );
 
-		$this->set('group', $group);
-		$this->set('groups', $this->Group->generateTreeList(null, null, null, '-- '));
-	}
+                $this->Flash->success('The user has been updated!');
+                return $this->redirect(['plugin' => 'admin', 'controller' => 'groups', 'action' => 'index']);
+            } else {
+                $this->errorFlash($res['errors']);
+            }
+        }
 
-	/**
-	 * Delete group 
-	 *
-	 * @url /admin/group/delete/<gid>
-	 */
-	public function delete($gid=false) {
-		$group = $this->Group->findById($gid);
-		if ( empty($group) ) {
-			throw new NotFoundException('Unknown group');
-		}
+        $this->set('group', $group);
+        $this->set('groups', $this->Group->generateTreeList(null, null, null, '-- '));
+    }
 
-		if ( $this->request->is('post') ) {
-			$this->Group->delete($gid);
+    /**
+     * Delete group
+     *
+     * @url /admin/group/delete/<gid>
+     */
+    public function delete($gid = false) {
+        $group = $this->Group->findById($gid);
+        if (empty($group)) {
+            throw new NotFoundException('Unknown group');
+        }
 
-			$msg = sprintf('Deleted group "%s" (#%d)', $group['Group']['name'], $gid);
+        if ($this->request->is('post')) {
+            $this->Group->delete($gid);
 
-			$this->logMessage(
-				'groups',
-				$msg,
-				[
-					'group' => $group['Group'],
-				],
-				$gid
-			);
+            $msg = sprintf('Deleted group "%s" (#%d)', $group['Group']['name'], $gid);
 
-			$this->Flash->success($msg);
-			return $this->redirect(['plugin' => 'admin', 'controller' => 'groups', 'action' => 'index']);
-		}
+            $this->logMessage(
+                'groups',
+                $msg,
+                [
+                    'group' => $group['Group'],
+                ],
+                $gid
+            );
 
-		$this->set('group', $group);
-	}
+            $this->Flash->success($msg);
+            return $this->redirect(['plugin' => 'admin', 'controller' => 'groups', 'action' => 'index']);
+        }
+
+        $this->set('group', $group);
+    }
 }

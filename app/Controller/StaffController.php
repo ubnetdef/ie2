@@ -3,320 +3,333 @@ App::uses('AppController', 'Controller');
 App::uses('InjectAbstraction', 'Lib');
 
 class StaffController extends AppController {
-	public $uses = [
-		'Config', 'Inject', 'UsedHint', 'Hint', 'Log',
-		'Grade', 'Group', 'Schedule', 'Submission',
-	];
 
-	/**
-	 * Pagination Settings
-	 */
-	public $paginate = [
-		'OnlyGraded' => [
-			'fields' => [
-				'Submission.id', 'Submission.created', 'Submission.deleted',
-				'Inject.id', 'Inject.title', 'Inject.sequence', 'Inject.type',
-				'User.username', 'Group.name', 'Group.team_number',
-				'Grade.created', 'Grade.grade', 'Grade.comments',
-				'Grader.username',
-			],
-			'joins' => [
-				[
-					'table'      => 'users',
-					'alias'      => 'Grader',
-					'type'       => 'LEFT',
-					'conditions' => [
-						'Grader.id = Grade.grader_id',
-					],
-				]
-			],
-			'conditions' => [
-				'OR' => [
-					'Grade.created IS NOT NULL',
-					'Submission.deleted' => true,
-				],
-			],
-			'order' => [
-				'Grade.created' => 'DESC',
-				'Submission.created' => 'DESC',
-			],
-		],
-	];
+    public $uses = [
+        'Config', 'Inject', 'UsedHint', 'Hint', 'Log',
+        'Grade', 'Group', 'Schedule', 'Submission',
+    ];
 
-	public function beforeFilter() {
-		parent::beforeFilter();
+    /**
+     * Pagination Settings
+     */
+    public $paginate = [
+        'OnlyGraded' => [
+            'fields' => [
+                'Submission.id', 'Submission.created', 'Submission.deleted',
+                'Inject.id', 'Inject.title', 'Inject.sequence', 'Inject.type',
+                'User.username', 'Group.name', 'Group.team_number',
+                'Grade.created', 'Grade.grade', 'Grade.comments',
+                'Grader.username',
+            ],
+            'joins' => [
+                [
+                    'table'      => 'users',
+                    'alias'      => 'Grader',
+                    'type'       => 'LEFT',
+                    'conditions' => [
+                        'Grader.id = Grade.grader_id',
+                    ],
+                ]
+            ],
+            'conditions' => [
+                'OR' => [
+                    'Grade.created IS NOT NULL',
+                    'Submission.deleted' => true,
+                ],
+            ],
+            'order' => [
+                'Grade.created' => 'DESC',
+                'Submission.created' => 'DESC',
+            ],
+        ],
+    ];
 
-		// Enforce staff only
-		$this->Auth->protect(env('GROUP_STAFF'));
+    public function beforeFilter() {
+        parent::beforeFilter();
 
-		// Load + setup the InjectStyler helper
-		$this->helpers[] = 'InjectStyler';
-		$this->helpers['InjectStyler'] = [
-			'types'  => $this->Config->getInjectTypes(),
-			'inject' => new stdClass(), // Nothing...for now
-		];
+        // Enforce staff only
+        $this->Auth->protect(env('GROUP_STAFF'));
 
-		// Load+Setup ScoreEngine EngineOutputter, if ScoreEngine is enabled
-		if ( (bool)env('FEATURE_SCOREENGINE') ) {
-			$this->helpers[] = 'ScoreEngine.EngineOutputter';
-			$this->uses = array_merge($this->uses, ['ScoreEngine.Check', 'ScoreEngine.Team', 'ScoreEngine.Service']);
+        // Load + setup the InjectStyler helper
+        $this->helpers[] = 'InjectStyler';
+        $this->helpers['InjectStyler'] = [
+            'types'  => $this->Config->getInjectTypes(),
+            'inject' => new stdClass(), // Nothing...for now
+        ];
 
-			$this->helpers['ScoreEngine.EngineOutputter']['data'] = $this->Check->getChecksTable(
-				$this->Team->findAllByEnabled(true),
-				$this->Service->findAllByEnabled(true)
-			);
-		}
+        // Load+Setup ScoreEngine EngineOutputter, if ScoreEngine is enabled
+        if ((bool)env('FEATURE_SCOREENGINE')) {
+            $this->helpers[] = 'ScoreEngine.EngineOutputter';
+            $this->uses = array_merge($this->uses, ['ScoreEngine.Check', 'ScoreEngine.Team', 'ScoreEngine.Service']);
 
-		// We're at the staff page
-		$this->set('at_staff', true);
-	}
+            $this->helpers['ScoreEngine.EngineOutputter']['data'] = $this->Check->getChecksTable(
+                $this->Team->findAllByEnabled(true),
+                $this->Service->findAllByEnabled(true)
+            );
+        }
 
-	/**
-	 * Competition Overview Page
-	 *
-	 * @url /staff
-	 * @url /staff/index
-	 */
-	public function index() {
-		// Static page
-	}
+        // We're at the staff page
+        $this->set('at_staff', true);
+    }
 
-	/**
-	 * Competition Overview API
-	 *
-	 * @url /staff/api
-	 */
-	public function api() {
-		$this->layout = 'ajax';
+    /**
+     * Competition Overview Page
+     *
+     * @url /staff
+     * @url /staff/index
+     */
+    public function index() {
+        // Static page
+    }
 
-		if ( (bool)env('FEATURE_SCOREENGINE') ) {
-			$this->uses[] = 'ScoreEngine.Round';
-			$this->set('round', $this->Round->getLastRound());
-		}
+    /**
+     * Competition Overview API
+     *
+     * @url /staff/api
+     */
+    public function api() {
+        $this->layout = 'ajax';
 
-		$active_injects = $this->Schedule->getInjects(env('GROUP_BLUE'));
-		foreach ( $active_injects AS $i => $inject ) {
-			if ( $inject->isExpired() ) unset($active_injects[$i]);
-		}
+        if ((bool)env('FEATURE_SCOREENGINE')) {
+            $this->uses[] = 'ScoreEngine.Round';
+            $this->set('round', $this->Round->getLastRound());
+        }
 
-		$this->set('active_injects', $active_injects);
-		$this->set('recent_expired', $this->Schedule->getRecentExpired(env('GROUP_BLUE')));
-		$this->set('recent_logs', $this->Log->find('all', [
-			'fields' => [
-				'Log.id', 'Log.time', 'Log.type', 'Log.data',
-				'Log.ip', 'Log.message', 'User.username', 'User.group_id',
-			],
-			'contain' => [
-				'User' => [
-					'Group.name',
-				]
-			],
-			'limit' => 20,
-			'order' => [
-				'Log.id' => 'DESC'
-			],
-		]));
-	}
+        $active_injects = $this->Schedule->getInjects(env('GROUP_BLUE'));
+        foreach ($active_injects as $i => $inject) {
+            if ($inject->isExpired()) { unset($active_injects[$i]);
+            }
+        }
 
-	/**
-	 * Inject View Page
-	 *
-	 * @url /staff/inject/<id>
-	 */
-	public function inject($id=false) {
-		$inject = $this->Inject->findById($id);
-		if ( empty($inject) ) {
-			throw new NotFoundException('Unknown Inject');
-		}
+        $this->set('active_injects', $active_injects);
+        $this->set('recent_expired', $this->Schedule->getRecentExpired(env('GROUP_BLUE')));
+        $this->set('recent_logs', $this->Log->find('all', [
+            'fields' => [
+                'Log.id', 'Log.time', 'Log.type', 'Log.data',
+                'Log.ip', 'Log.message', 'User.username', 'User.group_id',
+            ],
+            'contain' => [
+                'User' => [
+                    'Group.name',
+                ]
+            ],
+            'limit' => 20,
+            'order' => [
+                'Log.id' => 'DESC'
+            ],
+        ]));
+    }
 
-		$inject = new InjectAbstraction($inject, 0);
+    /**
+     * Inject View Page
+     *
+     * @url /staff/inject/<id>
+     */
+    public function inject($id = false) {
+        $inject = $this->Inject->findById($id);
+        if (empty($inject)) {
+            throw new NotFoundException('Unknown Inject');
+        }
 
-		// Setup the InjectStyler helper with the latest inject
-		$this->helpers['InjectStyler']['inject'] = $inject;
+        $inject = new InjectAbstraction($inject, 0);
 
-		$this->set('hints', $this->Hint->find('count', ['conditions' => ['inject_id' => $inject->getInjectId()]]));
-		$this->set('inject', $inject);
-	}
+        // Setup the InjectStyler helper with the latest inject
+        $this->helpers['InjectStyler']['inject'] = $inject;
 
-	/**
-	 * Grader Island Page
-	 *
-	 * @url /staff/graders
-	 */
-	public function graders() {
-		$this->set('ungraded', $this->Submission->getAllUngradedSubmissions());
+        $this->set('hints', $this->Hint->find('count', ['conditions' => ['inject_id' => $inject->getInjectId()]]));
+        $this->set('inject', $inject);
+    }
 
-		$this->Paginator->settings += $this->paginate['OnlyGraded'];
-		$this->set('graded', $this->Paginator->paginate('Submission'));
-	}
+    /**
+     * Grader Island Page
+     *
+     * @url /staff/graders
+     */
+    public function graders() {
+        $this->set('ungraded', $this->Submission->getAllUngradedSubmissions());
 
-	/**
-	 * Submission Grade Page
-	 *
-	 * @url /staff/grade/<sid>
-	 */
-	public function grade($sid=false) {
-		$submission = $this->Submission->getSubmission($sid);
-		if ( empty($submission) ) {
-			throw new NotFoundException('Unknown submission');
-		}
+        $this->Paginator->settings += $this->paginate['OnlyGraded'];
+        $this->set('graded', $this->Paginator->paginate('Submission'));
+    }
 
-		if ( $this->request->is('post') ) {
-			if (
-				!isset($this->request->data['grade']) ||
-				(empty($this->request->data['grade']) && $this->request->data['grade'] != 0) ||
-				$this->request->data['grade'] > $submission['Inject']['max_points']
-			) {
-				$this->Flash->danger('Incomplete data. Please try again.');
-				return $this->redirect('/staff/grade/'.$sid);
-			}
+    /**
+     * Submission Grade Page
+     *
+     * @url /staff/grade/<sid>
+     */
+    public function grade($sid = false) {
+        $submission = $this->Submission->getSubmission($sid);
+        if (empty($submission)) {
+            throw new NotFoundException('Unknown submission');
+        }
 
-			$data = [
-				'grade'    => $this->request->data['grade'],
-				'comments' => isset($this->request->data['comments']) ? $this->request->data['comments'] : 'N/A',
-			];
-			$grade = $this->Grade->findBySubmissionId($sid);
+        if ($this->request->is('post')) {
+            if (!isset($this->request->data['grade'])
+                || (empty($this->request->data['grade']) && $this->request->data['grade'] != 0)
+                || $this->request->data['grade'] > $submission['Inject']['max_points']
+            ) {
+                $this->Flash->danger('Incomplete data. Please try again.');
+                return $this->redirect('/staff/grade/'.$sid);
+            }
 
-			if ( empty($grade) ) {
-				$this->Grade->create();
+            $data = [
+                'grade'    => $this->request->data['grade'],
+                'comments' => isset($this->request->data['comments']) ? $this->request->data['comments'] : 'N/A',
+            ];
+            $grade = $this->Grade->findBySubmissionId($sid);
 
-				$data['submission_id'] = $sid;
-				$data['grader_id']     = $this->Auth->user('id');
-				$data['created']       = time();
+            if (empty($grade)) {
+                $this->Grade->create();
 
-				$logMessage = sprintf('Graded submission #%d for %s', $sid, $submission['Group']['name']);
-			} else {
-				$this->Grade->id = $grade['Grade']['id'];
+                $data['submission_id'] = $sid;
+                $data['grader_id']     = $this->Auth->user('id');
+                $data['created']       = time();
 
-				$logMessage = sprintf('Edited submission #%d for %s', $sid, $submission['Group']['name']);
-			}
+                $logMessage = sprintf('Graded submission #%d for %s', $sid, $submission['Group']['name']);
+            } else {
+                $this->Grade->id = $grade['Grade']['id'];
 
-			// Save + log
-			$this->Grade->save($data);
-			$this->logMessage(
-				'grading',
-				$logMessage,
-				[
-					'previous_grade'    => (empty($grade) ? null : $grade['Grade']['grade']),
-					'previous_comments' => (empty($grade) ? null : $grade['Grade']['comments']),
-					'new_grade'         => $data['grade'],
-					'new_comments'      => $data['comments'],
-				],
-				$this->Grade->id
-			);
+                $logMessage = sprintf('Edited submission #%d for %s', $sid, $submission['Group']['name']);
+            }
 
-			// Return home, ponyboy
-			$this->Flash->success('Saved!');
-			return $this->redirect('/staff/graders');
-		}
+            // Save + log
+            $this->Grade->save($data);
+            $this->logMessage(
+                'grading',
+                $logMessage,
+                [
+                    'previous_grade'    => (empty($grade) ? null : $grade['Grade']['grade']),
+                    'previous_comments' => (empty($grade) ? null : $grade['Grade']['comments']),
+                    'new_grade'         => $data['grade'],
+                    'new_comments'      => $data['comments'],
+                ],
+                $this->Grade->id
+            );
 
-		$this->set('submission', $submission);
-	}
+            // Return home, ponyboy
+            $this->Flash->success('Saved!');
+            return $this->redirect('/staff/graders');
+        }
 
-	/**
-	 * View (download) Submission
-	 *
-	 * @url /staff/submission/<sid>
-	 */
-	public function submission($sid=false) {
-		$submission = $this->Submission->getSubmission($sid);
-		if ( empty($submission) ) {
-			throw new NotFoundException('Unknown submission');
-		}
+        $this->set('submission', $submission);
+    }
 
-		$data = json_decode($submission['Submission']['data'], true);
-		$download = (isset($this->params['url']['download']) && $this->params['url']['download'] == true);
+    /**
+     * View (download) Submission
+     *
+     * @url /staff/submission/<sid>
+     */
+    public function submission($sid = false) {
+        $submission = $this->Submission->getSubmission($sid);
+        if (empty($submission)) {
+            throw new NotFoundException('Unknown submission');
+        }
 
-		// Let's verify our data is correct
-		if ( md5(base64_decode($data['data'])) !== $data['hash'] ) {
-			throw new InternalErrorException('Data storage failure.');
-		}
+        $data = json_decode($submission['Submission']['data'], true);
+        $download = (isset($this->params['url']['download']) && $this->params['url']['download'] == true);
 
-		// Create the new response for the data
-		$response = new CakeResponse();
-		$response->type($data['extension']);
-		$response->body(base64_decode($data['data']));
-		$response->disableCache();
+        // Let's verify our data is correct
+        if (md5(base64_decode($data['data'])) !== $data['hash']) {
+            throw new InternalErrorException('Data storage failure.');
+        }
 
-		$type = ($download ? 'attachment' : 'inline');
-		$filename = $data['filename'];
-		$response->header('Content-Disposition', $type.'; filename="'.$filename.'"');
+        // Create the new response for the data
+        $response = new CakeResponse();
+        $response->type($data['extension']);
+        $response->body(base64_decode($data['data']));
+        $response->disableCache();
 
-		return $response;
-	}
+        $type = ($download ? 'attachment' : 'inline');
+        $filename = $data['filename'];
+        $response->header('Content-Disposition', $type.'; filename="'.$filename.'"');
 
-	/**
-	 * Export Grades
-	 *
-	 * @url /staff/export
-	 */
-	public function export() {
-		$blueTeams = array_merge($this->Group->getChildren(env('GROUP_BLUE')), [env('GROUP_BLUE')]);
-		$submissions = $this->Submission->getAllSubmissions($blueTeams, true);
-		$injects = $this->Schedule->getInjects($blueTeams, false);
-		$used_hints = $this->UsedHint->find('all');
-		$out = [];
+        return $response;
+    }
 
-		// Lookup for hint deductions
-		$hintDeduction = function($team, $inject) use($used_hints) {
-			$deduction = 0;
+    /**
+     * Export Grades
+     *
+     * @url /staff/export
+     */
+    public function export() {
+        $blueTeams = array_merge($this->Group->getChildren(env('GROUP_BLUE')), [env('GROUP_BLUE')]);
+        $submissions = $this->Submission->getAllSubmissions($blueTeams, true);
+        $injects = $this->Schedule->getInjects($blueTeams, false);
+        $used_hints = $this->UsedHint->find('all');
+        $out = [];
 
-			foreach ( $used_hints AS $h ) {
-				if ( $h['UsedHint']['group_id'] != $team ) continue;
-				if ( $h['Hint']['inject_id'] != $inject ) continue;
+        // Lookup for hint deductions
+        $hintDeductions = [];
+        foreach ($used_hints as $h) {
+            $team_id = $h['UsedHint']['group_id'];
+            $inject_id = $h['Hint']['inject_id'];
 
-				$deduction += $h['Hint']['cost'];
-			}
+            if (!isset($hintDeductions[$team_id])) {
+                $hintDeductions[$team_id] = [];
+            }
+            if (!isset($hintDeductions[$team_id][$inject_id])) {
+                $hintDeductions[$team_id][$inject_id] = 0;
+            }
 
-			return $deduction;
-		};
+            $hintDeductions[$team_id][$inject_id] += $h['Hint']['cost'];
+        }
 
-		// Grab all the injects
-		$seenInjects = [];
-		foreach ( $injects AS $i ) {
-			// We ignore injects with a sequence number of zero
-			if ( $i->getSequence() == 0 ) continue;
+        // Grab all the injects
+        $seenInjects = [];
+        foreach ($injects as $i) {
+            // We ignore injects with a sequence number of zero
+            if ($i->getSequence() == 0) {
+                continue;
+            }
 
-			// One sequence number pls
-			if ( in_array($i->getSequence(), $seenInjects) ) continue;
+            // One sequence number pls
+            if (in_array($i->getSequence(), $seenInjects)) {
+                continue;
+            }
 
-			$seenInjects[] = $i->getSequence();
-		}
-		sort($seenInjects);
+            $seenInjects[] = $i->getSequence();
+        }
+        sort($seenInjects);
 
-		// Build the header
-		$header = ['team_number'];
-		foreach ( $seenInjects AS $i ) {
-			$header[] = sprintf('inject_%d_grade', $i);
-		}
-		$out[] = implode(',', $header);
+        // Build the header
+        $header = ['team_number'];
+        foreach ($seenInjects as $i) {
+            $header[] = sprintf('inject_%d_grade', $i);
+        }
+        $out[] = implode(',', $header);
 
-		// Parse the (fun) data
-		$scores = [];
-		foreach ( $submissions AS $s ) {
-			$tn = $s['Group']['team_number'];
-			$inject = $s['Inject']['sequence'];
+        // Parse the (fun) data
+        $scores = [];
+        foreach ($submissions as $s) {
+            $tn = $s['Group']['team_number'];
+            $in = $s['Inject']['id'];
+            $inject = $s['Inject']['sequence'];
 
-			if ( !isset($scores[$tn]) ) {
-				$scores[$tn] = [];
-			}
+            if (!isset($scores[$tn])) {
+                $scores[$tn] = [];
+            }
 
-			$grade = $s['Grade']['grade'] - $hintDeduction($tn, $s['Inject']['id']);
-			$scores[$tn][$inject] = $grade;
-		}
+            $deduction = 0;
+            if (isset($hintDeductions[$tn]) && isset($hintDeductions[$tn][$in])) {
+                $deduction = $hintDeductions[$tn][$in];
+            }
 
-		// Output the grades
-		foreach ( $scores AS $team => $data ) {
-			$line = [$team];
+            $grade = $s['Grade']['grade'] - $deduction;
+            $scores[$tn][$inject] = $grade;
+        }
 
-			foreach ( $seenInjects AS $i ) {
-				// Default the grade to 0 if it's not submitted
-				$line[] = isset($data[$i]) ? $data[$i] : 0;
-			}
+        // Output the grades
+        foreach ($scores as $team => $data) {
+            $line = [$team];
 
-			$out[] = implode(',', $line);
-		}
+            foreach ($seenInjects as $i) {
+                // Default the grade to 0 if it's not submitted
+                $line[] = isset($data[$i]) ? $data[$i] : 0;
+            }
 
-		return $this->ajaxResponse(implode(PHP_EOL, $out));
-	}
+            $out[] = implode(',', $line);
+        }
+
+        return $this->ajaxResponse(implode(PHP_EOL, $out));
+    }
 }

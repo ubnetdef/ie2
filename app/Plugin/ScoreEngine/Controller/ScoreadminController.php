@@ -2,171 +2,174 @@
 App::uses('ScoreEngineAppController', 'ScoreEngine.Controller');
 
 class ScoreadminController extends ScoreEngineAppController {
-	public $uses = ['ScoreEngine.Team', 'ScoreEngine.Check','ScoreEngine.Service', 'ScoreEngine.TeamService'];
 
-	public function beforeFilter() {
-		parent::beforeFilter();
+    public $uses = ['ScoreEngine.Team', 'ScoreEngine.Check','ScoreEngine.Service', 'ScoreEngine.TeamService'];
 
-		// Enforce staff only
-		$this->Auth->protect(env('GROUP_STAFF'));
+    public function beforeFilter() {
+        parent::beforeFilter();
 
-		// Set the active menu item
-		$this->set('at_staff', true);
-	}
+        // Enforce staff only
+        $this->Auth->protect(env('GROUP_STAFF'));
 
-	/**
-	 * ScoreEngine Admin Index Page
-	 *
-	 * @url /admin/scoreengine
-	 * @url /score_engine/admin
-	 * @url /admin/scoreengine/index
-	 * @url /score_engine/admin/index
-	 */
-	public function index() {
-		$this->set('teams', $this->Team->find('all'));
-	}
+        // Set the active menu item
+        $this->set('at_staff', true);
+    }
 
-	/**
-	 * View Team Page
-	 *
-	 * @url /admin/scoreengine/team/<id>
-	 * @url /score_engine/admin/team/<id>
-	 */
-	public function team($id=false) {
-		$team = $this->Team->findById($id);
-		if ( empty ($team) ) {
-			throw new NotFoundException('Unknown team');
-		}
+    /**
+     * ScoreEngine Admin Index Page
+     *
+     * @url /admin/scoreengine
+     * @url /score_engine/admin
+     * @url /admin/scoreengine/index
+     * @url /score_engine/admin/index
+     */
+    public function index() {
+        $this->set('teams', $this->Team->find('all'));
+    }
 
-		$tid = $team['Team']['id'];
-		$this->set('team', $team);
-		$this->set('data', $this->Check->getTeamChecks($tid, false));
-		$this->set('latest', $this->Check->getLastTeamCheck($tid));
-	}
+    /**
+     * View Team Page
+     *
+     * @url /admin/scoreengine/team/<id>
+     * @url /score_engine/admin/team/<id>
+     */
+    public function team($id = false) {
+        $team = $this->Team->findById($id);
+        if (empty($team)) {
+            throw new NotFoundException('Unknown team');
+        }
 
-	/**
-	 * View Team Service Page
-	 *
-	 * @url /admin/scoreengine/service/<tid>/<sid>
-	 * @url /score_engine/admin/config/<tid>/<sid>
-	 */
-	public function service($tid=false, $sid=false) {
-		$team = $this->Team->findById($tid);
-		if ( empty($team) ) {
-			throw new NotFoundException('Unknown team');
-		}
-		if ( $sid === false || !is_numeric($sid) ) {
-			throw new NotFoundException('Unknown service');
-		}
+        $tid = $team['Team']['id'];
+        $this->set('team', $team);
+        $this->set('data', $this->Check->getTeamChecks($tid, false));
+        $this->set('latest', $this->Check->getLastTeamCheck($tid));
+    }
 
-		$oldVF = $this->Check->virtualFields;
-		$this->Check->virtualFields = [];
+    /**
+     * View Team Service Page
+     *
+     * @url /admin/scoreengine/service/<tid>/<sid>
+     * @url /score_engine/admin/config/<tid>/<sid>
+     */
+    public function service($tid = false, $sid = false) {
+        $team = $this->Team->findById($tid);
+        if (empty($team)) {
+            throw new NotFoundException('Unknown team');
+        }
+        if ($sid === false || !is_numeric($sid)) {
+            throw new NotFoundException('Unknown service');
+        }
 
-		$this->set('team', $team);
-		$this->set('data', $this->Check->find('all', [
-			'conditions' => [
-				'team_id' => $team['Team']['id'],
-				'service_id' => $sid,
-			],
-			'limit' => 20,
-			'order' => 'time DESC',
-		]));
+        $oldVF = $this->Check->virtualFields;
+        $this->Check->virtualFields = [];
 
-		$this->Check->virtualFields = $oldVF;
-	}
+        $this->set('team', $team);
+        $this->set('data', $this->Check->find('all', [
+            'conditions' => [
+                'team_id' => $team['Team']['id'],
+                'service_id' => $sid,
+            ],
+            'limit' => 20,
+            'order' => 'time DESC',
+        ]));
 
-	/**
-	 * Team Config Page
-	 *
-	 * @url /admin/scoreengine/config/<id>
-	 * @url /score_engine/admin/config/<id>
-	 */
-	public function config($id=false) {
-		$team = $this->Team->findById($id);
-		if ( empty($team) ) {
-			throw new NotFoundException('Unknown team');
-		}
+        $this->Check->virtualFields = $oldVF;
+    }
 
-		$this->set('team', $team);
-		$data = $this->TeamService->getData($team['Team']['id'], false);
+    /**
+     * Team Config Page
+     *
+     * @url /admin/scoreengine/config/<id>
+     * @url /score_engine/admin/config/<id>
+     */
+    public function config($id = false) {
+        $team = $this->Team->findById($id);
+        if (empty($team)) {
+            throw new NotFoundException('Unknown team');
+        }
 
-		$updateOpt = function($id, $value) use(&$data) {
-			foreach ( $data AS $group => &$options ) {
-				foreach ( $options AS &$opt ) {
-					if ( $opt['id'] == $id ) {
-						$opt['value'] = $value;
-					}
-				}
-			}
+        $this->set('team', $team);
+        $data = $this->TeamService->getData($team['Team']['id'], false);
 
-			return false;
-		};
+        $updateOpt = function ($id, $value) use (&$data) {
+            foreach ($data as $group => &$options) {
+                foreach ($options as &$opt) {
+                    if ($opt['id'] == $id) {
+                        $opt['value'] = $value;
+                    }
+                }
+            }
 
-		if ( $this->request->is('post') ) {
-			foreach ( $this->request->data AS $opt => $value ) {
-				$opt = (int) str_replace('opt', '', $opt);
-				if ( $opt < 0 || !is_numeric($opt) ) continue;
+            return false;
+        };
 
-				// Only USERPASS is an array
-				if ( is_array($value) ) {
-					$value = $value['user'].'||'.$value['pass'];
-				}
+        if ($this->request->is('post')) {
+            foreach ($this->request->data as $opt => $value) {
+                $opt = (int)str_replace('opt', '', $opt);
+                if ($opt < 0 || !is_numeric($opt)) {
+                    continue;
+                }
 
-				$this->TeamService->updateConfig($opt, $value);
-				$updateOpt($opt, $value);
-			}
+                // Only USERPASS is an array
+                if (is_array($value)) {
+                    $value = $value['user'].'||'.$value['pass'];
+                }
 
-			// Message
-			$this->Flash->success('Updated Score Engine Config!');
-		}
+                $this->TeamService->updateConfig($opt, $value);
+                $updateOpt($opt, $value);
+            }
 
-		$this->set('data', $data);
-	}
+            // Message
+            $this->Flash->success('Updated Score Engine Config!');
+        }
 
-	/**
-	 * Export Grades
-	 *
-	 * @url /admin/scoreengine/export
-	 * @url /score_engine/admin/export
-	 */
-	public function export() {
-		$teams = $this->Team->find('all');
-		$services = $this->Service->find('all');
-		$out = [];
-		$chkOrder = [];
+        $this->set('data', $data);
+    }
 
-		// Helper function to grab the right check
-		$grabCheckById = function($checks, $id) {
-			foreach ( $checks AS $c ) {
-				if ( $c['Service']['id'] == $id ) {
-					return $c;
-				}
-			}
-		};
+    /**
+     * Export Grades
+     *
+     * @url /admin/scoreengine/export
+     * @url /score_engine/admin/export
+     */
+    public function export() {
+        $teams = $this->Team->find('all');
+        $services = $this->Service->find('all');
+        $out = [];
+        $chkOrder = [];
 
-		// Build the header
-		$header = ['team_number'];
-		foreach ( $services AS $s ) {
-			$header[] = '"'.$s['Service']['name'].'"';
-			$chkOrder[] = $s['Service']['id'];
-		}
-		$out[] = implode(',', $header);
+        // Helper function to grab the right check
+        $grabCheckById = function ($checks, $id) {
+            foreach ($checks as $c) {
+                if ($c['Service']['id'] == $id) {
+                    return $c;
+                }
+            }
+        };
 
-		// Parse team scores
-		foreach ( $teams AS $t ) {
-			$tid = $t['Team']['id'];
-			$line = [$tid];
+        // Build the header
+        $header = ['team_number'];
+        foreach ($services as $s) {
+            $header[] = '"'.$s['Service']['name'].'"';
+            $chkOrder[] = $s['Service']['id'];
+        }
+        $out[] = implode(',', $header);
 
-			$checks = $this->Check->getTeamChecks($tid);
+        // Parse team scores
+        foreach ($teams as $t) {
+            $tid = $t['Team']['id'];
+            $line = [$tid];
 
-			foreach ( $chkOrder AS $id ) {
-				$chk = $grabCheckById($checks, $id);
-				$line[] = isset($chk['Check']['total_passed']) ? $chk['Check']['total_passed'] : 0;
-			}
+            $checks = $this->Check->getTeamChecks($tid);
 
-			$out[] = implode(',', $line);
-		}
+            foreach ($chkOrder as $id) {
+                $chk = $grabCheckById($checks, $id);
+                $line[] = isset($chk['Check']['total_passed']) ? $chk['Check']['total_passed'] : 0;
+            }
 
-		return $this->ajaxResponse(implode(PHP_EOL, $out));
-	}
+            $out[] = implode(',', $line);
+        }
+
+        return $this->ajaxResponse(implode(PHP_EOL, $out));
+    }
 }

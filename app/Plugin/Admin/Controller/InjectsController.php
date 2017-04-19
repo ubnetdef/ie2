@@ -3,205 +3,206 @@ App::uses('AdminAppController', 'Admin.Controller');
 use Respect\Validation\Rules;
 
 class InjectsController extends AdminAppController {
-	public $uses = ['Attachment', 'Config', 'Inject', 'Schedule'];
 
-	public function beforeFilter() {
-		parent::beforeFilter();
+    public $uses = ['Attachment', 'Config', 'Inject', 'Schedule'];
 
-		// Load + setup the InjectStyler helper
-		$this->helpers[] = 'InjectStyler';
-		$this->helpers['InjectStyler'] = [
-			'types'  => $this->Config->getInjectTypes(),
-			'inject' => new stdClass(), // Nothing...for now
-		];
+    public function beforeFilter() {
+        parent::beforeFilter();
 
-		// Setup the validators
-		$this->validators = [
-			'sequence' => new Rules\AllOf(
-				new Rules\Digit()
-			),
-			'title' => new Rules\AllOf(
-				new Rules\NotEmpty()
-			),
-			'content' => new Rules\AllOf(
-				new Rules\NotEmpty()
-			),
-			'from_name' => new Rules\AllOf(
-				new Rules\NotEmpty()
-			),
-			'from_email' => new Rules\AllOf(
-				new Rules\NotEmpty()
-			),
-			'grading_guide' => new Rules\AllOf(
-				new Rules\NotEmpty()
-			),
-			'max_points' => new Rules\AllOf(
-				new Rules\Digit(),
-				new Rules\NotEmpty()
-			),
-			'max_submissions' => new Rules\AllOf(
-				new Rules\Digit(),
-				new Rules\NotEmpty()
-			),
-			'type' => new Rules\AllOf(
-				new Rules\Alnum('-_'),
-				new Rules\NotEmpty()
-			),
-		];
-	}
+        // Load + setup the InjectStyler helper
+        $this->helpers[] = 'InjectStyler';
+        $this->helpers['InjectStyler'] = [
+            'types'  => $this->Config->getInjectTypes(),
+            'inject' => new stdClass(), // Nothing...for now
+        ];
 
-	/**
-	 * Inject List Page 
-	 *
-	 * @url /admin/injects
-	 * @url /admin/injects/index
-	 */
-	public function index() {
-		$this->set('injects', $this->Inject->find('all'));
-	}
+        // Setup the validators
+        $this->validators = [
+            'sequence' => new Rules\AllOf(
+                new Rules\Digit()
+            ),
+            'title' => new Rules\AllOf(
+                new Rules\NotEmpty()
+            ),
+            'content' => new Rules\AllOf(
+                new Rules\NotEmpty()
+            ),
+            'from_name' => new Rules\AllOf(
+                new Rules\NotEmpty()
+            ),
+            'from_email' => new Rules\AllOf(
+                new Rules\NotEmpty()
+            ),
+            'grading_guide' => new Rules\AllOf(
+                new Rules\NotEmpty()
+            ),
+            'max_points' => new Rules\AllOf(
+                new Rules\Digit(),
+                new Rules\NotEmpty()
+            ),
+            'max_submissions' => new Rules\AllOf(
+                new Rules\Digit(),
+                new Rules\NotEmpty()
+            ),
+            'type' => new Rules\AllOf(
+                new Rules\Alnum('-_'),
+                new Rules\NotEmpty()
+            ),
+        ];
+    }
 
-	/**
-	 * Create Inject 
-	 *
-	 * @url /admin/injects/create
-	 */
-	public function create() {
-		if ( $this->request->is('post') ) {
-			// Validate the input
-			$res = $this->_validate();
+    /**
+     * Inject List Page
+     *
+     * @url /admin/injects
+     * @url /admin/injects/index
+     */
+    public function index() {
+        $this->set('injects', $this->Inject->find('all'));
+    }
 
-			if ( empty($res['errors']) ) {
-				// Upload the new attachments
-				if ( isset($this->request->data['new_attachments'])) {
-					foreach ( $this->request->data['new_attachments'] AS $new ) {
-						$contents = file_get_contents($new['tmp_name']);
-						$data = json_encode([
-							'extension' => pathinfo($new['name'], PATHINFO_EXTENSION),
-							'hash'      => md5($contents),
-							'data'      => base64_encode($contents)
-						]);
+    /**
+     * Create Inject
+     *
+     * @url /admin/injects/create
+     */
+    public function create() {
+        if ($this->request->is('post')) {
+            // Validate the input
+            $res = $this->validate();
 
-						$this->Attachment->create();
-						$this->Attachment->save([
-							'inject_id' => $inject['Inject']['id'],
-							'name'      => $new['name'],
-							'data'      => $data,
-						]);
-					}
-				}
+            if (empty($res['errors'])) {
+                // Upload the new attachments
+                if (isset($this->request->data['new_attachments'])) {
+                    foreach ($this->request->data['new_attachments'] as $new) {
+                        $contents = file_get_contents($new['tmp_name']);
+                        $data = json_encode([
+                            'extension' => pathinfo($new['name'], PATHINFO_EXTENSION),
+                            'hash'      => md5($contents),
+                            'data'      => base64_encode($contents)
+                        ]);
 
-				$this->Inject->create();
-				$this->Inject->save($res['data']);
+                        $this->Attachment->create();
+                        $this->Attachment->save([
+                            'inject_id' => $inject['Inject']['id'],
+                            'name'      => $new['name'],
+                            'data'      => $data,
+                        ]);
+                    }
+                }
 
-				$this->logMessage(
-					'injects',
-					sprintf('Created inject "%s"', $res['data']['title']),
-					[],
-					$this->Inject->id
-				);
+                $this->Inject->create();
+                $this->Inject->save($res['data']);
 
-				$this->Flash->success('The inject has been created!');
-				return $this->redirect(['plugin' => 'admin', 'controller' => 'injects', 'action' => 'index']);
-			} else {
-				$this->_errorFlash($res['errors']);
-			}
-		}
-	}
+                $this->logMessage(
+                    'injects',
+                    sprintf('Created inject "%s"', $res['data']['title']),
+                    [],
+                    $this->Inject->id
+                );
 
-	/**
-	 * Edit Inject 
-	 *
-	 * @url /admin/injects/edit/<id>
-	 */
-	public function edit($id=false) {
-		$inject = $this->Inject->findById($id);
-		if ( empty($inject) ) {
-			throw new NotFoundException('Unknown inject');
-		}
+                $this->Flash->success('The inject has been created!');
+                return $this->redirect(['plugin' => 'admin', 'controller' => 'injects', 'action' => 'index']);
+            } else {
+                $this->errorFlash($res['errors']);
+            }
+        }
+    }
 
-		if ( $this->request->is('post') ) {
-			// Validate the input
-			$res = $this->_validate();
+    /**
+     * Edit Inject
+     *
+     * @url /admin/injects/edit/<id>
+     */
+    public function edit($id = false) {
+        $inject = $this->Inject->findById($id);
+        if (empty($inject)) {
+            throw new NotFoundException('Unknown inject');
+        }
 
-			if ( empty($res['errors']) ) {
-				// Figure out if we deleted any attachments
-				foreach ( $inject['Attachment'] AS $i => $a ) {
-					if ( !isset($this->request->data['attachments'][$a['id']]) ) {
-						$this->Attachment->delete($a['id']);
+        if ($this->request->is('post')) {
+            // Validate the input
+            $res = $this->validate();
 
-						unset($inject['Attachment'][$i]);
-					}
-				}
+            if (empty($res['errors'])) {
+                // Figure out if we deleted any attachments
+                foreach ($inject['Attachment'] as $i => $a) {
+                    if (!isset($this->request->data['attachments'][$a['id']])) {
+                        $this->Attachment->delete($a['id']);
 
-				// Upload the new attachments
-				if ( isset($this->request->data['new_attachments'])) {
-					foreach ( $this->request->data['new_attachments'] AS $new ) {
-						$contents = file_get_contents($new['tmp_name']);
-						$data = json_encode([
-							'extension' => pathinfo($new['name'], PATHINFO_EXTENSION),
-							'hash'      => md5($contents),
-							'data'      => base64_encode($contents)
-						]);
+                        unset($inject['Attachment'][$i]);
+                    }
+                }
 
-						$this->Attachment->create();
-						$this->Attachment->save([
-							'inject_id' => $inject['Inject']['id'],
-							'name'      => $new['name'],
-							'data'      => $data,
-						]);
-					}
-				}
+                // Upload the new attachments
+                if (isset($this->request->data['new_attachments'])) {
+                    foreach ($this->request->data['new_attachments'] as $new) {
+                        $contents = file_get_contents($new['tmp_name']);
+                        $data = json_encode([
+                            'extension' => pathinfo($new['name'], PATHINFO_EXTENSION),
+                            'hash'      => md5($contents),
+                            'data'      => base64_encode($contents)
+                        ]);
 
-				$this->Inject->id = $id;
-				$this->Inject->save($res['data']);
+                        $this->Attachment->create();
+                        $this->Attachment->save([
+                            'inject_id' => $inject['Inject']['id'],
+                            'name'      => $new['name'],
+                            'data'      => $data,
+                        ]);
+                    }
+                }
 
-				$this->logMessage(
-					'injects',
-					sprintf('Updated inject "%s"', $inject['Inject']['title']),
-					[
-						'old_inject' => $inject['Inject'],
-						'new_inject' => $res['data'],
-					],
-					$id
-				);
+                $this->Inject->id = $id;
+                $this->Inject->save($res['data']);
 
-				$this->Flash->success('The inject has been updated!');
-				return $this->redirect(['plugin' => 'admin', 'controller' => 'injects', 'action' => 'index']);
-			} else {
-				$this->_errorFlash($res['errors']);
-			}
-		}
+                $this->logMessage(
+                    'injects',
+                    sprintf('Updated inject "%s"', $inject['Inject']['title']),
+                    [
+                        'old_inject' => $inject['Inject'],
+                        'new_inject' => $res['data'],
+                    ],
+                    $id
+                );
 
-		$this->set('inject', $inject);
-	}
+                $this->Flash->success('The inject has been updated!');
+                return $this->redirect(['plugin' => 'admin', 'controller' => 'injects', 'action' => 'index']);
+            } else {
+                $this->errorFlash($res['errors']);
+            }
+        }
 
-	/**
-	 * Delete Inject 
-	 *
-	 * @url /admin/injects/delete/<id>
-	 */
-	public function delete($id=false) {
-		$inject = $this->Inject->findById($id);
-		if ( empty($inject) ) {
-			throw new NotFoundException('Unknown inject');
-		}
+        $this->set('inject', $inject);
+    }
 
-		if ( $this->request->is('post') ) {
-			$this->Inject->delete($id);
+    /**
+     * Delete Inject
+     *
+     * @url /admin/injects/delete/<id>
+     */
+    public function delete($id = false) {
+        $inject = $this->Inject->findById($id);
+        if (empty($inject)) {
+            throw new NotFoundException('Unknown inject');
+        }
 
-			// Delete all associated schedules
-			$schedules = [];
-			foreach ( $this->Schedule->findByInjectId($id) AS $s ) {
-				$schedules[] = $s['Schedule']['id'];
-			}
-			$this->Schedule->delete($schedules);
+        if ($this->request->is('post')) {
+            $this->Inject->delete($id);
 
-			$msg = sprintf('Deleted inject "%s"', $inject['Inject']['title']);
-			$this->logMessage('injects', $msg, ['inject' => $inject], $id);
-			$this->Flash->success($msg.'!');
-			return $this->redirect(['plugin' => 'admin', 'controller' => 'injects', 'action' => 'index']);
-		}
+            // Delete all associated schedules
+            $schedules = [];
+            foreach ($this->Schedule->findByInjectId($id) as $s) {
+                $schedules[] = $s['Schedule']['id'];
+            }
+            $this->Schedule->delete($schedules);
 
-		$this->set('inject', $inject);
-	}
+            $msg = sprintf('Deleted inject "%s"', $inject['Inject']['title']);
+            $this->logMessage('injects', $msg, ['inject' => $inject], $id);
+            $this->Flash->success($msg.'!');
+            return $this->redirect(['plugin' => 'admin', 'controller' => 'injects', 'action' => 'index']);
+        }
+
+        $this->set('inject', $inject);
+    }
 }

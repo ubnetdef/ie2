@@ -14,7 +14,8 @@
     "respect/validation": "^1.1"
   },
   "require-dev": {
-    "cakephp/debug_kit" : "2.2.*"
+    "cakephp/debug_kit" : "2.2.*",
+    "squizlabs/php_codesniffer": "^2.8"
   },
   "config": {
     "preferred-install": "dist"

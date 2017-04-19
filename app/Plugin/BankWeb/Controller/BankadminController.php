@@ -3,127 +3,136 @@ App::uses('BankWebAppController', 'BankWeb.Controller');
 use Respect\Validation\Rules;
 
 class BankadminController extends BankWebAppController {
-	public $uses = ['Group', 'BankWeb.AccountMapping'];
 
-	public function beforeFilter() {
-		parent::beforeFilter();
+    public $uses = ['Group', 'BankWeb.AccountMapping'];
 
-		// Set the active menu item
-		$this->set('at_backend', true);
+    public function beforeFilter() {
+        parent::beforeFilter();
 
-		// Setup validators
-		$this->validators = [
-			'id' => new Rules\AllOf(
-				new Rules\Digit()
-			),
-			'group_id' => new Rules\AllOf(
-				new Rules\Digit()
-			),
-			'username' => new Rules\AllOf(
-				new Rules\NotEmpty()
-			),
-			'password' => new Rules\AllOf(
-				new Rules\NotEmpty()
-			),
-		];
-	}
+        // Set the active menu item
+        $this->set('at_backend', true);
 
-	/**
-	 * BankWEB Admin Index Page
-	 *
-	 * @url /admin/bank
-	 * @url /bank_web/admin
-	 * @url /admin/bank/index
-	 * @url /bank_web/admin/index
-	 */
-	public function index() {
-		$this->set('groups', $this->Group->generateTreeList(null, null, null, '--'));
-		$this->set('accounts', $this->AccountMapping->find('all'));
-	}
+        // Setup validators
+        $this->validators = [
+            'id' => new Rules\AllOf(
+                new Rules\Digit()
+            ),
+            'group_id' => new Rules\AllOf(
+                new Rules\Digit()
+            ),
+            'username' => new Rules\AllOf(
+                new Rules\NotEmpty()
+            ),
+            'password' => new Rules\AllOf(
+                new Rules\NotEmpty()
+            ),
+        ];
+    }
 
-	/**
-	 * BankWEB Admin API
-	 *
-	 * @url /admin/bank/api/<id>
-	 * @url /bank_web/admin/api/<id>
-	 */
-	public function api($id=false) {
-		$data = $this->AccountMapping->findById($id);
-		if ( empty($data) ) {
-			throw new NotFoundException('Unknown account');
-		}
+    /**
+     * BankWEB Admin Index Page
+     *
+     * @url /admin/bank
+     * @url /bank_web/admin
+     * @url /admin/bank/index
+     * @url /bank_web/admin/index
+     */
+    public function index() {
+        $this->set('groups', $this->Group->generateTreeList(null, null, null, '--'));
+        $this->set('accounts', $this->AccountMapping->find('all'));
+    }
 
-		return $this->ajaxResponse($data['AccountMapping']);
-	}
+    /**
+     * BankWEB Admin API
+     *
+     * @url /admin/bank/api/<id>
+     * @url /bank_web/admin/api/<id>
+     */
+    public function api($id = false) {
+        $data = $this->AccountMapping->findById($id);
+        if (empty($data)) {
+            throw new NotFoundException('Unknown account');
+        }
 
-	/**
-	 * BankWEB Credentials Save
-	 *
-	 * @url /admin/bank/save
-	 * @url /bank_web/admin/save
-	 */
-	public function save() {
-		if ( !$this->request->is('post') ) {
-			throw new MethodNotAllowedException();
-		}
+        return $this->ajaxResponse($data['AccountMapping']);
+    }
 
-		// Validate the input
-		$res = $this->_validate();
+    /**
+     * BankWEB Credentials Save
+     *
+     * @url /admin/bank/save
+     * @url /bank_web/admin/save
+     */
+    public function save() {
+        if (!$this->request->is('post')) {
+            throw new MethodNotAllowedException();
+        }
 
-		if ( !empty($res['errors']) ) {
-			$this->_errorFlash($res['errors']);
+        // Validate the input
+        $res = $this->validate();
 
-			return $this->redirect(['plugin' => 'bank_web', 'controller' => 'bankadmin', 'action' => 'index']);
-		}
+        if (!empty($res['errors'])) {
+            $this->errorFlash($res['errors']);
 
-		if ( $res['data']['id'] > 0 ) {
-			$data = $this->AccountMapping->findById($res['data']['id']);
-			if ( empty($data) ) {
-				throw new NotFoundException('Unknown account mapping');
-			}
+            return $this->redirect(['plugin' => 'bank_web', 'controller' => 'bankadmin', 'action' => 'index']);
+        }
 
-			$this->AccountMapping->id = $res['data']['id'];
-			$this->AccountMapping->save($res['data']);
+        if ($res['data']['id'] > 0) {
+            $data = $this->AccountMapping->findById($res['data']['id']);
+            if (empty($data)) {
+                throw new NotFoundException('Unknown account mapping');
+            }
 
-			$msg = sprintf('Edited account mapping for user "%s"', $data['AccountMapping']['username']);
+            $this->AccountMapping->id = $res['data']['id'];
+            $this->AccountMapping->save($res['data']);
 
-			$this->logMessage('bank', $msg, ['old_mapping' => $data['AccountMapping'], 'new_mapping' => $res['data']], $data['AccountMapping']['id']);
-			$this->Flash->success($msg.'!');
-		} else {
-			// Fix the data
-			unset($res['data']['id']);
+            $msg = sprintf('Edited account mapping for user "%s"', $data['AccountMapping']['username']);
 
-			$this->AccountMapping->create();
-			$this->AccountMapping->save($res['data']);
+            $this->logMessage(
+                'bank',
+                $msg,
+                [
+                    'old_mapping' => $data['AccountMapping'],
+                    'new_mapping' => $res['data']
+                ],
+                $data['AccountMapping']['id']
+            );
+            $this->Flash->success($msg.'!');
+        } else {
+            // Fix the data
+            unset($res['data']['id']);
 
-			$msg = sprintf('Created account mapping on user "%s"', $res['data']['username']);
-			$this->logMessage('bank', $msg, [], $this->AccountMapping->id);
-			$this->Flash->success($msg.'!');
-		}
+            $this->AccountMapping->create();
+            $this->AccountMapping->save($res['data']);
 
-		return $this->redirect(['plugin' => 'bank_web', 'controller' => 'bankadmin', 'action' => 'index']);
-	}
+            $msg = sprintf('Created account mapping on user "%s"', $res['data']['username']);
+            $this->logMessage('bank', $msg, [], $this->AccountMapping->id);
+            $this->Flash->success($msg.'!');
+        }
 
-	/**
-	 * BankWEB Account Mapping Delete 
-	 *
-	 * @url /admin/bank/delete/<type>/<id>
-	 */
-	public function delete($id=false) {
-		$data = $this->AccountMapping->findById($id);
-		if ( empty($data) ) {
-			throw new NotFoundException('Unknown acount');
-		}
+        return $this->redirect(['plugin' => 'bank_web', 'controller' => 'bankadmin', 'action' => 'index']);
+    }
 
-		if ( $this->request->is('post') ) {
-			$this->AccountMapping->delete($id);
+    /**
+     * BankWEB Account Mapping Delete
+     *
+     * @url /admin/bank/delete/<type>/<id>
+     */
+    public function delete($id = false) {
+        $data = $this->AccountMapping->findById($id);
+        if (empty($data)) {
+            throw new NotFoundException('Unknown acount');
+        }
 
-			$msg = sprintf('Deleted account mapping for user "%s"', $data['AccountMapping']['username']);
-			$this->logMessage('bank', $msg, ['mapping' => $data], $id);
-			$this->Flash->success($msg.'!');
-			return $this->redirect(['plugin' => 'bank_web', 'controller' => 'bankadmin', 'action' => 'index']);
-		}
+        if ($this->request->is('post')) {
+            $this->AccountMapping->delete($id);
 
-		$this->set('data', $data);
-	}
+            $msg = sprintf('Deleted account mapping for user "%s"', $data['AccountMapping']['username']);
+            $this->logMessage('bank', $msg, ['mapping' => $data], $id);
+            $this->Flash->success($msg.'!');
+            return $this->redirect(['plugin' => 'bank_web', 'controller' => 'bankadmin', 'action' => 'index']);
+        }
+
+        $this->set('data', $data);
+    }
 }

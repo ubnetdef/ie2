@@ -5,10 +5,10 @@ use AD7six\Dsn\Wrapper\CakePHP\V2\LogDsn;
 // Include the Composer autoloader
 // This does not use `App::import()` because `App::build()`
 // is called *after* `core.php` has been loaded
-include (ROOT . DS . 'vendor' . DS . 'autoload.php');
+include(ROOT . DS . 'vendor' . DS . 'autoload.php');
 
 // Include global functions
-include (ROOT . DS . APP_DIR . DS . 'Config' . DS . 'functions.php');
+include(ROOT . DS . APP_DIR . DS . 'Config' . DS . 'functions.php');
 
 // Remove and re-prepend CakePHP's autoloader as composer thinks it is the most important.
 // See https://github.com/composer/composer/commit/c80cb76b9b5082ecc3e5b53b1050f76bb27b127b
@@ -17,15 +17,15 @@ spl_autoload_register(['App', 'load'], true, true);
 
 // Specify the APP_NAME environment variable to skip .env file loading
 if (!env('APP_NAME')) {
-	// If there's a problem loading the .env file - load .env.default
-	// That means the code can assume appropriate env config always exists
-	// Don't trap this incase there's some other fundamental error
-	josegonzalez\Dotenv\Loader::load([
-		'filepath' => ROOT . DS . '.env',
-		'toServer' => false,
-		'skipExisting' => ['toServer'],
-		'raiseExceptions' => true
-	]);
+    // If there's a problem loading the .env file - load .env.default
+    // That means the code can assume appropriate env config always exists
+    // Don't trap this incase there's some other fundamental error
+    josegonzalez\Dotenv\Loader::load([
+        'filepath' => ROOT . DS . '.env',
+        'toServer' => false,
+        'skipExisting' => ['toServer'],
+        'raiseExceptions' => true
+    ]);
 }
 
 /**
@@ -34,23 +34,23 @@ if (!env('APP_NAME')) {
  * This is only really used in `bootstrap.php`, as that file does not
  * have the `env` function loaded at that time.
  */
-	Configure::write('ie.feature.scoreengine', (bool)env('FEATURE_SCOREENGINE'));
-	Configure::write('ie.feature.bankweb', (bool)env('FEATURE_BANKWEB'));
+    Configure::write('ie.feature.scoreengine', (bool)env('FEATURE_SCOREENGINE'));
+    Configure::write('ie.feature.bankweb', (bool)env('FEATURE_BANKWEB'));
 
 /**
  * CakePHP Debug Level:
  *
  * Production Mode:
- * 	0: No error messages, errors, or warnings shown. Flash messages redirect.
+ *  0: No error messages, errors, or warnings shown. Flash messages redirect.
  *
  * Development Mode:
- * 	1: Errors and warnings shown, model caches refreshed, flash messages halted.
- * 	2: As in 1, but also with full debug messages and SQL output.
+ *  1: Errors and warnings shown, model caches refreshed, flash messages halted.
+ *  2: As in 1, but also with full debug messages and SQL output.
  *
  * In production mode, flash messages redirect after a time interval.
  * In development mode, you need to click the flash message to continue.
  */
-	Configure::write('debug', (int)env('DEBUG'));
+    Configure::write('debug', (int)env('DEBUG'));
 
 /**
  * Configure the Error handler used to handle errors for your application. By default
@@ -67,11 +67,11 @@ if (!env('APP_NAME')) {
  *
  * @see ErrorHandler for more information on error handling and configuration.
  */
-	Configure::write('Error', [
-		'handler' => 'ErrorHandler::handleError',
-		'level' => E_ALL & ~E_DEPRECATED,
-		'trace' => true
-	]);
+    Configure::write('Error', [
+        'handler' => 'ErrorHandler::handleError',
+        'level' => E_ALL & ~E_DEPRECATED,
+        'trace' => true
+    ]);
 
 /**
  * Configure the Exception handler used for uncaught exceptions. By default,
@@ -90,16 +90,16 @@ if (!env('APP_NAME')) {
  *
  * @see ErrorHandler for more information on exception handling and configuration.
  */
-	Configure::write('Exception', [
-		'handler' => 'ErrorHandler::handleException',
-		'renderer' => 'ExceptionRenderer',
-		'log' => true
-	]);
+    Configure::write('Exception', [
+        'handler' => 'ErrorHandler::handleException',
+        'renderer' => 'ExceptionRenderer',
+        'log' => true
+    ]);
 
 /**
  * Application wide charset encoding
  */
-	Configure::write('App.encoding', 'UTF-8');
+    Configure::write('App.encoding', 'UTF-8');
 
 /**
  * To configure CakePHP *not* to use mod_rewrite and to
@@ -120,7 +120,7 @@ if (!env('APP_NAME')) {
  * included primarily as a development convenience - and
  * thus not recommended for production applications.
  */
-	//Configure::write('App.baseUrl', env('SCRIPT_NAME'));
+    //Configure::write('App.baseUrl', env('SCRIPT_NAME'));
 
 /**
  * Uncomment the define below to use CakePHP prefix routes.
@@ -131,20 +131,20 @@ if (!env('APP_NAME')) {
  * Set to an array of prefixes you want to use in your application. Use for
  * admin or other prefixed routes.
  *
- * 	Routing.prefixes = array('admin', 'manager');
+ *  Routing.prefixes = array('admin', 'manager');
  *
  * Enables:
- *	`admin_index()` and `/admin/controller/index`
- *	`manager_index()` and `/manager/controller/index`
+ *  `admin_index()` and `/admin/controller/index`
+ *  `manager_index()` and `/manager/controller/index`
  *
  */
-	//Configure::write('Routing.prefixes', ['admin', 'staff']);
+    //Configure::write('Routing.prefixes', ['admin', 'staff']);
 
 /**
  * Turn off all caching application-wide.
  *
  */
-	//Configure::write('Cache.disable', true);
+    //Configure::write('Cache.disable', true);
 
 /**
  * Enable cache checking.
@@ -155,7 +155,7 @@ if (!env('APP_NAME')) {
  * or in each action using $this->cacheAction = true.
  *
  */
-	//Configure::write('Cache.check', true);
+    //Configure::write('Cache.check', true);
 
 /**
  * Enable cache view prefixes.
@@ -165,7 +165,7 @@ if (!env('APP_NAME')) {
  * for instance. Each version can then have its own view cache namespace.
  * Note: The final cache file name will then be `prefix_cachefilename`.
  */
-	//Configure::write('Cache.viewPrefix', 'prefix');
+    //Configure::write('Cache.viewPrefix', 'prefix');
 
 /**
  * Session configuration.
@@ -204,22 +204,22 @@ if (!env('APP_NAME')) {
  * the cake shell command: cake schema create Sessions
  *
  */
-	Configure::write('Session', [
-		'defaults'       => 'php',
-		'cookie'         => env('APP_NAME'),
-		'cookieTimeout'  => env('SESSION_COOKIE_TIMEOUT'),
-		'autoRegenerate' => true,
-	]);
+    Configure::write('Session', [
+        'defaults'       => 'php',
+        'cookie'         => env('APP_NAME'),
+        'cookieTimeout'  => env('SESSION_COOKIE_TIMEOUT'),
+        'autoRegenerate' => true,
+    ]);
 
 /**
  * A random string used in security hashing methods.
  */
-	Configure::write('Security.salt', env('SECURITY_SALT'));
+    Configure::write('Security.salt', env('SECURITY_SALT'));
 
 /**
  * A random numeric string (digits only) used to encrypt/decrypt strings.
  */
-	Configure::write('Security.cipherSeed', env('SECURITY_CIPHER_SEED'));
+    Configure::write('Security.cipherSeed', env('SECURITY_CIPHER_SEED'));
 
 /**
  * Apply timestamps with the last modified time to static assets (js, css, images).
@@ -229,7 +229,7 @@ if (!env('APP_NAME')) {
  * Set to `true` to apply timestamps when debug > 0. Set to 'force' to always enable
  * timestamping regardless of debug value.
  */
-	//Configure::write('Asset.timestamp', true);
+    //Configure::write('Asset.timestamp', true);
 
 /**
  * Compress CSS output by removing comments, whitespace, repeating tags, etc.
@@ -238,7 +238,7 @@ if (!env('APP_NAME')) {
  *
  * To use, prefix the CSS link URL with '/ccss/' instead of '/css/' or use HtmlHelper::css().
  */
-	//Configure::write('Asset.filter.css', 'css.php');
+    //Configure::write('Asset.filter.css', 'css.php');
 
 /**
  * Plug in your own custom JavaScript compressor by dropping a script in your webroot to handle the
@@ -246,32 +246,32 @@ if (!env('APP_NAME')) {
  *
  * To use, prefix your JavaScript link URLs with '/cjs/' instead of '/js/' or use JavaScriptHelper::link().
  */
-	//Configure::write('Asset.filter.js', 'custom_javascript_output_filter.php');
+    //Configure::write('Asset.filter.js', 'custom_javascript_output_filter.php');
 
 /**
  * The class name and database used in CakePHP's
  * access control lists.
  */
-	Configure::write('Acl.classname', 'DbAcl');
-	Configure::write('Acl.database', 'default');
+    Configure::write('Acl.classname', 'DbAcl');
+    Configure::write('Acl.database', 'default');
 
 /**
  * Uncomment this line and correct your server timezone to fix
  * any date & time related errors.
  */
-	date_default_timezone_set('UTC');
+    date_default_timezone_set('UTC');
 
 /**
  * Configure Cache from environment variables
  */
-	Cache::config('default', CacheDsn::parse(env('CACHE_URL')));
-	Cache::config('debug_kit', CacheDsn::parse(env('CACHE_DEBUG_KIT_URL')));
-	Cache::config('_cake_core_', CacheDsn::parse(env('CACHE_CAKE_CORE_URL')));
-	Cache::config('_cake_model_', CacheDsn::parse(env('CACHE_CAKE_MODEL_URL')));
+    Cache::config('default', CacheDsn::parse(env('CACHE_URL')));
+    Cache::config('debug_kit', CacheDsn::parse(env('CACHE_DEBUG_KIT_URL')));
+    Cache::config('_cake_core_', CacheDsn::parse(env('CACHE_CAKE_CORE_URL')));
+    Cache::config('_cake_model_', CacheDsn::parse(env('CACHE_CAKE_MODEL_URL')));
 
 /**
  * Configure logs from environment variables
  */
-	App::uses('CakeLog', 'Log');
-	CakeLog::config('default', LogDsn::parse(env('LOG_URL')));
-	CakeLog::config('error', LogDsn::parse(env('LOG_ERROR_URL')));
+    App::uses('CakeLog', 'Log');
+    CakeLog::config('default', LogDsn::parse(env('LOG_URL')));
+    CakeLog::config('error', LogDsn::parse(env('LOG_ERROR_URL')));

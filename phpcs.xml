@@ -1,0 +1,72 @@
+<?xml version="1.0"?>
+<ruleset name="ie2">
+    <description>ie2 coding standard</description>
+
+    <file>./app</file>
+    <arg value="sp"/>
+
+    <!-- Use PSR2 as a base -->
+    <rule ref="PSR2">
+        <!-- Allow opening and closing braces for functions and classes to be on the same line -->
+        <exclude name="Squiz.Functions.MultiLineFunctionDeclaration.BraceOnSameLine" />
+        <exclude name="PSR2.Classes.ClassDeclaration.OpenBraceNewLine" />
+        <exclude name="Squiz.WhiteSpace.ScopeClosingBrace" />
+
+        <!-- Disable newline after opening brace -->
+        <exclude name="Squiz.ControlStructures.ControlSignature.NewlineAfterOpenBrace" />
+
+        <!-- Ignore some warnings due to CakePHP -->
+        <exclude name="PSR1.Classes.ClassDeclaration.MissingNamespace" />
+        <exclude name="PSR1.Files.SideEffects.FoundWithSymbols" />
+    </rule>
+    <rule ref="Generic.Functions.OpeningFunctionBraceKernighanRitchie" />
+
+    <!-- Enforce short array syntax -->
+    <rule ref="Generic.Arrays.DisallowLongArraySyntax.Found">
+        <type>warning</type>
+    </rule>
+
+    <!-- Enforce no blank lines -->
+    <rule ref="Squiz.WhiteSpace.SuperfluousWhitespace">
+        <properties>
+            <property name="ignoreBlankLines" value="false" />
+        </properties>
+    </rule>
+
+    <!-- Verify that operators have valid spacing surrounding them -->
+    <rule ref="Squiz.WhiteSpace.OperatorSpacing" />
+
+    <!-- Code Analysis -->
+    <rule ref="Generic.CodeAnalysis.ForLoopShouldBeWhileLoop" />
+    <rule ref="Generic.CodeAnalysis.ForLoopWithTestFunctionCall" />
+    <rule ref="Generic.CodeAnalysis.JumbledIncrementer" />
+    <rule ref="Generic.CodeAnalysis.UnconditionalIfStatement" />
+    <rule ref="Generic.CodeAnalysis.UnnecessaryFinalModifier" />
+
+    <!-- Documenting -->
+    <rule ref="Squiz.Commenting.DocCommentAlignment" />
+    <rule ref="Generic.Commenting.Todo" />
+
+    <!-- General good things to have -->
+    <rule ref="Generic.Formatting.NoSpaceAfterCast" />
+    <rule ref="Squiz.Operators.ValidLogicalOperators" />
+    <rule ref="Squiz.PHP.Eval" />
+    <rule ref="Squiz.PHP.NonExecutableCode" />
+    <rule ref="Generic.PHP.NoSilencedErrors" />
+    <rule ref="Generic.PHP.DeprecatedFunctions" />
+    <rule ref="Squiz.WhiteSpace.MemberVarSpacing"/>
+    <rule ref="PEAR.ControlStructures.MultiLineCondition"/>
+    <rule ref="PEAR.Formatting.MultiLineAssignment"/>
+
+    <!-- Code complexity and nesting -->
+    <rule ref="Generic.Metrics.CyclomaticComplexity"/>
+    <rule ref="Generic.Metrics.NestingLevel"/>
+
+    <!-- Ignore valid class name due to CakePHP -->
+    <rule ref="Squiz.Classes.ValidClassName.NotCamelCaps">
+        <exclude-pattern>./app/Config/database.php</exclude-pattern>
+    </rule>
+    <rule ref="PSR1.Methods.CamelCapsMethodName.NotCamelCaps">
+        <exclude-pattern>./app/Console/Command/EngineShell.php</exclude-pattern>
+    </rule>
+</ruleset>

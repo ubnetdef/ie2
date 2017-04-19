@@ -2,26 +2,27 @@
 namespace InjectTypes;
 
 class Manager {
-	protected $types = [];
 
-	public function __construct($types) {
-		foreach ( $types AS $type_name ) {
-			$name = sprintf('InjectTypes\\%s', $type_name);
-			$type = new $name();
+    protected $types = [];
 
-			$this->types[$type->getID()] = $type;
-		}
-	}
+    public function __construct($types) {
+        foreach ($types as $type_name) {
+            $name = sprintf('InjectTypes\\%s', $type_name);
+            $type = new $name();
 
-	public function get($id) {
-		if ( !isset($this->types[$id]) ) {
-			throw new BadMethodCallException('Unknown type!');
-		}
+            $this->types[$type->getID()] = $type;
+        }
+    }
 
-		return $this->types[$id];
-	}
+    public function get($id) {
+        if (!isset($this->types[$id])) {
+            throw new BadMethodCallException('Unknown type!');
+        }
 
-	public function getAll() {
-		return $this->types;
-	}
+        return $this->types[$id];
+    }
+
+    public function getAll() {
+        return $this->types;
+    }
 }

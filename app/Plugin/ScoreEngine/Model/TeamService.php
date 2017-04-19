@@ -2,64 +2,67 @@
 App::uses('ScoreEngineAppModel', 'ScoreEngine.Model');
 
 class TeamService extends ScoreEngineAppModel {
-	public $useTable = 'team_service';
-	public $belongsTo = ['ScoreEngine.Team', 'ScoreEngine.Service'];
-	public $recursive = 1;
 
-	public function getData($tid, $onlyEnabled=true) {
-		$conditions = [
-			'fields' => [
-				'TeamService.id', 'TeamService.key', 'TeamService.value',
-				'TeamService.edit', 'TeamService.hidden', 'Service.name', 'Service.id',
-				'Service.enabled',
-			],
+    public $useTable = 'team_service';
 
-			'conditions' => [
-				'Team.id' => $tid,
-			],
-		];
+    public $belongsTo = ['ScoreEngine.Team', 'ScoreEngine.Service'];
 
-		if ( $onlyEnabled ) {
-			$conditions['conditions']['Service.enabled'] = true;
-		}
+    public $recursive = 1;
 
-		$data = $this->find('all', $conditions);
+    public function getData($tid, $onlyEnabled = true) {
+        $conditions = [
+            'fields' => [
+                'TeamService.id', 'TeamService.key', 'TeamService.value',
+                'TeamService.edit', 'TeamService.hidden', 'Service.name', 'Service.id',
+                'Service.enabled',
+            ],
 
-		$rtn = [];
-		foreach ( $data AS $d ) {
-			if ( !$d['Service']['enabled'] ) {
-				$d['Service']['name'] .= ' (Disabled)';
-			}
+            'conditions' => [
+                'Team.id' => $tid,
+            ],
+        ];
 
-			if ( !isset($rtn[$d['Service']['name']]) ) {
-				$rtn[$d['Service']['name']] = [];
-			}
+        if ($onlyEnabled) {
+            $conditions['conditions']['Service.enabled'] = true;
+        }
 
-			$rtn[$d['Service']['name']][] = $d['TeamService'];
-		}
+        $data = $this->find('all', $conditions);
 
-		return $rtn;
-	}
+        $rtn = [];
+        foreach ($data as $d) {
+            if (!$d['Service']['enabled']) {
+                $d['Service']['name'] .= ' (Disabled)';
+            }
 
-	public function getConfig($tid, $sid, $key=false) {
-		$conditions = [
-			'Team.id'   => $tid,
-			'Service.id' => $sid,
-		];
+            if (!isset($rtn[$d['Service']['name']])) {
+                $rtn[$d['Service']['name']] = [];
+            }
 
-		if ( $key !== false ) {
-			$conditions['TeamService.key'] = $key;
-		}
+            $rtn[$d['Service']['name']][] = $d['TeamService'];
+        }
 
-		return $this->find('all', [
-			'conditions' => $conditions,
-		]);
-	}
+        return $rtn;
+    }
 
-	public function updateConfig($id, $value) {
-		$this->id = $id;
-		$this->save([
-			'value' => $value,
-		]);
-	}
+    public function getConfig($tid, $sid, $key = false) {
+        $conditions = [
+            'Team.id'   => $tid,
+            'Service.id' => $sid,
+        ];
+
+        if ($key !== false) {
+            $conditions['TeamService.key'] = $key;
+        }
+
+        return $this->find('all', [
+            'conditions' => $conditions,
+        ]);
+    }
+
+    public function updateConfig($id, $value) {
+        $this->id = $id;
+        $this->save([
+            'value' => $value,
+        ]);
+    }
 }

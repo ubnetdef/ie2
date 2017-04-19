@@ -3,156 +3,157 @@ App::uses('AdminAppController', 'Admin.Controller');
 use Respect\Validation\Rules;
 
 class HintsController extends AdminAppController {
-	public $uses = ['Hint', 'Inject'];
 
-	public function beforeFilter() {
-		parent::beforeFilter();
+    public $uses = ['Hint', 'Inject'];
 
-		// Setup the validators
-		$this->validators = [
-			'inject_id' => new Rules\AllOf(
-				new Rules\Digit()
-			),
-			'parent_id' => new Rules\Optional(
-				new Rules\Digit()
-			),
-			'title' => new Rules\AllOf(
-				new Rules\NotEmpty()
-			),
-			'content' => new Rules\AllOf(
-				new Rules\NotEmpty()
-			),
-			'time_wait' => new Rules\AllOf(
-				new Rules\Digit()
-			),
-			'cost' => new Rules\AllOf(
-				new Rules\Digit()
-			),
-		];
-	}
+    public function beforeFilter() {
+        parent::beforeFilter();
 
-	/**
-	 * Hint List Page 
-	 *
-	 * @url /admin/hints
-	 * @url /admin/hints/index
-	 */
-	public function index() {
-		$this->set('hints', $this->Hint->find('all'));
-	}
+        // Setup the validators
+        $this->validators = [
+            'inject_id' => new Rules\AllOf(
+                new Rules\Digit()
+            ),
+            'parent_id' => new Rules\Optional(
+                new Rules\Digit()
+            ),
+            'title' => new Rules\AllOf(
+                new Rules\NotEmpty()
+            ),
+            'content' => new Rules\AllOf(
+                new Rules\NotEmpty()
+            ),
+            'time_wait' => new Rules\AllOf(
+                new Rules\Digit()
+            ),
+            'cost' => new Rules\AllOf(
+                new Rules\Digit()
+            ),
+        ];
+    }
 
-	/**
-	 * Create Hint 
-	 *
-	 * @url /admin/hints/create
-	 */
-	public function create() {
-		if ( $this->request->is('post') ) {
-			// Validate the input
-			$res = $this->_validate();
+    /**
+     * Hint List Page
+     *
+     * @url /admin/hints
+     * @url /admin/hints/index
+     */
+    public function index() {
+        $this->set('hints', $this->Hint->find('all'));
+    }
 
-			if ( empty($res['errors']) ) {
-				$this->Hint->create();
-				$this->Hint->save($res['data']);
+    /**
+     * Create Hint
+     *
+     * @url /admin/hints/create
+     */
+    public function create() {
+        if ($this->request->is('post')) {
+            // Validate the input
+            $res = $this->validate();
 
-				$this->logMessage(
-					'hints',
-					sprintf('Created hint "%s"', $res['data']['title']),
-					[],
-					$id
-				);
+            if (empty($res['errors'])) {
+                $this->Hint->create();
+                $this->Hint->save($res['data']);
 
-				$this->Flash->success('The hint has been created!');
-				return $this->redirect(['plugin' => 'admin', 'controller' => 'hints', 'action' => 'index']);
-			} else {
-				$this->_errorFlash($res['errors']);
-			}
-		}
+                $this->logMessage(
+                    'hints',
+                    sprintf('Created hint "%s"', $res['data']['title']),
+                    [],
+                    $id
+                );
 
-		$this->set('hints', $this->Hint->find('all'));
-		$this->set('injects', $this->Inject->find('all'));
-	}
+                $this->Flash->success('The hint has been created!');
+                return $this->redirect(['plugin' => 'admin', 'controller' => 'hints', 'action' => 'index']);
+            } else {
+                $this->errorFlash($res['errors']);
+            }
+        }
 
-	/**
-	 * Edit Hint 
-	 *
-	 * @url /admin/hints/edit/<id>
-	 */
-	public function edit($id=false) {
-		$hint = $this->Hint->findById($id);
-		if ( empty($hint) ) {
-			throw new NotFoundException('Unknown hint');
-		}
+        $this->set('hints', $this->Hint->find('all'));
+        $this->set('injects', $this->Inject->find('all'));
+    }
 
-		if ( $this->request->is('post') ) {
-			// Validate the input
-			$res = $this->_validate();
+    /**
+     * Edit Hint
+     *
+     * @url /admin/hints/edit/<id>
+     */
+    public function edit($id = false) {
+        $hint = $this->Hint->findById($id);
+        if (empty($hint)) {
+            throw new NotFoundException('Unknown hint');
+        }
 
-			if ( empty($res['errors']) ) {
-				// Fix parent_id
-				if ( $res['data']['parent_id'] == 0 ) {
-					$res['data']['parent_id'] = NULL;
-				}
+        if ($this->request->is('post')) {
+            // Validate the input
+            $res = $this->validate();
 
-				$this->Hint->id = $id;
-				$this->Hint->save($res['data']);
+            if (empty($res['errors'])) {
+                // Fix parent_id
+                if ($res['data']['parent_id'] == 0) {
+                    $res['data']['parent_id'] = null;
+                }
 
-				$this->logMessage(
-					'hints',
-					sprintf('Updated hint "%s"', $hint['Hint']['title']),
-					[
-						'old_hint' => $hint['Hint'],
-						'new_hint' => $res['data'],
-					],
-					$id
-				);
+                $this->Hint->id = $id;
+                $this->Hint->save($res['data']);
 
-				$this->Flash->success('The hint has been updated!');
-				return $this->redirect(['plugin' => 'admin', 'controller' => 'hints', 'action' => 'index']);
-			} else {
-				$this->_errorFlash($res['errors']);
-			}
-		}
+                $this->logMessage(
+                    'hints',
+                    sprintf('Updated hint "%s"', $hint['Hint']['title']),
+                    [
+                        'old_hint' => $hint['Hint'],
+                        'new_hint' => $res['data'],
+                    ],
+                    $id
+                );
 
-		$this->set('hints', $this->Hint->find('all'));
-		$this->set('injects', $this->Inject->find('all'));
-		$this->set('hint', $hint);
-	}
+                $this->Flash->success('The hint has been updated!');
+                return $this->redirect(['plugin' => 'admin', 'controller' => 'hints', 'action' => 'index']);
+            } else {
+                $this->errorFlash($res['errors']);
+            }
+        }
 
-	/**
-	 * Delete Hint 
-	 *
-	 * @url /admin/hints/delete/<id>
-	 */
-	public function delete($id=false) {
-		$hint = $this->Hint->findById($id);
-		if ( empty($hint) ) {
-			throw new NotFoundException('Unknown hint');
-		}
+        $this->set('hints', $this->Hint->find('all'));
+        $this->set('injects', $this->Inject->find('all'));
+        $this->set('hint', $hint);
+    }
 
-		if ( $this->request->is('post') ) {
-			$this->Hint->delete($id);
+    /**
+     * Delete Hint
+     *
+     * @url /admin/hints/delete/<id>
+     */
+    public function delete($id = false) {
+        $hint = $this->Hint->findById($id);
+        if (empty($hint)) {
+            throw new NotFoundException('Unknown hint');
+        }
 
-			$msg = sprintf('Deleted hint "%s"', $hint['Hint']['title']);
-			$this->logMessage('hints', $msg, ['hint' => $hint], $id);
-			$this->Flash->success($msg.'!');
-			return $this->redirect(['plugin' => 'admin', 'controller' => 'hints', 'action' => 'index']);
-		}
+        if ($this->request->is('post')) {
+            $this->Hint->delete($id);
 
-		$this->set('hint', $hint);
-	}
+            $msg = sprintf('Deleted hint "%s"', $hint['Hint']['title']);
+            $this->logMessage('hints', $msg, ['hint' => $hint], $id);
+            $this->Flash->success($msg.'!');
+            return $this->redirect(['plugin' => 'admin', 'controller' => 'hints', 'action' => 'index']);
+        }
 
-	/**
-	 * View Hint 
-	 *
-	 * @url /admin/hints/view/<id>
-	 */
-	public function view($id=false) {
-		$log = $this->Log->findById($id);
-		if ( empty($log) ) {
-			throw new NotFoundException('Unknown Log ID');
-		}
+        $this->set('hint', $hint);
+    }
 
-		$this->set('log', $log);
-	}
+    /**
+     * View Hint
+     *
+     * @url /admin/hints/view/<id>
+     */
+    public function view($id = false) {
+        $log = $this->Log->findById($id);
+        if (empty($log)) {
+            throw new NotFoundException('Unknown Log ID');
+        }
+
+        $this->set('log', $log);
+    }
 }
