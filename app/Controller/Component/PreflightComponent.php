@@ -246,20 +246,17 @@ class PreflightComponent extends Component {
         $tables = ['AccountMapping', 'Product', 'Purchase'];
         $missing_tables = [];
 
-        foreach ( $tables AS $table ) {
+        foreach ($tables as $table) {
             $tbl = ClassRegistry::init('BankWeb.'.$table);
 
             try {
                 $tbl->find('first');
-            } catch ( Exception $e ) {
+            } catch (Exception $e) {
                 $missing_tables[] = $table;
             }
         }
 
-        return !empty($missing_tables) ?
-            'BankWeb is not setup. Missing DB table(s): '.implode(', ', $missing_tables).'. Please run `./cake engine install_bankweb`.'
-            :
-            true;
+        return !empty($missing_tables) ? 'BankWeb is not setup. Missing DB table(s): '.implode(', ', $missing_tables).'. Please run `./cake engine install_bankweb`.' : true;
     }
 
     /**

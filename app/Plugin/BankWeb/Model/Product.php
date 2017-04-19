@@ -2,5 +2,6 @@
 App::uses('BankWebAppModel', 'BankWeb.Model');
 
 class Product extends BankWebAppModel {
-	public $tablePrefix = 'bank_';
+
+    public $tablePrefix = 'bank_';
 }

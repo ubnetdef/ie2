@@ -2,33 +2,31 @@
 App::uses('BankWebAppController', 'BankWeb.Controller');
 
 class ProductsController extends BankWebAppController {
-	public $uses = ['BankWeb.Product', 'BankWeb.Purchase'];
+public $uses = ['BankWeb.Product', 'BankWeb.Purchase'];
 
-	/**
-	 * Array of products loaded from the
-	 * env variable 'BANKWEB_PRODUCTS'
-	 */
-	private $products = [];
+    /**
+     * Array of products loaded from the
+     * env variable 'BANKWEB_PRODUCTS'
+     */
+private $products = [];
 
-    public function beforeFilter() {
-        parent::beforeFilter();
+public function beforeFilter() {
+    parent::beforeFilter();
 
-		// Set the active menu item
-		$this->set('at_bank', true);
-	}
+    // Set the active menu item
+    $this->set('at_bank', true);
+}
 
-	/**
-	 * Product List Page
-	 *
-	 * @url /bank
-	 * @url /bank/products
-	 * @url /bank/products/index
-	 */
-	public function index() {
-		$this->set('products', $this->Product->findAllByEnabled(true));
-	}
-
-<<<<<<< HEAD
+    /**
+     * Product List Page
+     *
+     * @url /bank
+     * @url /bank/products
+     * @url /bank/products/index
+     */
+public function index() {
+    $this->set('products', $this->Product->findAllByEnabled(true));
+} << << <<< HEAD
     /**
      * Product List Page
      *
