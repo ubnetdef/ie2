@@ -152,9 +152,9 @@ class AppController extends Controller {
      * Validate request data against
      * $validators
      *
-     * @return array [errors,validated_data]
+     * @return array [errors, validated_data]
      */
-    protected function validate() {
+    protected function _validate() {
         // Validate the input
         $errors = [];
         $modify = [];
@@ -192,7 +192,7 @@ class AppController extends Controller {
      * @param $errors Array of the errors
      * @return void
      */
-    protected function errorFlash($errors) {
+    protected function _errorFlash($errors) {
         $this->Flash->danger('The following errors have occured:<br />'.implode('<br />', $errors));
     }
 
@@ -200,13 +200,17 @@ class AppController extends Controller {
      * Sends a slack message
      *
      */
-    protected function sendSlack($msg, $extra = []) {
+    protected function _sendSlack($msg, $extra = []) {
         if (!env('SLACK_ENDPOINT')) {
             return;
         }
 
         // Sprintf it
-        $msg = str_replace(['#USERNAME#', '#GROUP#'], [$this->Auth->user('username'), $this->Auth->group('name')], $msg);
+        $msg = str_replace(
+            ['#USERNAME#', '#GROUP#'],
+            [$this->Auth->user('username'), $this->Auth->group('name')],
+            $msg
+        );
 
         // Build the payload
         $payload = 'payload='.json_encode([

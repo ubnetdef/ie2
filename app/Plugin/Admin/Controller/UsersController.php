@@ -72,7 +72,7 @@ class UsersController extends AdminAppController {
     public function create() {
         if ($this->request->is('post')) {
             // Validate the input
-            $res = $this->validate();
+            $res = $this->_validate();
 
             if (empty($res['errors'])) {
                 $this->User->create();
@@ -88,7 +88,7 @@ class UsersController extends AdminAppController {
                 $this->Flash->success('The user has been created!');
                 return $this->redirect(['plugin' => 'admin', 'controller' => 'users', 'action' => 'index']);
             } else {
-                $this->errorFlash($res['errors']);
+                $this->_errorFlash($res['errors']);
             }
         }
 
@@ -109,7 +109,7 @@ class UsersController extends AdminAppController {
 
         if ($this->request->is('post')) {
             // Validate the input
-            $res = $this->validate();
+            $res = $this->_validate();
 
             if (empty($res['errors'])) {
                 // Clear out the password, if it's empty
@@ -141,7 +141,7 @@ class UsersController extends AdminAppController {
                 $this->Flash->success('The user has been updated!');
                 return $this->redirect(['plugin' => 'admin', 'controller' => 'users', 'action' => 'index']);
             } else {
-                $this->errorFlash($res['errors']);
+                $this->_errorFlash($res['errors']);
             }
         }
 

@@ -51,7 +51,7 @@ class GroupsController extends AdminAppController {
     public function create() {
         if ($this->request->is('post')) {
             // Validate the input
-            $res = $this->validate();
+            $res = $this->_validate();
 
             if (empty($res['errors'])) {
                 $this->Group->create();
@@ -67,7 +67,7 @@ class GroupsController extends AdminAppController {
                 $this->Flash->success('The group has been created!');
                 return $this->redirect(['plugin' => 'admin', 'controller' => 'groups', 'action' => 'index']);
             } else {
-                $this->errorFlash($res['errors']);
+                $this->_errorFlash($res['errors']);
             }
         }
 
@@ -87,7 +87,7 @@ class GroupsController extends AdminAppController {
 
         if ($this->request->is('post')) {
             // Validate the input
-            $res = $this->validate();
+            $res = $this->_validate();
 
             if (empty($res['errors'])) {
                 $this->Group->id = $gid;
@@ -106,7 +106,7 @@ class GroupsController extends AdminAppController {
                 $this->Flash->success('The user has been updated!');
                 return $this->redirect(['plugin' => 'admin', 'controller' => 'groups', 'action' => 'index']);
             } else {
-                $this->errorFlash($res['errors']);
+                $this->_errorFlash($res['errors']);
             }
         }
 

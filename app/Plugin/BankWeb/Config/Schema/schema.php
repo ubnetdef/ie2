@@ -112,7 +112,7 @@ class BankWebSchema extends CakeSchema {
 
         switch ($event['create']) {
             case 'account_mappings':
-                $this->_create('AccountMapping', [
+                $this->create('AccountMapping', [
                     'group_id' => env('GROUP_STAFF'),
                     'username'  => 'admin',
                     'password'  => 'admin',
@@ -120,7 +120,7 @@ class BankWebSchema extends CakeSchema {
                 break;
 
             case 'bank_products':
-                $this->_create('BankProduct', [
+                $this->create('BankProduct', [
                     'enabled'      => true,
                     'name'         => 'BankWeb Example Product',
                     'description'  => 'This is an example product. SO COOL.',
@@ -131,7 +131,7 @@ class BankWebSchema extends CakeSchema {
         }
     }
 
-    private function _create($tbl, $data) {
+    private function create($tbl, $data) {
         $table = ClassRegistry::init($tbl);
 
         $table->create();

@@ -102,7 +102,7 @@ class InjectsController extends AppController {
         $typeManager = new InjectTypes\Manager($this->Config->getInjectTypes());
         $injectType = $typeManager->get($inject->getType());
 
-        if (!$injectType->validateSubmission($inject, $this->request->data)) {
+        if (!$injectType->_validateSubmission($inject, $this->request->data)) {
             throw new BadRequestException('Non-valid submission');
         }
 
