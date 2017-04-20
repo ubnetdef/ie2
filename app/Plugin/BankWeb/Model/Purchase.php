@@ -5,7 +5,7 @@ class Purchase extends BankWebAppModel {
 
     public $tablePrefix = 'bank_';
 
-    public $belongsTo = ['BankWeb.Product'];
+    public $belongsTo = ['BankWeb.Product', 'User'];
 
-    public $recursive = 1;
+    public $recursive = 2;
 }

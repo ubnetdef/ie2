@@ -4,13 +4,16 @@ use Respect\Validation\Rules;
 
 class BankadminController extends BankWebAppController {
 
-    public $uses = ['Group', 'BankWeb.AccountMapping'];
+    public $uses = ['Group', 'BankWeb.AccountMapping', 'BankWeb.Purchase'];
 
     public function beforeFilter() {
         parent::beforeFilter();
 
         // Set the active menu item
         $this->set('at_backend', true);
+
+        // Enforce admins
+        $this->Auth->protect(env('GROUP_ADMINS'));
 
         // Setup validators
         $this->validators = [

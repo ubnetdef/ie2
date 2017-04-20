@@ -21,6 +21,10 @@ class HookController extends BankWebAppController {
             return $this->ajaxResponse(null);
         }
 
+        // Message stuff
+        $prepend = '[COMPLETED] ';
+        $postpend = ' - Completed by #USER#';
+
         // Now verify post data
         if (!$this->request->is('post') || !isset($this->request->data['payload'])) {
             return $this->ajaxResponse(null);
@@ -35,9 +39,27 @@ class HookController extends BankWebAppController {
         $purchase_id = $payload['callback_id'];
         $user = $payload['user']['name'];
 
-        $purchase = $this->Purchase->findByIdAndCompleted($purchase_id, false);
+        $purchase = $this->Purchase->findById($purchase_id);
         if (empty($purchase)) {
             return $this->ajaxResponse(null);
+        }
+
+        // If it's completed, well...
+        if ($purchase['Purchase']['completed']) {
+            $slack_message = $prepend;
+            $slack_message .= $payload['original_message']['text'];
+            $slack_message .= str_replace('#USER#', $purchase['Purchase']['completed_by'], $postpend);
+
+            return $this->ajaxResponse([
+                'response_type' => 'in_channel',
+                'replace_original' => true,
+                'text' => $slack_message,
+                'attachments' => [
+                    [
+                        'text' => ':white_check_mark: Completed by '.$purchase['Purchase']['completed_by'],
+                    ],
+                ],
+            ]);
         }
 
         // Update the DB
@@ -49,13 +71,10 @@ class HookController extends BankWebAppController {
         ]);
 
         // Return the new message to slack
-        $prepend = '[COMPLETED] ';
-        $postpend = ' - Completed by <@'.$user.'>';
-
         return $this->ajaxResponse([
             'response_type' => 'in_channel',
             'replace_original' => true,
-            'text' => $prepend.$payload['original_message']['text'].$postpend,
+            'text' => $prepend.$payload['original_message']['text'].str_replace('#USER#', '<@'.$user.'>', $postpend),
             'attachments' => [
                 [
                     'text' => ':white_check_mark: Completed by <@'.$user.'>',

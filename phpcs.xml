@@ -26,13 +26,6 @@
         <type>warning</type>
     </rule>
 
-    <!-- Enforce no blank lines -->
-    <rule ref="Squiz.WhiteSpace.SuperfluousWhitespace">
-        <properties>
-            <property name="ignoreBlankLines" value="false" />
-        </properties>
-    </rule>
-
     <!-- Verify that operators have valid spacing surrounding them -->
     <rule ref="Squiz.WhiteSpace.OperatorSpacing" />
 
