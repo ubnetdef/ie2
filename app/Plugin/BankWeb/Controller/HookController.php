@@ -35,11 +35,20 @@ class HookController extends BankWebAppController {
         $purchase_id = $payload['callback_id'];
         $user = $payload['user']['name'];
 
-        $purchase = $this->Purchase->findById($purchase_id);
+        $purchase = $this->Purchase->findByIdAndCompleted($purchase_id, false);
         if (empty($purchase)) {
             return $this->ajaxResponse(null);
         }
 
+        // Update the DB
+        $this->Purchase->id = $purchase_id;
+        $this->Purchase->save([
+            'completed' => true,
+            'completed_by' => $user,
+            'completed_time' => time(),
+        ]);
+
+        // Return the new message to slack
         $prepend = '[COMPLETED] ';
         $postpend = ' - Completed by <@'.$user.'>';
 
