@@ -85,27 +85,31 @@ class ProductsController extends BankWebAppController {
                     $message = $product['Product']['message_slack'];
                     $message .= "\n\n<".$url."|View Purchase> - Purchase #".$this->Purchase->id;
 
-                    $extra = [
-                        'attachments' => [
-                            [
-                                'callback_id' => $this->Purchase->id,
-                                'fallback' => 'Please go to this URL: '.$url,
-                                'actions' => [
-                                    [
-                                        'name' => 'handled',
-                                        'text' => 'Mark as completed',
-                                        'type' => 'button',
+                    $extra = [];
+                    if ((bool)env('BANKWEB_SLACK_EXTENDED')) {
+                        $extra = [
+                            'attachments' => [
+                                [
+                                    'callback_id' => $this->Purchase->id,
+                                    'fallback' => 'Please go to this URL: '.$url,
+                                    'actions' => [
+                                        [
+                                            'name' => 'handled',
+                                            'text' => 'Mark as completed',
+                                            'type' => 'button',
+                                            'style' => 'primary',
+                                        ],
                                     ],
                                 ],
                             ],
-                        ],
-                    ];
+                        ];
+                    }
 
                     $this->_sendSlack($message, $extra);
                 }
             }
 
-            return $this->redirect(['plugin' => 'bank_web', 'controller' => 'products', 'action' => 'index']);
+            return $this->redirect(['plugin' => 'BankWeb', 'controller' => 'products', 'action' => 'index']);
         }
 
         $this->set('item', $product);

@@ -1,40 +1,25 @@
 <?php
 App::uses('BankWebAppController', 'BankWeb.Controller');
 
-class InfoController extends BankWebAppController {
+class HookController extends BankWebAppController {
+
+    public $uses = ['BankWeb.Purchase'];
 
     public function beforeFilter() {
-        parent::beforeFilter();
-
-        // Set the active menu item
-        $this->set('at_team', true);
-    }
-
-    /**
-     * Account Information Page
-     *
-     * @url /bank/info
-     * @url /bank/info/index
-     */
-    public function index() {
-        if ((bool)env('BANKWEB_PUBLIC_APIINFO') == false && !$this->Auth->isAdmin()) {
-            throw new ForbiddenException('This feature is disabled');
-        }
-
-        $account = $this->AccountMapping->getAccount($this->Auth->item('groups'));
-
-        $this->set('api', parse_url(env('BANKAPI_SERVER')));
-        $this->set('username', $account['AccountMapping']['username']);
-        $this->set('password', $account['AccountMapping']['password']);
+        // Don't call the parent's beforeFilter, as it
+        // enforces logins.
     }
 
     /**
      * Slack Endpoint
      *
-     * @url /bank/info/slack
+     * @url /bank/hook/slack
      */
     public function slack() {
         // Ensure slack is enabled
+        if (!(bool)env('BANKWEB_SLACK_ENABLED') && !(bool)env('BANKWEB_SLACK_EXTENDED')) {
+            return $this->ajaxResponse(null);
+        }
 
         // Now verify post data
         if (!$this->request->is('post') || !isset($this->request->data['payload'])) {
@@ -61,11 +46,11 @@ class InfoController extends BankWebAppController {
         return $this->ajaxResponse([
             'response_type' => 'in_channel',
             'replace_original' => true,
-            'text' => $payload['original_message']['text'],
+            'text' => $prepend.$payload['original_message']['text'].$postpend,
             'attachments' => [
                 [
                     'text' => ':white_check_mark: Completed by <@'.$user.'>',
-                ]
+                ],
             ],
         ]);
     }

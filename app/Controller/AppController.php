@@ -197,18 +197,6 @@ class AppController extends Controller {
     }
 
     /**
-     * Prepare a slack message
-     *
-     */
-    protected function _prepSlack($msg) {
-        return str_replace(
-            ['#USERNAME#', '#GROUP#'],
-            [$this->Auth->user('username'), $this->Auth->group('name')],
-            $msg
-        );
-    }
-
-    /**
      * Sends a slack message
      *
      */
@@ -218,7 +206,11 @@ class AppController extends Controller {
         }
 
         // Sprintf it
-        $msg = $this->_prepSlack($msg);
+        $msg = str_replace(
+            ['#USERNAME#', '#GROUP#'],
+            [$this->Auth->user('username'), $this->Auth->group('name')],
+            $msg
+        );
 
         // Build the payload
         $payload = json_encode([
