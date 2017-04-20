@@ -56,7 +56,7 @@ $(document).ready(function() {
 		$('#bankModal .modal-title').html('Account Mapping Modification');
 		$('#bankModal form input[name=id]').val($(this).data('id'));
 
-		$.getJSON('<?= $this->Html->url(['plugin' => 'BankWeb', 'controller' => 'bankadmin', 'action' => 'api']); ?>'+$(this).data('id'), function(data) {
+		$.getJSON('<?= $this->Html->url(['plugin' => 'BankWeb', 'controller' => 'bankadmin', 'action' => 'api']); ?>/'+$(this).data('id'), function(data) {
 			$('#bankModal form input[name=username]').val(data.username);
 			$('#bankModal form input[name=password]').val(data.password);
 			$('#bankModal form select[name=group_id] option[value='+data.group_id+']').prop('selected', true);
