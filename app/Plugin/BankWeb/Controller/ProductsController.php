@@ -58,26 +58,51 @@ class ProductsController extends BankWebAppController {
             }
 
             if ($res === true) {
+                // Create the purchase
+                $this->Purchase->create();
+                $this->Purchase->save([
+                    'product_id' => $product['Product']['id'],
+                    'user_id'    => $this->Auth->user('id'),
+                    'group_id'   => $this->Auth->group('id'),
+                    'time'       => time(),
+                ]);
+
                 if (!empty($product['Product']['message_user'])) {
                     $this->Flash->success($product['Product']['message_user']);
                 }
 
                 if ((bool)env('BANKWEB_SLACK_ENABLED') && !empty($product['Product']['message_slack'])) {
-                    $this->_sendSlack($product['Product']['message_slack']);
+                    $url = Router::url(
+                        [
+                            'plugin' => 'BankWeb',
+                            'controller' => 'bankadmin',
+                            'action' => 'view',
+                            $this->Purchase->id,
+                        ],
+                        true
+                    );
+
+                    $message = $product['Product']['message_slack'];
+                    $message .= "\n\n<".$url."|View Purchase> - Purchase #".$this->Purchase->id;
+
+                    $extra = [
+                        'attachments' => [
+                            [
+                                'callback_id' => $this->Purchase->id,
+                                'fallback' => 'Please go to this URL: '.$url,
+                                'actions' => [
+                                    [
+                                        'name' => 'handled',
+                                        'text' => 'Mark as completed',
+                                        'type' => 'button',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ];
+
+                    $this->_sendSlack($message, $extra);
                 }
-
-                // Create the purchase
-                $this->Purchase->create();
-                $this->Purchase->save([
-                'product_id' => $product['Product']['id'],
-                'user_id'    => $this->Auth->user('id'),
-                'group_id'   => $this->Auth->group('id'),
-                'time'       => time(),
-                ]);
-            }
-
-            if ((bool)env('BANKWEB_SLACK_ENABLED')) {
-                $this->_sendSlack($product['slack_message']);
             }
 
             return $this->redirect(['plugin' => 'bank_web', 'controller' => 'products', 'action' => 'index']);
