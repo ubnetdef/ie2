@@ -4,7 +4,7 @@ use Respect\Validation\Rules;
 
 class BankadminController extends BankWebAppController {
 
-    public $uses = ['Group', 'BankWeb.AccountMapping', 'BankWeb.Purchase'];
+    public $uses = ['Group', 'BankWeb.AccountMapping', 'BankWeb.Product', 'BankWeb.Purchase'];
 
     public function beforeFilter() {
         parent::beforeFilter();
@@ -43,21 +43,41 @@ class BankadminController extends BankWebAppController {
     public function index() {
         $this->set('groups', $this->Group->generateTreeList(null, null, null, '--'));
         $this->set('accounts', $this->AccountMapping->find('all'));
+        $this->set('products', $this->Product->find('all'));
     }
 
     /**
      * BankWEB Admin API
      *
-     * @url /admin/bank/api/<id>
-     * @url /bank_web/admin/api/<id>
+     * @url /admin/bank/api/<table>/<id>
+     * @url /bank_web/admin/api/<table>/<id>
      */
-    public function api($id = false) {
-        $data = $this->AccountMapping->findById($id);
-        if (empty($data)) {
-            throw new NotFoundException('Unknown account');
+    public function api($table = false, $id = false) {
+        switch ($table) {
+            case 'mapping':
+                $data = $this->AccountMapping->findById($id);
+                if (empty($data)) {
+                    throw new NotFoundException('Unknown account');
+                }
+
+                $result = $data['AccountMapping'];
+                break;
+
+            case 'product':
+                $data = $this->Product->findById($id);
+                if (empty($data)) {
+                    throw new NotFoundException('Unknown account');
+                }
+
+                $result = $data['Product'];
+                break;
+
+            default:
+                $result = [];
+                break;
         }
 
-        return $this->ajaxResponse($data['AccountMapping']);
+        return $this->ajaxResponse($result);
     }
 
     /**

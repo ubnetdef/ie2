@@ -3,6 +3,7 @@
 		<div class="modal-content">
 			<form method="post" action="<?= $this->Html->url(['plugin' => 'BankWeb', 'controller' => 'bankadmin', 'action' => 'save']); ?>" class="form-horizontal">
 				<input type="hidden" name="id" value="" />
+				<input type="hidden" name="table" value="account" />
 
 				<div class="modal-header">
 					<button type="button" class="close" data-dismiss="modal">&times;</button>
