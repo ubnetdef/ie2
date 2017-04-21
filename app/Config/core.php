@@ -34,8 +34,8 @@ if (!env('APP_NAME')) {
  * This is only really used in `bootstrap.php`, as that file does not
  * have the `env` function loaded at that time.
  */
-    Configure::write('ie.feature.scoreengine', (bool)env('FEATURE_SCOREENGINE'));
-    Configure::write('ie.feature.bankweb', (bool)env('FEATURE_BANKWEB'));
+    Configure::write('ie.feature.scoreengine', benv('FEATURE_SCOREENGINE'));
+    Configure::write('ie.feature.bankweb', benv('FEATURE_BANKWEB'));
 
 /**
  * CakePHP Debug Level:

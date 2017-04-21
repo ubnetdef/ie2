@@ -11,22 +11,22 @@ $count = 0;
 	</div>
 
 	<div class="row">
-	<?php foreach ( $products AS $i => $product ): if ( !$product['enabled'] ) continue; ?>
+	<?php foreach ( $products AS $product ): ?>
 		<div class="col-md-3">
 			<div class="db-wrapper">
 				<div class="db-pricing-seven">
 					<ul>
 						<li class="price">
 							<i class="glyphicon glyphicon-console"></i>
-							<?=$product['name']?>
+							<?= $product['Product']['name']; ?>
 						</li>
 
-						<li><?=$product['desc']?></li>
-						<li><strong>PRICE</strong>: <?=money_format('%.2n', $product['cost'])?></li>
+						<li><?= $product['Product']['description']; ?></li>
+						<li><strong>PRICE</strong>: <?= money_format('%.2n', $product['Product']['cost']); ?></li>
 					</ul>
 
 					<div class="pricing-footer">
-						<a href="<?= $this->Html->url(['plugin' => 'BankWeb', 'controller' => 'products', 'action' => 'confirm', $i]); ?>" class="btn btn-default btn-lg">
+						<a href="<?= $this->Html->url(['plugin' => 'BankWeb', 'controller' => 'products', 'action' => 'confirm', $product['Product']['id']]); ?>" class="btn btn-default btn-lg">
 							BUY <i class="glyphicon glyphicon-play-circle"></i>
 						</a>
 					</div>

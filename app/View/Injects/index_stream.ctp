@@ -19,11 +19,11 @@
 								<?= $this->InjectStyler->contentOutput($inject->getContent(), $this->Auth->item()); ?>
 							</div>
 							<div class="col-sm-2">
-								<?php if ( (bool)env('FEATURE_HINT_SUBSYSTEM') ): ?>
+								<?php if ( benv('FEATURE_HINT_SUBSYSTEM') ): ?>
 								<p><button class="btn btn-xs btn-info">HINTS</button></p>
 								<?php endif; ?>
 
-								<?php if ( (bool)env('FEATURE_HELP_SUBSYSTEM') ): ?>
+								<?php if ( benv('FEATURE_HELP_SUBSYSTEM') ): ?>
 								<p><button class="btn btn-xs btn-info">REQUEST HELP</button></p>
 								<?php endif; ?>
 

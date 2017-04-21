@@ -69,7 +69,7 @@ class InjectsController extends AdminAppController {
     public function create() {
         if ($this->request->is('post')) {
             // Validate the input
-            $res = $this->validate();
+            $res = $this->_validate();
 
             if (empty($res['errors'])) {
                 // Upload the new attachments
@@ -104,7 +104,7 @@ class InjectsController extends AdminAppController {
                 $this->Flash->success('The inject has been created!');
                 return $this->redirect(['plugin' => 'admin', 'controller' => 'injects', 'action' => 'index']);
             } else {
-                $this->errorFlash($res['errors']);
+                $this->_errorFlash($res['errors']);
             }
         }
     }
@@ -122,7 +122,7 @@ class InjectsController extends AdminAppController {
 
         if ($this->request->is('post')) {
             // Validate the input
-            $res = $this->validate();
+            $res = $this->_validate();
 
             if (empty($res['errors'])) {
                 // Figure out if we deleted any attachments
@@ -169,7 +169,7 @@ class InjectsController extends AdminAppController {
                 $this->Flash->success('The inject has been updated!');
                 return $this->redirect(['plugin' => 'admin', 'controller' => 'injects', 'action' => 'index']);
             } else {
-                $this->errorFlash($res['errors']);
+                $this->_errorFlash($res['errors']);
             }
         }
 

@@ -126,7 +126,7 @@ class InjectAbstraction implements JsonSerializable {
             return $this->getStartString();
         }
 
-        return $this->fuzzyDuration('+', $this->getStart());
+        return '+'.fuzzy_duration(COMPETITION_START, $this->getStart());
     }
 
     /**
@@ -152,7 +152,7 @@ class InjectAbstraction implements JsonSerializable {
             return $this->getEndString();
         }
 
-        return $this->fuzzyDuration('+', $this->getEnd());
+        return '+'.fuzzy_duration(COMPETITION_START, $this->getEnd());
     }
 
     /**
@@ -180,7 +180,7 @@ class InjectAbstraction implements JsonSerializable {
         } elseif ($duration == 0) {
             return '&infin;';
         } else {
-            return $this->fuzzyDuration('', $this->getEnd(), $this->getStart());
+            return fuzzy_duration($this->getStart(), $this->getEnd());
         }
     }
 
@@ -267,41 +267,5 @@ class InjectAbstraction implements JsonSerializable {
             'expired'   => $this->isExpired(),
             'submitted' => ($this->getSubmissionCount() > 0),
         ];
-    }
-
-    /**
-     * Fuzzy Duration Generator
-     *
-     * @source http://stackoverflow.com/a/18602474
-     * @param $time The time you're checking
-     * @return string The fuzzy time
-     */
-    private function fuzzyDuration($prepend, $time, $start = COMPETITION_START) {
-        $start = new DateTime('@'.$start);
-        $end = new DateTime('@'.$time);
-        $diff = $end->diff($start);
-
-        $diff->w = floor($diff->d / 7);
-        $diff->d -= $diff->w * 7;
-
-        $string = [
-            'y' => 'year',
-            'm' => 'month',
-            'w' => 'week',
-            'd' => 'day',
-            'h' => 'hour',
-            'i' => 'minute',
-            's' => 'second',
-        ];
-
-        foreach ($string as $k => &$v) {
-            if ($diff->$k) {
-                $v = $diff->$k . ' ' . $v . ($diff->$k > 1 ? 's' : '');
-            } else {
-                unset($string[$k]);
-            }
-        }
-
-        return $prepend.implode(', ', $string);
     }
 }

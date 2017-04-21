@@ -55,7 +55,7 @@ class UserController extends AppController {
     public function profile() {
         $this->Auth->protect();
 
-        $canChangePassword = ($this->Auth->isBlueTeam() ? (bool)env('FEATURE_BLUE_PASSWORD_CHANGES') : true);
+        $canChangePassword = ($this->Auth->isBlueTeam() ? benv('FEATURE_BLUE_PASSWORD_CHANGES') : true);
 
         if ($this->request->is('post') && $canChangePassword) {
             // Update Password

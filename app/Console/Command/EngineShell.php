@@ -73,7 +73,7 @@ class EngineShell extends AppShell {
         // DB initialized
         $this->out('DONE!');
 
-        if ((bool)env('FEATURE_BANKWEB')) {
+        if (benv('FEATURE_BANKWEB')) {
             $this->out('Initializing BankWeb database...', 0);
 
             $this->dispatchShell('engine', 'install_bankweb', '--quiet');

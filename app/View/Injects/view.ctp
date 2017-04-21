@@ -21,11 +21,11 @@
 			</p>
 		</div>
 		<div class="col-md-2">
-			<?php if ( (bool)env('FEATURE_HINT_SUBSYSTEM') && $hints > 0 ): ?>
+			<?php if ( benv('FEATURE_HINT_SUBSYSTEM') && $hints > 0 ): ?>
 			<p><a herf="#" class="btn btn-info btn-block" data-toggle="modal" data-target=".hint_modal">HINTS</a></p>
 			<?php endif; ?>
 
-			<?php if ( (bool)env('FEATURE_HELP_SUBSYSTEM') ): ?>
+			<?php if ( benv('FEATURE_HELP_SUBSYSTEM') ): ?>
 			<p><a href="#" class="btn btn-info btn-block">REQUEST HELP</a></p>
 			<?php endif; ?>
 
@@ -75,7 +75,7 @@
 </div>
 
 <?php
-if ( (bool)env('FEATURE_HINT_SUBSYSTEM') && $hints > 0 ) {
+if ( benv('FEATURE_HINT_SUBSYSTEM') && $hints > 0 ) {
 	$this->Html->script('/js/hint', ['inline' => false]);
 	$this->Html->scriptStart(['inline' => false, 'safe' => false]);
 	echo 'window.INJECT = '.$inject->getId().';';

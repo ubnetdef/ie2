@@ -11,6 +11,7 @@ class AppController extends Controller {
         ],
         'RequestHandler',
         'Session',
+        'Slack',
         'Paginator' => [
             'settings' => [
                 'limit' => 20,
@@ -134,7 +135,7 @@ class AppController extends Controller {
             $who = ($this->Auth->loggedIn() ? $this->Auth->user('id') : null);
         }
 
-        $safe = !((bool)env('X_FORWARDED_ENABLED') == true);
+        $safe = !(benv('X_FORWARDED_ENABLED') == true);
 
         $this->Log->create();
         $this->Log->save([
@@ -152,9 +153,9 @@ class AppController extends Controller {
      * Validate request data against
      * $validators
      *
-     * @return array [errors,validated_data]
+     * @return array [errors, validated_data]
      */
-    protected function validate() {
+    protected function _validate() {
         // Validate the input
         $errors = [];
         $modify = [];
@@ -192,37 +193,7 @@ class AppController extends Controller {
      * @param $errors Array of the errors
      * @return void
      */
-    protected function errorFlash($errors) {
+    protected function _errorFlash($errors) {
         $this->Flash->danger('The following errors have occured:<br />'.implode('<br />', $errors));
-    }
-
-    /**
-     * Sends a slack message
-     *
-     */
-    protected function sendSlack($msg, $extra = []) {
-        if (!env('SLACK_ENDPOINT')) {
-            return;
-        }
-
-        // Sprintf it
-        $msg = sprintf($msg, $this->Auth->user('username'), $this->Auth->group('name'));
-
-        // Build the payload
-        $payload = 'payload='.json_encode([
-            'text'       => $msg,
-            'link_names' => 1,
-        ] + $extra);
-
-        $ch = curl_init(env('SLACK_ENDPOINT'));
-        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-
-        $result = curl_exec($ch);
-
-        curl_close($ch);
-
-        return $result;
     }
 }

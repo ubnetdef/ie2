@@ -24,3 +24,50 @@ function tz_date($format, $ts) {
 
     return $date->format($format);
 }
+
+/**
+ * Fuzzy Duration Generator
+ *
+ * @source http://stackoverflow.com/a/18602474
+ * @param $start The start time
+ * @param $end The end time
+ * @return string The fuzzy time
+ */
+function fuzzy_duration($start, $end) {
+    $start = new DateTime('@'.$start);
+    $end = new DateTime('@'.$end);
+    $diff = $end->diff($start);
+
+    $diff->w = floor($diff->d / 7);
+    $diff->d -= $diff->w * 7;
+
+    $string = [
+        'y' => 'year',
+        'm' => 'month',
+        'w' => 'week',
+        'd' => 'day',
+        'h' => 'hour',
+        'i' => 'minute',
+        's' => 'second',
+    ];
+
+    foreach ($string as $k => &$v) {
+        if ($diff->$k) {
+            $v = $diff->$k . ' ' . $v . ($diff->$k > 1 ? 's' : '');
+        } else {
+            unset($string[$k]);
+        }
+    }
+
+    return implode(', ', $string);
+}
+
+/**
+ * Get a (bool) env variable
+ *
+ * @param $name The env variable name
+ * @return bool true/false
+ */
+function benv($name) {
+    return (bool)env($name);
+}

@@ -58,7 +58,7 @@ class StaffController extends AppController {
         ];
 
         // Load+Setup ScoreEngine EngineOutputter, if ScoreEngine is enabled
-        if ((bool)env('FEATURE_SCOREENGINE')) {
+        if (benv('FEATURE_SCOREENGINE')) {
             $this->helpers[] = 'ScoreEngine.EngineOutputter';
             $this->uses = array_merge($this->uses, ['ScoreEngine.Check', 'ScoreEngine.Team', 'ScoreEngine.Service']);
 
@@ -90,7 +90,7 @@ class StaffController extends AppController {
     public function api() {
         $this->layout = 'ajax';
 
-        if ((bool)env('FEATURE_SCOREENGINE')) {
+        if (benv('FEATURE_SCOREENGINE')) {
             $this->uses[] = 'ScoreEngine.Round';
             $this->set('round', $this->Round->getLastRound());
         }
@@ -99,6 +99,11 @@ class StaffController extends AppController {
         foreach ($active_injects as $i => $inject) {
             if ($inject->isExpired()) { unset($active_injects[$i]);
             }
+        }
+
+        if (benv('FEATURE_BANKWEB')) {
+            $this->uses[] = 'BankWeb.Purchase';
+            $this->set('purchases', $this->Purchase->findAllByCompleted(false));
         }
 
         $this->set('active_injects', $active_injects);

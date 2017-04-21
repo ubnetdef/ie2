@@ -6,6 +6,11 @@ App::uses('Security', 'Utility');
 class PreflightComponent extends Component {
 
     /**
+     * Additional components needed
+     */
+    public $components = ['Slack'];
+
+    /**
      * Array of all the checks that should
      * be ran.
      */
@@ -40,17 +45,17 @@ class PreflightComponent extends Component {
         }
 
         // Additional checks for ScoreEngine
-        if ((bool)env('FEATURE_SCOREENGINE')) {
+        if (benv('FEATURE_SCOREENGINE')) {
             $this->checks[] = 'checkScoringDB';
             $this->checks[] = 'checkScoreEngine';
         }
 
         // Additional checks for BankWeb
-        if ((bool)env('FEATURE_BANKWEB')) {
+        if (benv('FEATURE_BANKWEB')) {
             $this->checks[] = 'checkBankWeb';
-            $this->checks[] = 'checkBankWebTable';
+            $this->checks[] = 'checkBankWebDB';
 
-            if ((bool)env('BANKWEB_SLACK_ENABLED')) {
+            if (benv('BANKWEB_SLACK_ENABLED')) {
                 $this->checks[] = 'checkBankWebSlack';
             }
         }
@@ -193,7 +198,7 @@ class PreflightComponent extends Component {
         $missing_tables = [];
 
         foreach ($tables as $table) {
-            $tbl = ClassRegistry::init('BankWeb.'.$table);
+            $tbl = ClassRegistry::init('ScoreEngine.'.$table);
 
             try {
                 $tbl->find('first');
@@ -238,20 +243,28 @@ class PreflightComponent extends Component {
     }
 
     /**
-     * Check BankWeb Table
+     * Check BankWeb DB
      *
-     * That the BankWeb Table (account_mappings) exists
+     * That the BankWeb Tables exists
      */
-    public function checkBankWebTable() {
-        $table = ClassRegistry::init('BankWeb.AccountMapping');
+    public function checkBankWebDB() {
+        $tables = ['AccountMapping', 'Product', 'Purchase'];
+        $missing_tables = [];
 
-        try {
-            $table->find('first');
-        } catch (Exception $e) {
-            return 'BankWeb plugin is not setup - please run `./cake engine install_bankweb`';
+        foreach ($tables as $table) {
+            $tbl = ClassRegistry::init('BankWeb.'.$table);
+
+            try {
+                $tbl->find('first');
+            } catch (Exception $e) {
+                $missing_tables[] = $table;
+            }
         }
 
-        return true;
+        $missing_tpl = 'BankWeb is not setup. Missing DB table(s): '.implode(', ', $missing_tables)
+            .'. Please run `./cake engine install_bankweb`.';
+
+        return !empty($missing_tables) ? $missing_tpl : true;
     }
 
     /**
@@ -260,17 +273,8 @@ class PreflightComponent extends Component {
      * Verify that BankWeb's slack configuration is correct
      */
     public function checkBankWebSlack() {
-        $url = env('SLACK_ENDPOINT');
+        $res = $this->Slack->test();
 
-        $ch = curl_init(env('SLACK_ENDPOINT'));
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_exec($ch);
-        $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        curl_close($ch);
-
-        if ($http_code != 400) {
-            return 'Invalid slack endpoint setup. Please verify that your Slack URL is correct.';
-        }
-        return true;
+        return $res['ok'] ? true : 'Invalid slack API key: '.$res['error'];
     }
 }
