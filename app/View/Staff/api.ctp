@@ -1,17 +1,17 @@
 <?php
-$extra_row = ((bool)env('FEATURE_BANKWEB') && (bool)env('FEATURE_SCOREENGINE'));
+$extra_row = (benv('FEATURE_BANKWEB') && benv('FEATURE_SCOREENGINE'));
 $col_amt = 6;
 
-if ((bool)env('FEATURE_SCOREENGINE')) {
+if (benv('FEATURE_SCOREENGINE')) {
 	$col_amt = 2;
 }
-if ((bool)env('FEATURE_BANKWEB') ) {
-	$col_amt = ((bool)env('FEATURE_SCOREENGINE') ? 6 : 4);
+if (benv('FEATURE_BANKWEB') ) {
+	$col_amt = (benv('FEATURE_SCOREENGINE') ? 6 : 4);
 }
 ?>
 
 <div class="row">
-	<?php if ( (bool)env('FEATURE_SCOREENGINE') ): ?>
+	<?php if ( benv('FEATURE_SCOREENGINE') ): ?>
 	<div class="col-md-8">
 		<h3>Uptime Overview (Round: <?= $round; ?>)</h3>
 		<?= $this->EngineOutputter->generateScoreBoard(); ?>
@@ -23,7 +23,7 @@ if ((bool)env('FEATURE_BANKWEB') ) {
 	<div class="row">
 	<?php endif; ?>
 
-	<?php if ((bool)env('FEATURE_BANKWEB')): ?>
+	<?php if (benv('FEATURE_BANKWEB')): ?>
 	<div class="col-md-<?= $extra_row ? 12 : 4; ?>">
 		<h3>Bank Overview</h3>
 		<table class="table table-bordered">

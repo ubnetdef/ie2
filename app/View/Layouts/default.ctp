@@ -62,11 +62,11 @@
 					echo $this->Misc->navbarItem('Injects', '/injects', isset($at_injects));
 				}
 
-				if ( (bool)env('FEATURE_BANKWEB') && $this->Auth->loggedIn() ) {
+				if ( benv('FEATURE_BANKWEB') && $this->Auth->loggedIn() ) {
 					echo $this->Misc->navbarItem('Bank', '/bank/products', isset($at_bank));
 				}
 
-				if ( (bool)env('FEATURE_SCOREENGINE') ) {
+				if ( benv('FEATURE_SCOREENGINE') ) {
 					echo $this->Misc->navbarItem('Scoreboard', '/scoreboard', isset($at_scoreboard));
 				}
 				?>
@@ -77,8 +77,8 @@
 				if ( $this->Auth->loggedIn() ) {
 					echo $this->Misc->navbarDropdown('Team Central', isset($at_team), [
 						($this->Auth->isBlueTeam() ? $this->Misc->navbarItem('Team Panel', '/team', false) : ''),
-						((bool)env('FEATURE_BANKWEB') ? $this->Misc->navbarItem('Bank Accounts', '/bank/account', false) : ''),
-						((bool)env('FEATURE_BANKWEB') && (bool)env('BANKWEB_PUBLIC_APIINFO') ? $this->Misc->navbarItem('Bank API', '/bank/info', false) : ''),
+						(benv('FEATURE_BANKWEB') ? $this->Misc->navbarItem('Bank Accounts', '/bank/account', false) : ''),
+						(benv('FEATURE_BANKWEB') && benv('BANKWEB_PUBLIC_APIINFO') ? $this->Misc->navbarItem('Bank API', '/bank/info', false) : ''),
 					]);
 
 					if ( $this->Auth->isStaff() ) {
@@ -90,10 +90,10 @@
 							$this->Misc->navbarItem('Scheduler', '/admin/schedule'),
 							'<li role="separator" class="divider"></li>',
 							$this->Misc->navbarItem('Grading Export', '/staff/export'),
-							((bool)env('FEATURE_SCOREENGINE') ? $this->Misc->navbarItem('ScoreEngine Export', '/admin/scoreengine/export', false) : ''),
-							((bool)env('FEATURE_SCOREENGINE') || (bool)env('FEATURE_BANKWEB') ? '<li role="separator" class="divider"></li>' : ''),
-							((bool)env('FEATURE_SCOREENGINE') ? $this->Misc->navbarItem('ScoreEngine Overview', '/admin/scoreengine', false) : ''),
-							((bool)env('FEATURE_BANKWEB') ? $this->Misc->navbarItem('BankWeb Overview', '/staff/bank', false) : ''),
+							(benv('FEATURE_SCOREENGINE') ? $this->Misc->navbarItem('ScoreEngine Export', '/admin/scoreengine/export', false) : ''),
+							(benv('FEATURE_SCOREENGINE') || benv('FEATURE_BANKWEB') ? '<li role="separator" class="divider"></li>' : ''),
+							(benv('FEATURE_SCOREENGINE') ? $this->Misc->navbarItem('ScoreEngine Overview', '/admin/scoreengine', false) : ''),
+							(benv('FEATURE_BANKWEB') ? $this->Misc->navbarItem('BankWeb Overview', '/staff/bank', false) : ''),
 						]);
 					}
 
@@ -109,7 +109,7 @@
 							$this->Misc->navbarItem('Group Manager', '/admin/groups'),
 							$this->Misc->navbarItem('Log Manager', '/admin/logs'),
 							'<li role="separator" class="divider"></li>',
-							((bool)env('FEATURE_BANKWEB') ? $this->Misc->navbarItem('BankWeb Manager', '/admin/bank', false) : ''),
+							(benv('FEATURE_BANKWEB') ? $this->Misc->navbarItem('BankWeb Manager', '/admin/bank', false) : ''),
 						]);
 					}
 

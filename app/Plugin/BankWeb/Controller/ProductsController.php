@@ -71,7 +71,7 @@ class ProductsController extends BankWebAppController {
                     $this->Flash->success($product['Product']['message_user']);
                 }
 
-                if ((bool)env('BANKWEB_SLACK_ENABLED') && !empty($product['Product']['message_slack'])) {
+                if (benv('BANKWEB_SLACK_ENABLED') && !empty($product['Product']['message_slack'])) {
                     $url = Router::url(
                         [
                             'plugin' => 'BankWeb',

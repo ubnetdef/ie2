@@ -1,12 +1,12 @@
 <?php
-$col = (bool)env('SCOREENGINE_BOARD_SHOW_INJECTS') ? 9 : 12;
+$col = benv('SCOREENGINE_BOARD_SHOW_INJECTS') ? 9 : 12;
 ?>
 <div class="row">
 	<div class="col-md-<?= $col; ?>">
 		<h4>Round #<?= $round; ?></h4>
 		<?= $this->EngineOutputter->generateScoreBoard(); ?>
 	</div>
-	<?php if ( (bool)env('SCOREENGINE_BOARD_SHOW_INJECTS') ): ?>
+	<?php if ( benv('SCOREENGINE_BOARD_SHOW_INJECTS') ): ?>
 	<div class="col-md-3">
 		<h4>Active Injects</h4>
 		<ul class="list-group">

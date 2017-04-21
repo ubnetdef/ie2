@@ -14,7 +14,7 @@
 			</p>
 		</div>
 		<div class="col-md-2">
-			<?php if ( (bool)env('FEATURE_HINT_SUBSYSTEM') && $hints > 0 ): ?>
+			<?php if ( benv('FEATURE_HINT_SUBSYSTEM') && $hints > 0 ): ?>
 			<p><a herf="#" class="btn btn-info btn-block">HAS HINTS</a></p>
 			<?php endif; ?>
 		</div>

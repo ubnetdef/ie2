@@ -135,7 +135,7 @@ class AppController extends Controller {
             $who = ($this->Auth->loggedIn() ? $this->Auth->user('id') : null);
         }
 
-        $safe = !((bool)env('X_FORWARDED_ENABLED') == true);
+        $safe = !(benv('X_FORWARDED_ENABLED') == true);
 
         $this->Log->create();
         $this->Log->save([

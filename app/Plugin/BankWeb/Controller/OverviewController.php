@@ -45,7 +45,7 @@ class OverviewController extends BankWebAppController {
             ]);
 
             // Update slack
-            if ((bool)env('BANKWEB_SLACK_EXTENDED')
+            if (benv('BANKWEB_SLACK_EXTENDED')
                 && !empty($purchase['Purchase']['slack_ts'])
                 && !empty($purchase['Purchase']['slack_channel'])
             ) {

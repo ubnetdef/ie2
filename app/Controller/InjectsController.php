@@ -37,7 +37,7 @@ class InjectsController extends AppController {
      * @url /injects/index
      */
     public function index() {
-        if ((bool)env('INJECT_INBOX_STREAM_VIEW')) {
+        if (benv('INJECT_INBOX_STREAM_VIEW')) {
             $this->set('injects', $this->Schedule->getInjects($this->groups));
             return $this->render('index_stream');
         } else {

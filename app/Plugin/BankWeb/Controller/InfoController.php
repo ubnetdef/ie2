@@ -17,7 +17,7 @@ class InfoController extends BankWebAppController {
      * @url /bank/info/index
      */
     public function index() {
-        if ((bool)env('BANKWEB_PUBLIC_APIINFO') == false && !$this->Auth->isAdmin()) {
+        if (benv('BANKWEB_PUBLIC_APIINFO') == false && !$this->Auth->isAdmin()) {
             throw new ForbiddenException('This feature is disabled');
         }
 

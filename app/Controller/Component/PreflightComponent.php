@@ -45,17 +45,17 @@ class PreflightComponent extends Component {
         }
 
         // Additional checks for ScoreEngine
-        if ((bool)env('FEATURE_SCOREENGINE')) {
+        if (benv('FEATURE_SCOREENGINE')) {
             $this->checks[] = 'checkScoringDB';
             $this->checks[] = 'checkScoreEngine';
         }
 
         // Additional checks for BankWeb
-        if ((bool)env('FEATURE_BANKWEB')) {
+        if (benv('FEATURE_BANKWEB')) {
             $this->checks[] = 'checkBankWeb';
             $this->checks[] = 'checkBankWebDB';
 
-            if ((bool)env('BANKWEB_SLACK_ENABLED')) {
+            if (benv('BANKWEB_SLACK_ENABLED')) {
                 $this->checks[] = 'checkBankWebSlack';
             }
         }
