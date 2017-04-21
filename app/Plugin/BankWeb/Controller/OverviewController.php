@@ -69,7 +69,11 @@ class OverviewController extends BankWebAppController {
                 // Make the message dynamic again
                 $message = str_replace(
                     ['#USERNAME#', '#GROUP#', '#INPUT#'],
-                    [$purchase['User']['username'], $purchase['User']['Group']['name'], $purchase['Purchase']['user_input']],
+                    [
+                        $purchase['User']['username'],
+                        $purchase['User']['Group']['name'],
+                        $purchase['Purchase']['user_input']
+                    ],
                     $message
                 );
 

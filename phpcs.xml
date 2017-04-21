@@ -27,7 +27,11 @@
     </rule>
 
     <!-- Verify that operators have valid spacing surrounding them -->
-    <rule ref="Squiz.WhiteSpace.OperatorSpacing" />
+    <rule ref="Squiz.WhiteSpace.OperatorSpacing">
+        <properties>
+            <property name="ignoreNewlines" value="true"/>
+        </properties>
+    </rule>
 
     <!-- Code Analysis -->
     <rule ref="Generic.CodeAnalysis.ForLoopShouldBeWhileLoop" />

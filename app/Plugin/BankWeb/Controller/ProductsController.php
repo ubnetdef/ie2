@@ -50,7 +50,7 @@ class ProductsController extends BankWebAppController {
                 ? htmlentities($this->request->data['user_input'])
                 : 'N/A';
 
-            if ( strlen($user_input) > env('BANKWEB_USERINPUT_MAX') ) {
+            if (strlen($user_input) > env('BANKWEB_USERINPUT_MAX')) {
                 $user_input = substr($user_input, 0, env('BANKWEB_USERINPUT_MAX'));
                 $user_input .= '... (truncated)';
             }
