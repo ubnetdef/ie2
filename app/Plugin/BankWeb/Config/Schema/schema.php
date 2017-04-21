@@ -48,8 +48,7 @@ class BankWebSchema extends CakeSchema {
             'null' => false,
         ],
         'user_input' => [
-            'type' => 'boolean',
-            'default' => false,
+            'type' => 'string',
         ],
         'message_user' => [
             'type' => 'text',
