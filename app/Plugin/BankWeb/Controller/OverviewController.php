@@ -59,11 +59,14 @@ class OverviewController extends BankWebAppController {
                     true
                 );
 
+                // Rebuild the message, but add some more tags
                 $message = '[COMPLETED] ';
                 $message .= $purchase['Product']['message_slack'];
                 $message .= "\n\n<".$url."|View Purchase> - Purchase #".$pid;
                 $message .= ' - Completed by '.$this->Auth->user('username');
+                $message .= ' (via InjectEngine2)';
 
+                // Make the message dynamic again
                 $message = str_replace(
                     ['#USERNAME#', '#GROUP#'],
                     [$purchase['User']['username'], $purchase['User']['Group']['name']],

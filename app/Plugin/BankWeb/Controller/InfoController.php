@@ -27,46 +27,4 @@ class InfoController extends BankWebAppController {
         $this->set('username', $account['AccountMapping']['username']);
         $this->set('password', $account['AccountMapping']['password']);
     }
-
-    /**
-     * Slack Endpoint
-     *
-     * @url /bank/info/slack
-     */
-    public function slack() {
-        // Ensure slack is enabled
-
-        // Now verify post data
-        if (!$this->request->is('post') || !isset($this->request->data['payload'])) {
-            return $this->ajaxResponse(null);
-        }
-
-        // Decode the json, and hope it's all good
-        $payload = json_decode($this->request->data['payload'], true);
-        if (json_last_error() != JSON_ERROR_NONE) {
-            return $this->ajaxResponse(null);
-        }
-
-        $purchase_id = $payload['callback_id'];
-        $user = $payload['user']['name'];
-
-        $purchase = $this->Purchase->findById($purchase_id);
-        if (empty($purchase)) {
-            return $this->ajaxResponse(null);
-        }
-
-        $prepend = '[COMPLETED] ';
-        $postpend = ' - Completed by <@'.$user.'>';
-
-        return $this->ajaxResponse([
-            'response_type' => 'in_channel',
-            'replace_original' => true,
-            'text' => $payload['original_message']['text'],
-            'attachments' => [
-                [
-                    'text' => ':white_check_mark: Completed by <@'.$user.'>',
-                ]
-            ],
-        ]);
-    }
 }

@@ -82,14 +82,21 @@ class ProductsController extends BankWebAppController {
                         true
                     );
 
+                    // Build the message
                     $message = $product['Product']['message_slack'];
                     $message .= "\n\n<".$url."|View Purchase> - Purchase #".$this->Purchase->id;
 
+                    // Make the message dynamic
+                    $message = str_replace(
+                        ['#USERNAME#', '#GROUP#'],
+                        [$this->Auth->user('username'), $this->Auth->group('name')],
+                        $message
+                    );
+
+                    // Add our SICK attachment
                     $extra = [
                         'as_user' => true,
-                    ];
-                    if ((bool)env('BANKWEB_SLACK_EXTENDED')) {
-                        $extra['attachments'] = json_encode([
+                        'attachments' => json_encode([
                             [
                                 'callback_id' => $this->Purchase->id,
                                 'fallback' => 'Please go to this URL: '.$url,
@@ -102,19 +109,13 @@ class ProductsController extends BankWebAppController {
                                     ],
                                 ],
                             ],
-                        ]);
-                    }
-
-                    $message = str_replace(
-                        ['#USERNAME#', '#GROUP#'],
-                        [$this->Auth->user('username'), $this->Auth->group('name')],
-                        $message
-                    );
+                        ]),
+                    ];
 
                     // Send it over to slack
                     $this->Slack->send('#bank', $message, $extra);
 
-                    // Decode it
+                    // Decode the response
                     $resp = json_decode($resp, true);
 
                     // Save the channel and ts
