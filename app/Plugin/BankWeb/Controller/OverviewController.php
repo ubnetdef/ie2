@@ -45,7 +45,7 @@ class OverviewController extends BankWebAppController {
             ]);
 
             // Update slack
-            if (benv('BANKWEB_SLACK_EXTENDED')
+            if (benv('BANKWEB_SLACK_ENABLED')
                 && !empty($purchase['Purchase']['slack_ts'])
                 && !empty($purchase['Purchase']['slack_channel'])
             ) {
@@ -79,7 +79,7 @@ class OverviewController extends BankWebAppController {
                     ],
                 ];
 
-                $this->Slack->update(
+                $resp = $this->Slack->update(
                     $purchase['Purchase']['slack_ts'],
                     $purchase['Purchase']['slack_channel'],
                     $message,
