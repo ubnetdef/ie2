@@ -68,6 +68,6 @@ function fuzzy_duration($start, $end) {
  * @param $name The env variable name
  * @return bool true/false
  */
-public function benv($name) {
+function benv($name) {
     return (bool)env($name);
 }
