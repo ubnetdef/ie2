@@ -79,7 +79,7 @@ class OverviewController extends BankWebAppController {
                     ],
                 ];
 
-                $resp = $this->Slack->update(
+                $this->Slack->update(
                     $purchase['Purchase']['slack_ts'],
                     $purchase['Purchase']['slack_channel'],
                     $message,
