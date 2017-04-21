@@ -1,7 +1,6 @@
 # User specific & automatically generated files #
 #################################################
 /.env
-/bankweb_products.json
 /tmp
 /vendor
 /Plugin
