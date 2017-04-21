@@ -15,7 +15,7 @@
 
 		<h3>Top Inject Scores</h3>
 		<ol>
-			<?php for ( $i=0; $i < 5; $i++ ): ?>
+			<?php for ( $i=0; $i < 5; $i++ ): if ( !isset($grades[$i]) ) continue; ?>
 			<li><?= $grades[$i]['Group']['name']; ?> - <?= $grades[$i]['Submission']['total_grade']; ?></li>
 			<?php endfor; ?>
 		</ol>
