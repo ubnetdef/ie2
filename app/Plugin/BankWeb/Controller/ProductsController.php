@@ -88,7 +88,7 @@ class ProductsController extends BankWebAppController {
                     $extra = [];
                     if ((bool)env('BANKWEB_SLACK_EXTENDED')) {
                         $extra = [
-                            'attachments' => [
+                            'attachments' => json_encode([
                                 [
                                     'callback_id' => $this->Purchase->id,
                                     'fallback' => 'Please go to this URL: '.$url,
@@ -101,11 +101,32 @@ class ProductsController extends BankWebAppController {
                                         ],
                                     ],
                                 ],
-                            ],
+                            ]),
                         ];
                     }
 
-                    $this->_sendSlack($message, $extra);
+                    $message = str_replace(
+                        ['#USERNAME#', '#GROUP#'],
+                        [$this->Auth->user('username'), $this->Auth->group('name')],
+                        $message
+                    );
+
+                    $resp = $this->_sendSlackEndpoint('chat.postMessage', [
+                        'text' => $message,
+                        'channel' => '#bank',
+                        'as_user' => true,
+                    ] + $extra);
+
+                    // Decode it
+                    $resp = json_decode($resp, true);
+
+                    // Save the channel and ts
+                    if ( $resp['ok'] ) {
+                        $this->Purchase->save([
+                            'slack_ts' => $resp['ts'],
+                            'slack_channel' => $resp['channel'],
+                        ]);
+                    }
                 }
             }
 

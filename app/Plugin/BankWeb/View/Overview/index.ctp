@@ -14,7 +14,7 @@
 	</thead>
 	<tbody>
 		<?php foreach ( $purchases AS $p ): ?>
-		<tr class="<?= $p['Purchase']['completed'] ? 'success' : 'danger'; ?>">
+		<tr class="<?= $p['Purchase']['completed'] ? '' : 'danger'; ?>">
 			<td><?= $p['Purchase']['id']; ?></td>
 			<td><?= tz_date('n/j/Y \a\t g:iA', $p['Purchase']['time']); ?></td>
 			<td><?= $p['Product']['name']; ?></td>

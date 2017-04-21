@@ -91,6 +91,14 @@ class BankWebSchema extends CakeSchema {
         'completed_time' => [
             'type' => 'integer',
         ],
+        'slack_ts' => [
+            'type' => 'string',
+            'length' => 20,
+        ],
+        'slack_channel' => [
+            'type' => 'string',
+            'length' => 20,
+        ],
 
         'indexes' => [
             'PRIMARY' => ['column' => 'id', 'unqiue' => true],

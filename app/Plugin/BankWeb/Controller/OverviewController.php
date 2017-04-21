@@ -35,14 +35,55 @@ class OverviewController extends BankWebAppController {
      * @url /staff/bank/mark/<purchase_id>
      */
     public function mark($pid) {
-        $purchase = $this->Purchase->findByIdAndCompleted($pid, true);
-        if (empty($purchase)) {
+        $purchase = $this->Purchase->findByIdAndCompleted($pid, false);
+        if (!empty($purchase)) {
             $this->Purchase->id = $pid;
             $this->Purchase->save([
                 'completed' => true,
                 'completed_time' => time(),
                 'completed_by' => $this->Auth->user('username'),
             ]);
+
+            // Update slack
+            if ( (bool)env('BANKWEB_SLACK_EXTENDED')
+                && !empty($purchase['Purchase']['slack_ts'])
+                && !empty($purchase['Purchase']['slack_channel'])
+            ) {
+                $url = Router::url(
+                    [
+                        'plugin' => 'BankWeb',
+                        'controller' => 'bankadmin',
+                        'action' => 'view',
+                        $pid,
+                    ],
+                    true
+                );
+
+                $message = '[COMPLETED] ';
+                $message .= $purchase['Product']['message_slack'];
+                $message .= "\n\n<".$url."|View Purchase> - Purchase #".$pid;
+                $message .= ' - Completed by '.$this->Auth->user('username');
+
+                $message = str_replace(
+                    ['#USERNAME#', '#GROUP#'],
+                    [$purchase['User']['username'], $purchase['User']['Group']['name']],
+                    $message
+                );
+
+                $attachments = [
+                    [
+                        'text' => ':white_check_mark: Completed by '.$this->Auth->user('username'),
+                    ],
+                ];
+
+                $resp = $this->_sendSlackEndpoint('chat.update', [
+                    'ts' => $purchase['Purchase']['slack_ts'],
+                    'channel' => $purchase['Purchase']['slack_channel'],
+                    'text' => $message,
+                    'parse' => 'none',
+                    'attachments' => json_encode($attachments),
+                ]);
+            }
 
             $this->Flash->success('Marked Purchase #'.$pid.' as completed!');
         }
