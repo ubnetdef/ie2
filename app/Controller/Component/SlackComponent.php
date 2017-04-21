@@ -4,6 +4,10 @@ App::uses('Component', 'Controller');
 class SlackComponent extends Component {
     const SLACK_ENDPOINT_ROOT = 'https://slack.com/api/';
 
+    public function test() {
+        return $this->request('auth.test', []);
+    }
+
     public function send($channel, $message, $extra = []) {
         $data = [
             'text' => $message,
@@ -44,6 +48,6 @@ class SlackComponent extends Component {
 
         curl_close($ch);
 
-        return $result;
+        return json_decode($result, true);
     }
 }

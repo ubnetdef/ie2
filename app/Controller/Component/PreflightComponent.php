@@ -6,6 +6,11 @@ App::uses('Security', 'Utility');
 class PreflightComponent extends Component {
 
     /**
+     * Additional components needed
+     */
+    public $components = array('Slack');
+
+    /**
      * Array of all the checks that should
      * be ran.
      */
@@ -268,6 +273,8 @@ class PreflightComponent extends Component {
      * Verify that BankWeb's slack configuration is correct
      */
     public function checkBankWebSlack() {
-        return true;
+        $res =  $this->Slack->test();
+
+        return $res['ok'] ? true : 'Invalid slack API key: '.$res['error'];
     }
 }

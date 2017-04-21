@@ -115,9 +115,6 @@ class ProductsController extends BankWebAppController {
                     // Send it over to slack
                     $resp = $this->Slack->send(env('BANKWEB_SLACK_CHANNEL'), $message, $extra);
 
-                    // Decode the response
-                    $resp = json_decode($resp, true);
-
                     // Save the channel and ts
                     if ($resp['ok']) {
                         $this->Purchase->save([
