@@ -29,7 +29,7 @@
 							Edit
 						</a>
 						<a
-							href="<?= $this->Html->url('/admin/bank/delete/'.$p['Product']['id']); ?>"
+							href="<?= $this->Html->url('/admin/bank/deleteProduct/'.$p['Product']['id']); ?>"
 							class="btn btn-danger btn-xs delete-btn"
 						>
 							Delete
@@ -80,7 +80,7 @@
 							Edit
 						</a>
 						<a
-							href="<?= $this->Html->url('/admin/bank/delete/'.$a['AccountMapping']['id']); ?>"
+							href="<?= $this->Html->url('/admin/bank/deleteMapping/'.$a['AccountMapping']['id']); ?>"
 							class="btn btn-danger btn-xs delete-btn"
 						>
 							Delete
@@ -140,6 +140,9 @@ $(document).ready(function() {
 			$('#productModal form [name=user_input]').val('');
 			$('#productModal form [name=message_user]').val('');
 			$('#productModal form [name=message_slack]').val('');
+
+			$('#productModal form [name=enabled]').removeAttr('checked');
+			$('#productModal form [name=enabled][value=0]').attr('checked', 'checked');
 		} else {
 			$('#productModal .modal-title').html('Product Modification');
 			$('#productModal form input[name=id]').val(source.data('id'));
@@ -151,6 +154,9 @@ $(document).ready(function() {
 				$('#productModal form [name=user_input]').val(data.user_input);
 				$('#productModal form [name=message_user]').val(data.message_user);
 				$('#productModal form [name=message_slack]').val(data.message_slack);
+
+				$('#productModal form [name=enabled]').removeAttr('checked');
+				$('#productModal form [name=enabled][value='+(data.enabled ? 1 : 0)+']').attr('checked', 'checked');
 			});
 		}
 	});

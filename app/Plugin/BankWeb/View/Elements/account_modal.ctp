@@ -1,7 +1,7 @@
 <div class="modal fade" id="bankModal" tabindex="-1">
 	<div class="modal-dialog">
 		<div class="modal-content">
-			<form method="post" action="<?= $this->Html->url(['plugin' => 'BankWeb', 'controller' => 'bankadmin', 'action' => 'save']); ?>" class="form-horizontal">
+			<form method="post" action="<?= $this->Html->url(['plugin' => 'BankWeb', 'controller' => 'bankadmin', 'action' => 'saveAccount']); ?>" class="form-horizontal">
 				<input type="hidden" name="id" value="" />
 				<input type="hidden" name="table" value="account" />
 
