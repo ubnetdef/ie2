@@ -50,34 +50,31 @@ class HookController extends BankWebAppController {
             $slack_message .= $payload['original_message']['text'];
             $slack_message .= str_replace('#USER#', $purchase['Purchase']['completed_by'], $postpend);
 
-            return $this->ajaxResponse([
-                'response_type' => 'in_channel',
-                'replace_original' => true,
-                'text' => $slack_message,
-                'attachments' => [
-                    [
-                        'text' => ':white_check_mark: Completed by '.$purchase['Purchase']['completed_by'],
-                    ],
-                ],
+            $completed_message = ':white_check_mark: Completed by '.$purchase['Purchase']['completed_by'];
+        } else {
+            // Update the DB
+            $this->Purchase->id = $purchase_id;
+            $this->Purchase->save([
+                'completed' => true,
+                'completed_by' => $user,
+                'completed_time' => time(),
             ]);
-        }
 
-        // Update the DB
-        $this->Purchase->id = $purchase_id;
-        $this->Purchase->save([
-            'completed' => true,
-            'completed_by' => $user,
-            'completed_time' => time(),
-        ]);
+            $slack_message = $prepend;
+            $slack_message .= $payload['original_message']['text'];
+            $slack_message .= str_replace('#USER#', '<@'.$user.'>', $postpend);
+
+            $completed_message = ':white_check_mark: Completed by <@'.$user.'>';
+        }
 
         // Return the new message to slack
         return $this->ajaxResponse([
             'response_type' => 'in_channel',
             'replace_original' => true,
-            'text' => $prepend.$payload['original_message']['text'].str_replace('#USER#', '<@'.$user.'>', $postpend),
+            'text' => $slack_message,
             'attachments' => [
                 [
-                    'text' => ':white_check_mark: Completed by <@'.$user.'>',
+                    'text' => $completed_message,
                 ],
             ],
         ]);
