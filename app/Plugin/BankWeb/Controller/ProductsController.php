@@ -46,6 +46,15 @@ class ProductsController extends BankWebAppController {
             && isset($this->request->data['pin'])
             && is_numeric($this->request->data['pin'])
         ) {
+            $user_input = isset($this->request->data['user_input'])
+                ? htmlentities($this->request->data['user_input'])
+                : 'N/A';
+
+            if ( strlen($user_input) > env('BANKWEB_USERINPUT_MAX') ) {
+                $user_input = substr($user_input, 0, env('BANKWEB_USERINPUT_MAX'));
+                $user_input .= '... (truncated)';
+            }
+
             try {
                 $res = $this->BankApi->transfer(
                     $_POST['srcAcc'],
@@ -65,6 +74,7 @@ class ProductsController extends BankWebAppController {
                     'user_id'    => $this->Auth->user('id'),
                     'group_id'   => $this->Auth->group('id'),
                     'time'       => time(),
+                    'user_input' => $user_input,
                 ]);
 
                 if (!empty($product['Product']['message_user'])) {
@@ -88,14 +98,13 @@ class ProductsController extends BankWebAppController {
 
                     // Make the message dynamic
                     $message = str_replace(
-                        ['#USERNAME#', '#GROUP#'],
-                        [$this->Auth->user('username'), $this->Auth->group('name')],
+                        ['#USERNAME#', '#GROUP#' , '#INPUT#'],
+                        [$this->Auth->user('username'), $this->Auth->group('name'), $user_input],
                         $message
                     );
 
                     // Add our SICK attachment
                     $extra = [
-                        'as_user' => true,
                         'attachments' => json_encode([
                             [
                                 'callback_id' => $this->Purchase->id,

@@ -47,6 +47,10 @@ class BankWebSchema extends CakeSchema {
             'type' => 'integer',
             'null' => false,
         ],
+        'user_input' => [
+            'type' => 'boolean',
+            'default' => false,
+        ],
         'message_user' => [
             'type' => 'text',
         ],
@@ -80,6 +84,9 @@ class BankWebSchema extends CakeSchema {
         'time' => [
             'type' => 'integer',
             'null' => false,
+        ],
+        'user_input' => [
+            'type' => 'text',
         ],
         'completed' => [
             'type'    => 'boolean',
