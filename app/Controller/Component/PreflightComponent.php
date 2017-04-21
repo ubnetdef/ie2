@@ -198,7 +198,7 @@ class PreflightComponent extends Component {
         $missing_tables = [];
 
         foreach ($tables as $table) {
-            $tbl = ClassRegistry::init('BankWeb.'.$table);
+            $tbl = ClassRegistry::init('ScoreEngine.'.$table);
 
             try {
                 $tbl->find('first');
