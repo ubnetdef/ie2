@@ -6,7 +6,7 @@ class SlackComponent extends Component {
 
     public function send($channel, $message, $extra = []) {
         $data = [
-            'message' => $message,
+            'text' => $message,
             'channel' => $channel,
         ] + $extra;
 

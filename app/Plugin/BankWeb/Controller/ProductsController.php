@@ -113,7 +113,7 @@ class ProductsController extends BankWebAppController {
                     ];
 
                     // Send it over to slack
-                    $this->Slack->send('#bank', $message, $extra);
+                    $resp = $this->Slack->send('#bank', $message, $extra);
 
                     // Decode the response
                     $resp = json_decode($resp, true);
