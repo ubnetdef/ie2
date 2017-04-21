@@ -17,7 +17,7 @@ class HookController extends BankWebAppController {
      */
     public function slack() {
         // Ensure slack is enabled
-        if (!benv('BANKWEB_SLACK_ENABLED') && !benv('BANKWEB_SLACK_EXTENDED')) {
+        if (!env('SLACK_APIKEY')) {
             return $this->ajaxResponse(null);
         }
 

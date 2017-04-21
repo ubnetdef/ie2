@@ -44,6 +44,11 @@ class PreflightComponent extends Component {
             return;
         }
 
+        // Additional checks for Slack
+        if (env('SLACK_APIKEY')) {
+            $this->checks[] = 'checkBankWebSlack';
+        }
+
         // Additional checks for ScoreEngine
         if (benv('FEATURE_SCOREENGINE')) {
             $this->checks[] = 'checkScoringDB';
@@ -54,10 +59,6 @@ class PreflightComponent extends Component {
         if (benv('FEATURE_BANKWEB')) {
             $this->checks[] = 'checkBankWeb';
             $this->checks[] = 'checkBankWebDB';
-
-            if (benv('BANKWEB_SLACK_ENABLED')) {
-                $this->checks[] = 'checkBankWebSlack';
-            }
         }
 
         foreach ($this->checks as $check) {
@@ -268,11 +269,11 @@ class PreflightComponent extends Component {
     }
 
     /**
-     * Check BankWeb Slack Configuration
+     * Check Slack Configuration
      *
-     * Verify that BankWeb's slack configuration is correct
+     * Verify that the slack configuration is correct
      */
-    public function checkBankWebSlack() {
+    public function checkSlack() {
         $res = $this->Slack->test();
 
         return $res['ok'] ? true : 'Invalid slack API key: '.$res['error'];
