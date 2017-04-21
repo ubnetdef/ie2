@@ -1,5 +1,13 @@
 <?php
-$col_subrows = ((bool)env('FEATURE_SCOREENGINE') ? 'col-md-2' : 'col-md-6');
+$extra_row = ((bool)env('FEATURE_BANKWEB') && (bool)env('FEATURE_SCOREENGINE'));
+$col_amt = 6;
+
+if ((bool)env('FEATURE_SCOREENGINE')) {
+	$col_amt = 2;
+}
+if ((bool)env('FEATURE_BANKWEB') ) {
+	$col_amt = ((bool)env('FEATURE_SCOREENGINE') ? 6 : 4);
+}
 ?>
 
 <div class="row">
@@ -10,7 +18,41 @@ $col_subrows = ((bool)env('FEATURE_SCOREENGINE') ? 'col-md-2' : 'col-md-6');
 	</div>
 	<?php endif; ?>
 
-	<div class="<?= $col_subrows; ?>">
+	<?php if ($extra_row): ?>
+	<div class="col-md-4">
+	<div class="row">
+	<?php endif; ?>
+
+	<?php if ((bool)env('FEATURE_BANKWEB')): ?>
+	<div class="col-md-<?= $extra_row ? 12 : 4; ?>">
+		<h3>Bank Overview</h3>
+		<table class="table table-bordered">
+			<thead>
+				<tr>
+					<td>Date</td>
+					<td>Product</td>
+					<td>Buyer</td>
+				</tr>
+			</thead>
+			<tbody>
+				<?php foreach ( $purchases AS $p ): ?>
+				<tr class="warning">
+					<td><?= $this->Time->timeAgoInWords($p['Purchase']['time']); ?></td>
+					<td><?= $p['Product']['name']; ?></td>
+					<td><?= $p['User']['username']; ?> (<?= $p['User']['Group']['name']; ?>)</td>
+				</tr>
+				<?php endforeach; ?>
+			</tbody>
+		</table>
+	</div>
+	<?php endif; ?>
+
+	<?php if ($extra_row): ?>
+	</div>
+	<div class="row">
+	<?php endif; ?>
+
+	<div class="col-md-<?= $col_amt; ?>">
 		<h3>Active</h3>
 		<div class="list-group">
 			<?php foreach ( $active_injects AS $i ): ?>
@@ -23,7 +65,7 @@ $col_subrows = ((bool)env('FEATURE_SCOREENGINE') ? 'col-md-2' : 'col-md-6');
 		</div>
 	</div>
 	
-	<div class="<?= $col_subrows; ?>">
+	<div class="col-md-<?= $col_amt; ?>">
 		<h3>Expired</h3>
 		<div class="list-group">
 			<?php foreach ( $recent_expired AS $i ): ?>
@@ -35,6 +77,11 @@ $col_subrows = ((bool)env('FEATURE_SCOREENGINE') ? 'col-md-2' : 'col-md-6');
 			<?php endif; ?>
 		</div>
 	</div>
+
+	<?php if ($extra_row): ?>
+	</div>
+	</div>
+	<?php endif; ?>
 </div>
 
 <h3>Recent Actions</h3>

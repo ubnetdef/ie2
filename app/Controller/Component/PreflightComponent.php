@@ -8,7 +8,7 @@ class PreflightComponent extends Component {
     /**
      * Additional components needed
      */
-    public $components = array('Slack');
+    public $components = ['Slack'];
 
     /**
      * Array of all the checks that should
@@ -273,7 +273,7 @@ class PreflightComponent extends Component {
      * Verify that BankWeb's slack configuration is correct
      */
     public function checkBankWebSlack() {
-        $res =  $this->Slack->test();
+        $res = $this->Slack->test();
 
         return $res['ok'] ? true : 'Invalid slack API key: '.$res['error'];
     }
