@@ -85,24 +85,24 @@ class ProductsController extends BankWebAppController {
                     $message = $product['Product']['message_slack'];
                     $message .= "\n\n<".$url."|View Purchase> - Purchase #".$this->Purchase->id;
 
-                    $extra = [];
+                    $extra = [
+                        'as_user' => true,
+                    ];
                     if ((bool)env('BANKWEB_SLACK_EXTENDED')) {
-                        $extra = [
-                            'attachments' => json_encode([
-                                [
-                                    'callback_id' => $this->Purchase->id,
-                                    'fallback' => 'Please go to this URL: '.$url,
-                                    'actions' => [
-                                        [
-                                            'name' => 'handled',
-                                            'text' => 'Mark as completed',
-                                            'type' => 'button',
-                                            'style' => 'primary',
-                                        ],
+                        $extra['attachments'] = json_encode([
+                            [
+                                'callback_id' => $this->Purchase->id,
+                                'fallback' => 'Please go to this URL: '.$url,
+                                'actions' => [
+                                    [
+                                        'name' => 'handled',
+                                        'text' => 'Mark as completed',
+                                        'type' => 'button',
+                                        'style' => 'primary',
                                     ],
                                 ],
-                            ]),
-                        ];
+                            ],
+                        ]);
                     }
 
                     $message = str_replace(
@@ -111,17 +111,14 @@ class ProductsController extends BankWebAppController {
                         $message
                     );
 
-                    $resp = $this->_sendSlackEndpoint('chat.postMessage', [
-                        'text' => $message,
-                        'channel' => '#bank',
-                        'as_user' => true,
-                    ] + $extra);
+                    // Send it over to slack
+                    $this->Slack->send('#bank', $message, $extra);
 
                     // Decode it
                     $resp = json_decode($resp, true);
 
                     // Save the channel and ts
-                    if ( $resp['ok'] ) {
+                    if ($resp['ok']) {
                         $this->Purchase->save([
                             'slack_ts' => $resp['ts'],
                             'slack_channel' => $resp['channel'],

@@ -11,6 +11,7 @@ class AppController extends Controller {
         ],
         'RequestHandler',
         'Session',
+        'Slack',
         'Paginator' => [
             'settings' => [
                 'limit' => 20,
@@ -194,39 +195,5 @@ class AppController extends Controller {
      */
     protected function _errorFlash($errors) {
         $this->Flash->danger('The following errors have occured:<br />'.implode('<br />', $errors));
-    }
-
-    /**
-     * Sends a slack message
-     *
-     */
-    protected function _sendSlack($msg, $extra = []) {
-        if (!env('SLACK_ENDPOINT')) {
-            return;
-        }
-
-        // Sprintf it
-        $msg = str_replace(
-            ['#USERNAME#', '#GROUP#'],
-            [$this->Auth->user('username'), $this->Auth->group('name')],
-            $msg
-        );
-
-        // Build the payload
-        $payload = json_encode([
-            'text'       => $msg,
-            'link_names' => 1,
-        ] + $extra);
-
-        $ch = curl_init(env('SLACK_ENDPOINT'));
-        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-
-        $result = curl_exec($ch);
-
-        curl_close($ch);
-
-        return $result;
     }
 }

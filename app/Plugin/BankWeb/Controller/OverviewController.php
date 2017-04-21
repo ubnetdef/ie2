@@ -45,7 +45,7 @@ class OverviewController extends BankWebAppController {
             ]);
 
             // Update slack
-            if ( (bool)env('BANKWEB_SLACK_EXTENDED')
+            if ((bool)env('BANKWEB_SLACK_EXTENDED')
                 && !empty($purchase['Purchase']['slack_ts'])
                 && !empty($purchase['Purchase']['slack_channel'])
             ) {
@@ -76,13 +76,15 @@ class OverviewController extends BankWebAppController {
                     ],
                 ];
 
-                $resp = $this->_sendSlackEndpoint('chat.update', [
-                    'ts' => $purchase['Purchase']['slack_ts'],
-                    'channel' => $purchase['Purchase']['slack_channel'],
-                    'text' => $message,
-                    'parse' => 'none',
-                    'attachments' => json_encode($attachments),
-                ]);
+                $this->Slack->update(
+                    $purchase['Purchase']['slack_ts'],
+                    $purchase['Purchase']['slack_channel'],
+                    $message,
+                    [
+                        'parse' => 'none',
+                        'attachments' => json_encode($attachments),
+                    ]
+                );
             }
 
             $this->Flash->success('Marked Purchase #'.$pid.' as completed!');
