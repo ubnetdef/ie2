@@ -85,7 +85,7 @@ class ProductsController extends BankWebAppController {
                     $url = Router::url(
                         [
                             'plugin' => 'BankWeb',
-                            'controller' => 'bankadmin',
+                            'controller' => 'overview',
                             'action' => 'view',
                             $this->Purchase->id,
                         ],

@@ -30,6 +30,20 @@ class OverviewController extends BankWebAppController {
     }
 
     /**
+     * View Page
+     *
+     * @url /staff/bank/view/<id>
+     */
+    public function view($id) {
+        $purchase = $this->Purchase->findById($id);
+        if (empty($purchase)) {
+            throw new NotFoundException('Unknown purchase');
+        }
+        
+        $this->set('purchase', $purchase);
+    }
+
+    /**
      * Overview Mark as Completed
      *
      * @url /staff/bank/mark/<purchase_id>
@@ -52,7 +66,7 @@ class OverviewController extends BankWebAppController {
                 $url = Router::url(
                     [
                         'plugin' => 'BankWeb',
-                        'controller' => 'bankadmin',
+                        'controller' => 'overview',
                         'action' => 'view',
                         $pid,
                     ],

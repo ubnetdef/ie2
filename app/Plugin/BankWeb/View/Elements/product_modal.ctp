@@ -77,7 +77,7 @@
 							<textarea class="form-control" rows="5" id="message_slack" name="message_slack"></textarea>
 							<span class="help-block">
 								This item is <strong>optional</strong>.<br />
-								You can use the following variables: <code>#USERNAME#</code>, <code>#GROUP#</code>, <code>#INPUT</code>.
+								You can use the following variables: <code>#USERNAME#</code>, <code>#GROUP#</code>, <code>#INPUT#</code>.
 								They will be automatically replaced with the correct values upon purchase.<br />
 								If you are trying to "tag" a user in slack, format it like this: <code><@james></code>
 							</span>
