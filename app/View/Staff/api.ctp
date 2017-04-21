@@ -42,6 +42,14 @@ if (benv('FEATURE_BANKWEB') ) {
 					<td><?= $p['User']['username']; ?> (<?= $p['User']['Group']['name']; ?>)</td>
 				</tr>
 				<?php endforeach; ?>
+
+				<?php if ( empty($purchases) ): ?>
+				<tr>
+					<td colspan="3">
+						No pending purchases.
+					</td>
+				</tr>
+				<?php endif; ?>
 			</tbody>
 		</table>
 	</div>
