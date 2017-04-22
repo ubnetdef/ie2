@@ -46,7 +46,7 @@ class PreflightComponent extends Component {
 
         // Additional checks for Slack
         if (env('SLACK_APIKEY')) {
-            $this->checks[] = 'checkBankWebSlack';
+            $this->checks[] = 'checkSlack';
         }
 
         // Additional checks for ScoreEngine
