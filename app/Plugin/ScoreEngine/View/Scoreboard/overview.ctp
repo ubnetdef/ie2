@@ -43,7 +43,7 @@ function drawScoreboard() {
 		],
 		<?php foreach ( $overview AS $o ): ?>
 		[
-			'<?= $team_mappings[$o['Team']['id']]; ?>',
+			'<?= isset($team_mappings[$o['Team']['id']]) ? $team_mappings[$o['Team']['id']] : 'TID: '.$o['Team']['id']; ?>',
 			<?= $o['Check']['total_passed']; ?>,
 			<?= isset($grade_team_mappings[$o['Team']['id']]) ? $grade_team_mappings[$o['Team']['id']] : 0; ?>
 		],
