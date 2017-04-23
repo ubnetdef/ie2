@@ -8,7 +8,7 @@
 	<div class="col-md-4">
 		<h3>Top Uptime</h3>
 		<ol>
-			<?php for ( $i=0; $i < 5; $i++ ): ?>
+			<?php for ( $i=0; $i < 5; $i++ ): if ( !isset($team_mappings[$overview[$i]['Team']['id']]) ) continue; ?>
 			<li><?= $team_mappings[$overview[$i]['Team']['id']]; ?> - <?= $overview[$i]['Check']['total_passed']; ?></li>
 			<?php endfor; ?>
 		</ol>
