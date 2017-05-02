@@ -32,7 +32,7 @@
 					</div>
 					<?php else: ?>
 					<div class="col-sm-9">
-						<input type="text" name="opt<?= $opt['id']; ?>" class="form-control" value="<?= $opt['value']; ?>"<?= $opt['edit'] == 1 ? ' disabled="disabled"' : ''; ?> />
+						<input type="text" name="opt<?= $opt['id']; ?>" class="form-control" value="<?= $opt['value']; ?>"<?= $opt['edit'] == 0 ? ' disabled="disabled"' : ''; ?> />
 					</div>
 					<?php endif; ?>
 				</div>
