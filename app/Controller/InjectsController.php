@@ -194,6 +194,10 @@ class InjectsController extends AppController {
      * @url /injects/hints/<schedule_id>
      */
     public function hints($id = false) {
+        if ( !benv('FEATURE_HINT_SUBSYSTEM') ) {
+            throw new BadRequestException('Hint subsystem not enabled');
+        }
+
         $inject = $this->Schedule->getInject($id, $this->groups);
         if (empty($inject)) {
             throw new NotFoundException('Unknown inject');
@@ -214,9 +218,13 @@ class InjectsController extends AppController {
      *
      * Unlocks a hint
      *
-     * @url /injects/unlock_hint/<hint_id>
+     * @url /injects/unlock/<hint_id>
      */
-    public function unlock_hint($sid = false, $id = false) {
+    public function unlock($sid = false, $id = false) {
+        if ( !benv('FEATURE_HINT_SUBSYSTEM') ) {
+            throw new BadRequestException('Hint subsystem not enabled');
+        }
+
         $inject = $this->Schedule->getInject($sid, $this->groups);
         if (empty($inject)) {
             return $this->ajaxResponse(false);

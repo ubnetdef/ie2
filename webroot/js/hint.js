@@ -12,7 +12,7 @@ Hint = {
 
 		$(document).on('click', '.unlock_hint', function() {
 			hint_id = $(this).data('hint');
-			$.get(window.BASE+'injects/unlock_hint/'+window.INJECT+'/'+hint_id).done(function() {
+			$.get(window.BASE+'injects/unlock/'+window.INJECT+'/'+hint_id).done(function() {
 				$('.hint_modal').modal('show');
 			});
 		});
