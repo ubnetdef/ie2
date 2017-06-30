@@ -160,7 +160,7 @@ class Schedule extends AppModel {
             // Resolve dependencies. This is so bad I'm sorry but I need to
             // get this working
             if ($inject['Schedule']['dependency_id'] > 0) {
-                $count = ClassRegistry::init('Submission')->getCount($inject['Schedule']['dependency_id'], $groups);
+                $count = ClassRegistry::init('Submission')->isDependencyMet($inject['Schedule']['dependency_id'], $groups);
 
                 if ($count == 0) {
                     continue;

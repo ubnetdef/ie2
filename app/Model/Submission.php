@@ -188,6 +188,25 @@ class Submission extends AppModel {
     }
 
     /**
+     * Is Dependendy Met
+     *
+     * @param $id The inject ID
+     * @param $group The group ID
+     * @return int The number of the submissions done by
+     * this group for this inject
+     */
+    public function isDependencyMet($id, $group) {
+        return $this->find('count', [
+            'conditions' => [
+                'Inject.id'          => $id,
+                'Group.id'           => $group,
+                'Submission.deleted' => false,
+                'Grade.grade > 0',
+            ],
+        ]) > 0;
+    }
+
+    /**
      * Get Grade Totals
      *
      * @param $groups The groups you wish to get grades for
