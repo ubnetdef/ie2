@@ -152,9 +152,21 @@ class Schedule extends AppModel {
      */
     public function getInjects($groups, $onlyActive = true) {
         $rtn = [];
+        $seenInjects = [];
 
         foreach ($this->getInjectsRaw($groups, $onlyActive) as $inject) {
             $submissionCount = ClassRegistry::init('Submission')->getCount($inject['Inject']['id'], $groups);
+
+            // Resolve dependencies. This is so bad I'm sorry but I need to
+            // get this working
+            if ($inject['Schedule']['dependency_id'] > 0) {
+                $count = ClassRegistry::init('Submission')->getCount($inject['Schedule']['dependency_id'], $groups);
+
+                if ($count == 0) {
+                    continue;
+                }
+            }
+
             $rtn[] = new InjectAbstraction($inject, $submissionCount);
         }
 
