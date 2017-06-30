@@ -134,6 +134,16 @@ class InjectStylerHelper extends AppHelper {
     }
 
     /**
+     * Inject Type Grader Form Output
+     *
+     * @param $id Inject Type ID
+     * @return string The template
+     */
+    public function graderFormOutput($id, $submission) {
+        return $this->typeManager->get($id)->getGraderForm($submission);
+    }
+
+    /**
      * Get Inject Type Name
      *
      * @param $id Inject Type ID

@@ -57,26 +57,4 @@
 	</div>
 </div>
 
-<form method="post">
-	<div class="row">
-		<div class="col-md-4">
-			<div class="form-group">
-				<div class="input-group">
-					<div class="input-group-addon">Grade: </div>
-					<input type="text" class="form-control" name="grade" placeholder="0" value="<?= $submission['Grade']['grade']; ?>" />
-					<div class="input-group-addon">/<?= $submission['Inject']['max_points']; ?></div>
-				</div>
-			</div>
-		</div>
-
-		<div class="col-md-8">
-			<p><textarea class="form-control" rows="5" name="comments" placeholder="Enter any comments here..."><?= $submission['Grade']['comments']; ?></textarea></p>
-		</div>
-	</div>
-
-	<div class="row">
-		<div class="col-sm-6 col-sm-offset-3">
-			<input type="submit" class="btn btn-success btn-block" value="Save!" />
-		</div>
-	</div>
-</form>
+<?= $this->InjectStyler->graderFormOutput($submission['Inject']['type'], $submission); ?>
