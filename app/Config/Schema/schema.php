@@ -122,7 +122,6 @@ class AppSchema extends CakeSchema {
         'grading_guide' => [
             'type'    => 'text',
             'null'    => false,
-            'default' => '',
         ],
         'max_points' => [
             'type'    => 'integer',
