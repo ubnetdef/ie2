@@ -51,7 +51,7 @@ echo $this->Html->script('injectengine', array('inline' => false));
 
 <script id="inject-list-empty-tpl" type="text/x-handlebars-template">
 <a href="#" class="list-group-item">
-	<h4 class="list-group-item-heading">There is no currently no injects active</h4>
+	<h4 class="list-group-item-heading">There are currently no injects active</h4>
 </a>
 </script>
 
