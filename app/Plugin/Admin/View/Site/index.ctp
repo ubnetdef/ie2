@@ -20,7 +20,7 @@ $this->Html->css('/vendor/bootstrap-datetimepicker/css/bootstrap-datetimepicker.
 			<thead>
 				<tr>
 					<td>Announcement</td>
-					<td>Expiraion</td>
+					<td>Expiration</td>
 					<td>Active</td>
 					<td>Actions</td>
 				</tr>
