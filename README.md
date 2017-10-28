@@ -5,9 +5,9 @@ Cyber Security competition Inject Engine.
 
 ## Requirements
 
-* PHP5
-  -php5-mcrypt
-  -php5-mysql
+* php5
+* php5-mcrypt
+* php5-mysql
 * MySQL
 * [Composer](https://getcomposer.org/)
 
