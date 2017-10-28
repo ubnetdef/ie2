@@ -5,6 +5,7 @@ Cyber Security competition Inject Engine.
 
 ## Requirements
 
+* Web server (such as apache2)
 * php5
 * php5-mcrypt
 * php5-mysql
