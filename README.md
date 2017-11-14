@@ -1,7 +1,7 @@
 ie2
 ========
 
-Cyber Security competition Inject Engine.
+Cyber Security competition Inject Engine.  ie2 integrates with UBNetDef's [ScoreEngine](https://github.com/ubnetdef/scoreengine) and [Bank-API](https://github.com/ubnetdef/bank-api) via optional plugins.
 
 ## Requirements
 
@@ -12,7 +12,7 @@ Cyber Security competition Inject Engine.
 * MySQL-server
 * [Composer](https://getcomposer.org/download)
 
-## Installation
+## Quick Installation
 
 1. Install git and clone repository
 2. Run ```cp dot.env .env```, and edit the file.
@@ -20,3 +20,6 @@ Cyber Security competition Inject Engine.
 4. Run ```cd app/Console && ./cake engine install``` to install the Inject Engine
 5. Point your webroot to the directory "webroot"
 6. You're done!
+
+## Documentation
+Please click [here](doc/)
