@@ -59,6 +59,7 @@ class PreflightComponent extends Component {
         if (benv('FEATURE_BANKWEB')) {
             $this->checks[] = 'checkBankWeb';
             $this->checks[] = 'checkBankWebDB';
+            $this->checks[] = 'checkBankWebBadCreds';
         }
 
         foreach ($this->checks as $check) {
@@ -255,6 +256,30 @@ class PreflightComponent extends Component {
             .'. Please run `./cake engine install_bankweb`.';
 
         return !empty($missing_tables) ? $missing_tpl : true;
+    }
+
+    /**
+     * Check BankWeb Bad Credentials
+     *
+     * Verifies we're not using insecure credentials
+     */
+    public function checkBankWebBadCreds() {
+        $tbl = ClassRegistry::init('BankWeb.AccountMapping');
+        $bad_creds = [
+            'staff' => 'staff',
+        ];
+        $found_bad = [];
+
+        foreach ($tbl->find('all') as $account) {
+            if (isset($bad_creds[$account['AccountMapping']['username']])
+                && $bad_creds[$account['AccountMapping']['username']] == $account['AccountMapping']['password']
+            ) {
+                $found_bad[] = 'BankWeb has detected insecure credentials for the group '.$account['Group']['name'].'.'.
+                    ' Please change the password for bank user "'.$account['AccountMapping']['username'].'".';
+            }
+        }
+
+        return !empty($found_bad) ? implode('\n', $found_bad) : true;
     }
 
     /**

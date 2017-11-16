@@ -194,7 +194,7 @@ class InjectsController extends AppController {
      * @url /injects/hints/<schedule_id>
      */
     public function hints($id = false) {
-        if ( !benv('FEATURE_HINT_SUBSYSTEM') ) {
+        if (!benv('FEATURE_HINT_SUBSYSTEM')) {
             throw new BadRequestException('Hint subsystem not enabled');
         }
 
@@ -221,7 +221,7 @@ class InjectsController extends AppController {
      * @url /injects/unlock/<hint_id>
      */
     public function unlock($sid = false, $id = false) {
-        if ( !benv('FEATURE_HINT_SUBSYSTEM') ) {
+        if (!benv('FEATURE_HINT_SUBSYSTEM')) {
             throw new BadRequestException('Hint subsystem not enabled');
         }
 
