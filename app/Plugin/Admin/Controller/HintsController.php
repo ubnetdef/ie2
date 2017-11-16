@@ -51,8 +51,24 @@ class HintsController extends AdminAppController {
         if ($this->request->is('post')) {
             // Validate the input
             $res = $this->_validate();
+            $errors = $res['errors'];
 
-            if (empty($res['errors'])) {
+            if (!empty($res['errors'])) {
+                $this->_errorFlash($res['errors']);
+            }
+
+            if ($res['data']['parent_id'] > 0) {
+                $parent_hint = $this->Hint->findById($res['data']['parent_id']);
+
+                if (empty($parent_hint)) {
+                    $errors[] = 'Unknown parent hint!';
+                }
+                if ($parent_hint['Hint']['inject_id'] != $res['data']['inject_id']) {
+                    $errors[] = 'Hint dependencies must be associated with the same Inject.';
+                }
+            }
+
+            if (empty($errors)) {
                 $this->Hint->create();
                 $this->Hint->save($res['data']);
 
@@ -66,7 +82,7 @@ class HintsController extends AdminAppController {
                 $this->Flash->success('The hint has been created!');
                 return $this->redirect(['plugin' => 'admin', 'controller' => 'hints', 'action' => 'index']);
             } else {
-                $this->_errorFlash($res['errors']);
+                $this->_errorFlash($errors);
             }
         }
 
@@ -88,8 +104,24 @@ class HintsController extends AdminAppController {
         if ($this->request->is('post')) {
             // Validate the input
             $res = $this->_validate();
+            $errors = $res['errors'];
 
-            if (empty($res['errors'])) {
+            if (!empty($res['errors'])) {
+                $this->_errorFlash($res['errors']);
+            }
+
+            if ($res['data']['parent_id'] > 0) {
+                $parent_hint = $this->Hint->findById($res['data']['parent_id']);
+
+                if (empty($parent_hint)) {
+                    $errors[] = 'Unknown parent hint!';
+                }
+                if ($parent_hint['Hint']['inject_id'] != $res['data']['inject_id']) {
+                    $errors[] = 'Hint dependencies must be associated with the same Inject.';
+                }
+            }
+
+            if (empty($errors)) {
                 // Fix parent_id
                 if ($res['data']['parent_id'] == 0) {
                     $res['data']['parent_id'] = null;
@@ -111,7 +143,7 @@ class HintsController extends AdminAppController {
                 $this->Flash->success('The hint has been updated!');
                 return $this->redirect(['plugin' => 'admin', 'controller' => 'hints', 'action' => 'index']);
             } else {
-                $this->_errorFlash($res['errors']);
+                $this->_errorFlash($errors);
             }
         }
 
