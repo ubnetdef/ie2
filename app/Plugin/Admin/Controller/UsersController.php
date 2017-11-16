@@ -73,8 +73,19 @@ class UsersController extends AdminAppController {
         if ($this->request->is('post')) {
             // Validate the input
             $res = $this->_validate();
+            $errors = $res['errors'];
 
-            if (empty($res['errors'])) {
+            // Username unique-ness check
+            if (empty($errors)) {
+                $username_check = $this->User->findByUsername($res['data']['username']);
+
+                if (!empty($username_check)) {
+                    $errors[] = 'A user with the username "'.$res['data']['username'].'" already exists. '.
+                        'Please choose a different one.';
+                }
+            }
+
+            if (empty($errors)) {
                 $this->User->create();
                 $this->User->save($res['data']);
 
@@ -88,7 +99,7 @@ class UsersController extends AdminAppController {
                 $this->Flash->success('The user has been created!');
                 return $this->redirect(['plugin' => 'admin', 'controller' => 'users', 'action' => 'index']);
             } else {
-                $this->_errorFlash($res['errors']);
+                $this->_errorFlash($errors);
             }
         }
 
@@ -110,8 +121,18 @@ class UsersController extends AdminAppController {
         if ($this->request->is('post')) {
             // Validate the input
             $res = $this->_validate();
+            $errors = $res['errors'];
 
-            if (empty($res['errors'])) {
+            // Username unique-ness check
+            if (empty($errors) && $res['data']['username'] != $user['User']['username']) {
+                $username_check = $this->User->findByUsername($res['data']['username']);
+
+                if (!empty($username_check)) {
+                    $errors[] = 'A user with the username "'.$res['data']['username'].'" already exists. '.
+                        'Please choose a different one.';
+                }
+            }
+            if (empty($errors)) {
                 // Clear out the password, if it's empty
                 if (empty($res['data']['password'])) {
                     unset($res['data']['password']);
@@ -141,7 +162,7 @@ class UsersController extends AdminAppController {
                 $this->Flash->success('The user has been updated!');
                 return $this->redirect(['plugin' => 'admin', 'controller' => 'users', 'action' => 'index']);
             } else {
-                $this->_errorFlash($res['errors']);
+                $this->_errorFlash($errors);
             }
         }
 
