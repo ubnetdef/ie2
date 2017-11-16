@@ -221,23 +221,12 @@ class PreflightComponent extends Component {
         foreach ([
             'BANKAPI_SERVER',
             'BANKAPI_TIMEOUT',
-            'BANKWEB_PRODUCTS',
             'BANKWEB_WHITETEAM_ACCOUNT',
             'BANKWEB_PUBLIC_APIINFO'
         ] as $key) {
             if (env($key) === null) {
                 return sprintf('Please setup the variable "%s" to use the BankWeb Feature.', $key);
             }
-        }
-
-        $products = ROOT . DS . env('BANKWEB_PRODUCTS');
-        if (!file_exists($products)) {
-            return sprintf('Please make sure the file "%s" exists (as set in "BANKWEB_PRODUCTS")', $products);
-        }
-
-        $contents = json_decode(file_get_contents($products));
-        if (json_last_error() != JSON_ERROR_NONE) {
-            return sprintf('JSON Error with "BANKWEB_PRODUCTS" - %s', json_last_error_msg());
         }
 
         return true;
