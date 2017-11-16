@@ -25,6 +25,12 @@
 	?>
 </head>
 <body>
+<?php if ( env('DEBUG') != 0 ): ?>
+<div class="alert alert-warning" style="margin-bottom: 0px;">
+	<strong>WARNING</strong>: DEBUG mode is currently enabled. If this is a production instance, DEBUG mode should be set to "0".
+</div>
+<?php endif; ?>
+
 <?php if ( isset($emulating) && $emulating ): ?>
 <div class="alert alert-danger" style="margin-bottom: 0px;">
 	You are currently emulating a user's account!
