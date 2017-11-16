@@ -153,16 +153,16 @@ class Schedule extends AppModel {
     public function getInjects($groups, $onlyActive = true) {
         $rtn = [];
         $seenInjects = [];
+        $SubmissionModel = ClassRegistry::init('Submission');
 
         foreach ($this->getInjectsRaw($groups, $onlyActive) as $inject) {
-            $submissionCount = ClassRegistry::init('Submission')->getCount($inject['Inject']['id'], $groups);
+            $submissionCount = $SubmissionModel->getCount($inject['Inject']['id'], $groups);
 
-            // Resolve dependencies. This is so bad I'm sorry but I need to
-            // get this working
+            // Dependency resolving
             if ($inject['Schedule']['dependency_id'] > 0) {
-                $count = ClassRegistry::init('Submission')->isDependencyMet($inject['Schedule']['dependency_id'], $groups);
+                $dependency_met = $SubmissionModel->isDependencyMet($inject['Schedule']['dependency_id'], $groups);
 
-                if ($count == 0) {
+                if (!$dependency_met) {
                     continue;
                 }
             }

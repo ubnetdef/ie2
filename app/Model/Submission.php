@@ -201,7 +201,7 @@ class Submission extends AppModel {
                 'Inject.id'          => $id,
                 'Group.id'           => $group,
                 'Submission.deleted' => false,
-                'Grade.grade > 0',
+                'Grade.created IS NOT NULL',
             ],
         ]) > 0;
     }
