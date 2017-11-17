@@ -16,7 +16,7 @@ class Manager {
 
     public function get($id) {
         if (!isset($this->types[$id])) {
-            throw new BadMethodCallException('Unknown type!');
+            throw new \BadMethodCallException('Unknown type - '.$id.'!');
         }
 
         return $this->types[$id];
