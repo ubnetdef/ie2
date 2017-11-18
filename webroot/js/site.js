@@ -3,7 +3,7 @@ $(document).ready(function() {
 	$('.alert-announcement').on('closed.bs.alert', function () {
 		$aid = $(this).data('aid');
 
-		$.get(window.BASE+"/pages/announcement_read/"+$aid);
+		$.get(window.BASE+"pages/announcement_read/"+$aid);
 	});
 
 	$('.hide_ui').click(function() {

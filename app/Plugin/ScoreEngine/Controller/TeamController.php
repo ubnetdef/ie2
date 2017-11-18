@@ -31,6 +31,10 @@ class TeamController extends ScoreEngineAppController {
 
         // Set the team number
         $this->team = $this->Auth->group('team_number');
+
+        if (empty($this->team)) {
+            throw new InternalErrorException('Your group does not have a team number associated with it');
+        }
     }
 
     /**

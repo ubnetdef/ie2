@@ -97,7 +97,8 @@ class StaffController extends AppController {
 
         $active_injects = $this->Schedule->getInjects(env('GROUP_BLUE'));
         foreach ($active_injects as $i => $inject) {
-            if ($inject->isExpired()) { unset($active_injects[$i]);
+            if ($inject->isExpired()) {
+                unset($active_injects[$i]);
             }
         }
 
