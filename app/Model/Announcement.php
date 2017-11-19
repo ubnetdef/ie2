@@ -16,7 +16,10 @@ class Announcement extends AppModel {
         return $this->find('all', [
             'conditions' => [
                 'Announcement.active' => true,
-                'Announcement.expiration <=' => time(),
+                'OR' => [
+                    'Announcement.expiration >' => time(),
+                    'Announcement.expiration' => 0
+                ],
             ],
         ]);
     }
