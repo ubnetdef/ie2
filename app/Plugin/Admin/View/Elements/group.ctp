@@ -12,6 +12,11 @@
 			<input type="text" class="form-control" id="team_number" name="team_number" value="<?= !empty($group) ? $group['Group']['team_number'] : ''; ?>" />
 		</div>
 	</div>
+	<div class="row">
+		<div class="col-sm-9 col-sm-offset-3">
+			<p class="help-block">The team number that this group maps to. All blue teams must have this set.</p>
+		</div>
+	</div>
 
 	<div class="form-group">
 		<label for="parent_id" class="col-sm-3 control-label">Group Parent</label>
