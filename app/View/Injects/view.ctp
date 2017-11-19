@@ -55,6 +55,14 @@
 	<hr />
 	<?php endif ?>
 
+	<?php if (!empty($inject->getSubmissionGuideline())): ?>
+	<h4>Submission Guidelines</h4>
+
+	<?= $inject->getSubmissionGuideline(); ?>
+
+	<hr />
+	<?php endif; ?>
+
 	<ul class="nav nav-tabs">
 		<li class="<?= $inject->isAcceptingSubmissions() ? ' active in' : ''; ?>">
 			<a href="#submit" role="tab" data-toggle="tab">Submit</a>

@@ -56,6 +56,19 @@ $this->Html->script('/js/summernote.config', ['inline' => false]);
 	</div>
 
 	<div class="form-group">
+		<label for="grading_guide_editor" class="col-sm-3 control-label">Submission Guidelines</label>
+		<div class="col-sm-9">
+			<input type="hidden" name="submission_guideline" id="submission_guideline" />
+			<div id="submission_guideline_editor" class="wysiwyg"></div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-sm-9 col-sm-offset-3">
+			<p class="help-block">This will be shown to Blue Team members when submitting the inject.</p>
+		</div>
+	</div>
+
+	<div class="form-group">
 		<label for="grading_guide_editor" class="col-sm-3 control-label">Grading Guide</label>
 		<div class="col-sm-9">
 			<input type="hidden" name="grading_guide" id="grading_guide" />
@@ -167,6 +180,7 @@ $(document).ready(function() {
 	$('form').submit(function() {
 		$('#content').val($('#content_editor').summernote('code'));
 		$('#grading_guide').val($('#grading_guide_editor').summernote('code'));
+		$('#submission_guideline').val($('#submission_guideline_editor').summernote('code'));
 	});
 
 	$('.attachment_more').click(function() {
@@ -188,6 +202,7 @@ $(document).ready(function() {
 	<?php if ( !empty($inject) ): ?>
 	$('#content_editor').summernote('code', <?= json_encode($inject['Inject']['content']); ?>);
 	$('#grading_guide_editor').summernote('code', <?= json_encode($inject['Inject']['grading_guide']); ?>);
+	$('#submission_guideline_editor').summernote('code', <?= json_encode($inject['Inject']['submission_guideline']); ?>);
 	<?php endif; ?>
 });
 </script>

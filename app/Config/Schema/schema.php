@@ -123,6 +123,9 @@ class AppSchema extends CakeSchema {
             'type'    => 'text',
             'null'    => false,
         ],
+        'submission_guideline' => [
+            'type'    => 'text',
+        ],
         'max_points' => [
             'type'    => 'integer',
             'null'    => false,

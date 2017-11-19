@@ -36,6 +36,9 @@ class InjectsController extends AdminAppController {
             'grading_guide' => new Rules\AllOf(
                 new Rules\NotEmpty()
             ),
+            'submission_guideline' => new Rules\Optional(
+                new Rules\NotEmpty()
+            ),
             'max_points' => new Rules\AllOf(
                 new Rules\Digit(),
                 new Rules\NotEmpty()

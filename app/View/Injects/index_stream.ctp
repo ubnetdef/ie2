@@ -37,6 +37,19 @@
 							</div>
 						</div>
 						<hr />
+
+						<?php if (!empty($inject->getSubmissionGuideline())): ?>
+						<div class="row">
+							<div class="col-sm-12">
+								<h4>Submission Guidelines</h4>
+
+								<?= $inject->getSubmissionGuideline(); ?>
+							</div>
+						</div>
+
+						<hr />
+						<?php endif; ?>
+						
 						<div class="row">
 							<div class="col-sm-12">
 								<?= $this->InjectStyler->typeOutput($inject->getType()); ?>
