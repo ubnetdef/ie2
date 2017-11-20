@@ -15,7 +15,7 @@ class PreflightComponent extends Component {
      * be ran.
      */
     protected $checks = [
-        'verifySecurityKeys', 'checkDatabaseConnection',
+        'verifyPHPVersion', 'verifySecurityKeys', 'checkDatabaseConnection',
         'checkGroupMappings', 'checkInjectTypes',
     ];
 
@@ -44,8 +44,13 @@ class PreflightComponent extends Component {
             return;
         }
 
+        // Additional checks for Mattermost
+        if (env('CHATOPS_SERVICE') == 1) {
+            $this->checks[] = 'checkMattermost';
+        }
+
         // Additional checks for Slack
-        if (env('SLACK_APIKEY')) {
+        if (env('CHATOPS_SERVICE') == 2) {
             $this->checks[] = 'checkSlack';
         }
 
@@ -72,6 +77,16 @@ class PreflightComponent extends Component {
 
         // If we got here, we can save and cache the result
         Cache::write('preflight_check', $hash);
+    }
+
+    /**
+     * Verify PHP Version
+     *
+     * Ensures we are on PHP 7.0+
+     * @return boolean If the check passed
+     */
+    public function verifyPHPVersion() {
+        return PHP_VERSION_ID >= 70000 ? true : 'ie2 requires PHP 7.0+. You have '.PHP_VERSION;
     }
 
     /**
@@ -280,6 +295,19 @@ class PreflightComponent extends Component {
         }
 
         return !empty($found_bad) ? implode('\n', $found_bad) : true;
+    }
+
+    /**
+     * Check Mattermost Configuration
+     *
+     * Verify that the mattermost configuration is correct
+     */
+    public function checkMattermost() {
+        if (env('MATTERMOST_WEBHOOK_URL') === null) {
+            return 'Please configure the "MATTERMOST_WEBHOOK_URL" variable.';
+        }
+
+        return true;
     }
 
     /**

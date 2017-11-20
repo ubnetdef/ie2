@@ -12,6 +12,7 @@ class AppController extends Controller {
         'RequestHandler',
         'Session',
         'Slack',
+        'Mattermost',
         'Paginator' => [
             'settings' => [
                 'limit' => 20,

@@ -81,56 +81,8 @@ class ProductsController extends BankWebAppController {
                     $this->Flash->success($product['Product']['message_user']);
                 }
 
-                if (env('SLACK_APIKEY') && !empty($product['Product']['message_slack'])) {
-                    $url = Router::url(
-                        [
-                            'plugin' => 'BankWeb',
-                            'controller' => 'overview',
-                            'action' => 'view',
-                            $this->Purchase->id,
-                        ],
-                        true
-                    );
-
-                    // Build the message
-                    $message = $product['Product']['message_slack'];
-                    $message .= "\n\n<".$url."|View Purchase> - Purchase #".$this->Purchase->id;
-
-                    // Make the message dynamic
-                    $message = str_replace(
-                        ['#USERNAME#', '#GROUP#' , '#INPUT#'],
-                        [$this->Auth->user('username'), $this->Auth->group('name'), $user_input],
-                        $message
-                    );
-
-                    // Add our SICK attachment
-                    $extra = [
-                        'attachments' => json_encode([
-                            [
-                                'callback_id' => $this->Purchase->id,
-                                'fallback' => 'Please go to this URL: '.$url,
-                                'actions' => [
-                                    [
-                                        'name' => 'handled',
-                                        'text' => 'Mark as completed',
-                                        'type' => 'button',
-                                        'style' => 'primary',
-                                    ],
-                                ],
-                            ],
-                        ]),
-                    ];
-
-                    // Send it over to slack
-                    $resp = $this->Slack->send(env('BANKWEB_SLACK_CHANNEL'), $message, $extra);
-
-                    // Save the channel and ts
-                    if ($resp['ok']) {
-                        $this->Purchase->save([
-                            'slack_ts' => $resp['ts'],
-                            'slack_channel' => $resp['channel'],
-                        ]);
-                    }
+                if (env('CHATOPS_SERVICE') > 0) {
+                    $this->sendChatOpsNotification($product, $user_input, $this->Purchase->id);
                 }
             }
 
@@ -139,5 +91,98 @@ class ProductsController extends BankWebAppController {
 
         $this->set('item', $product);
         $this->set('accounts', $this->BankApi->accounts());
+    }
+
+    private function sendChatOpsNotification($product, $user_input, $purchase_id) {
+        $purchase_url = Router::url(
+            [
+                'plugin' => 'BankWeb',
+                'controller' => 'overview',
+                'action' => 'view',
+                $purchase_id,
+            ],
+            true
+        );
+
+        // Build the dynamic message
+        $message = str_replace(
+            ['#USERNAME#', '#GROUP#' , '#INPUT#'],
+            [$this->Auth->user('username'), $this->Auth->group('name'), $user_input],
+            $product['Product']['message_slack']
+        );
+
+        switch (env('CHATOPS_SERVICE')) {
+            case 1: // Mattermost
+                $message .= "\n\n[View Purchase](".$purchase_url.") - Purchase #".$purchase_id;
+
+                $nonce = bin2hex(random_bytes(64));
+                $additional = [
+                    'username'    => 'ie2 - Bank',
+                    'attachments' => [
+                        [
+                            'text' => 'Please mark this as completed',
+                            'actions' => [
+                                [
+                                    'name' => 'Mark as completed',
+                                    'integration' => [
+                                        'url' => Router::url(
+                                            [
+                                                'plugin' => 'BankWeb',
+                                                'controller' => 'hook',
+                                                'action' => 'mattermost',
+                                            ],
+                                            true
+                                        ),
+                                        'context' => [
+                                            'purchase_id'      => $purchase_id,
+                                            'original_message' => $message,
+                                            'nonce'            => $nonce,
+                                            'hash'             => hash('sha256', $nonce.env('SECURITY_SALT')),
+                                        ],
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ];
+
+                $this->Mattermost->send($message, false, $additional);
+                break;
+
+            case 2: // Slack
+                $message .= "\n\n<".$purchase_url."|View Purchase> - Purchase #".$purchase_id;
+
+                $additional = [
+                    'attachments' => json_encode([
+                        [
+                            'callback_id' => $purchase_id,
+                            'fallback' => 'Please go to this URL: '.$purchase_url,
+                            'actions' => [
+                                [
+                                    'name' => 'handled',
+                                    'text' => 'Mark as completed',
+                                    'type' => 'button',
+                                    'style' => 'primary',
+                                ],
+                            ],
+                        ],
+                    ]),
+                ];
+
+                $resp = $this->Slack->send(env('BANKWEB_SLACK_CHANNEL'), $message, $additional);
+
+                // Save the channel and ts
+                if ($resp['ok']) {
+                    $this->Purchase->id = $purchase_id;
+                    $this->Purchase->save([
+                        'slack_ts' => $resp['ts'],
+                        'slack_channel' => $resp['channel'],
+                    ]);
+                }
+                break;
+
+            default:
+                throw new RuntimeException('Unknown ChatOps Service');
+        }
     }
 }

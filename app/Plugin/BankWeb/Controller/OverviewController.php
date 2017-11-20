@@ -59,7 +59,7 @@ class OverviewController extends BankWebAppController {
             ]);
 
             // Update slack
-            if (env('SLACK_APIKEY')
+            if (env('CHATOPS_SERVICE') == 2
                 && !empty($purchase['Purchase']['slack_ts'])
                 && !empty($purchase['Purchase']['slack_channel'])
             ) {
