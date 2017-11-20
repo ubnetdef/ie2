@@ -43,7 +43,8 @@ class ScoreboardController extends ScoreEngineAppController {
         ]);
         $team_mappings = [];
         foreach ($group_names as $g) {
-            $team_mappings[$g['Group']['team_number']] = $g['Group']['name'];
+            $t = $this->Team->findById($g['Group']['team_number']);
+            $team_mappings[$g['Group']['team_number']] = empty($t) ? $g['Group']['name'] : $t['Team']['name'];
         }
 
         // Grab the check overview
@@ -73,7 +74,7 @@ class ScoreboardController extends ScoreEngineAppController {
         $this->set('grade_team_mappings', $grade_team_mappings);
         $this->set('team_mappings', $team_mappings);
         $this->set('max_grade', $max_grade);
-        $this->set('max_check', $max_check[0]['Check']['total_passed']);
+        $this->set('max_check', empty($max_check) ? 0 : $max_check[0]['Check']['total_passed']);
     }
 
     /**
