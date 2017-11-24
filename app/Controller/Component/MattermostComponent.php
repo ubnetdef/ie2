@@ -21,7 +21,7 @@ class MattermostComponent extends Component {
             return;
         }
 
-        $payload = 'payload='.json_encode($data);
+        $payload = 'payload='.urlencode(json_encode($data));
 
         $ch = curl_init(env('MATTERMOST_WEBHOOK_URL'));
         curl_setopt($ch, CURLOPT_POST, true);
