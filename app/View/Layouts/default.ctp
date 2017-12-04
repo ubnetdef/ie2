@@ -88,18 +88,19 @@
 					]);
 
 					if ( $this->Auth->isStaff() ) {
-						echo $this->Misc->navbarDropdown('Competition Central', isset($at_staff), [
-							$this->Misc->navbarItem('Competition Overview', '/staff'),
-							(benv('FEATURE_SCOREENGINE') ? $this->Misc->navbarItem('Scoreboard Overview', '/scoreboard/overview') : ''),
-							'<li role="separator" class="divider"></li>',
+						echo $this->Misc->navbarDropdown('Staff Area', isset($at_staff), [
+							$this->Misc->navbarItem('Gold Team Hangout', '/dashboard/gold'),
+							$this->Misc->navbarItem('White Team Dwelling', '/dashboard/white'),
 							$this->Misc->navbarItem('Grader Island', '/staff/graders'),
-							$this->Misc->navbarItem('Scheduler', '/admin/schedule'),
+							$this->Misc->navbarItem('Red Team Habitation', '/dashboard/red'),
+							$this->Misc->navbarItem('Black Team Cottage', '/dashboard/black'),
+							'<li role="separator" class="divider"></li>',
+							$this->Misc->navbarItem('Schedule Overview', '/admin/schedule'),
+							(benv('FEATURE_SCOREENGINE') ? $this->Misc->navbarItem('ScoreEngine Overview', '/admin/scoreengine', false) : ''),
+							(benv('FEATURE_BANKWEB') ? $this->Misc->navbarItem('BankWeb Overview', '/staff/bank', false) : ''),
 							'<li role="separator" class="divider"></li>',
 							$this->Misc->navbarItem('Grading Export', '/staff/export'),
 							(benv('FEATURE_SCOREENGINE') ? $this->Misc->navbarItem('ScoreEngine Export', '/admin/scoreengine/export', false) : ''),
-							(benv('FEATURE_SCOREENGINE') || benv('FEATURE_BANKWEB') ? '<li role="separator" class="divider"></li>' : ''),
-							(benv('FEATURE_SCOREENGINE') ? $this->Misc->navbarItem('ScoreEngine Overview', '/admin/scoreengine', false) : ''),
-							(benv('FEATURE_BANKWEB') ? $this->Misc->navbarItem('BankWeb Overview', '/staff/bank', false) : ''),
 						]);
 					}
 

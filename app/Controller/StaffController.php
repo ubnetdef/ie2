@@ -44,6 +44,8 @@ class StaffController extends AppController {
         ],
     ];
 
+    const DASHBOARDS = ['gold', 'white', 'red', 'black'];
+
     public function beforeFilter() {
         parent::beforeFilter();
 
@@ -73,13 +75,13 @@ class StaffController extends AppController {
     }
 
     /**
-     * Competition Overview Page
+     * Staff index page. Does nothing
      *
      * @url /staff
      * @url /staff/index
      */
     public function index() {
-        // Static page
+        return $this->redirect('/');
     }
 
     /**
