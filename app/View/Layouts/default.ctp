@@ -81,11 +81,13 @@
 			<ul class="nav navbar-nav navbar-right">
 				<?php
 				if ( $this->Auth->loggedIn() ) {
-					echo $this->Misc->navbarDropdown('Team Central', isset($at_team), [
-						($this->Auth->isBlueTeam() ? $this->Misc->navbarItem('Team Panel', '/team', false) : ''),
-						(benv('FEATURE_BANKWEB') ? $this->Misc->navbarItem('Bank Accounts', '/bank/account', false) : ''),
-						(benv('FEATURE_BANKWEB') && benv('BANKWEB_PUBLIC_APIINFO') ? $this->Misc->navbarItem('Bank API', '/bank/info', false) : ''),
-					]);
+					if ( benv('FEATURE_SCOREENGINE') || benv('FEATURE_BANKWEB') ) {
+						echo $this->Misc->navbarDropdown('Team Central', isset($at_team), [
+							(benv('FEATURE_SCOREENGINE') && $this->Auth->isBlueTeam() ? $this->Misc->navbarItem('Team Panel', '/team', false) : ''),
+							(benv('FEATURE_BANKWEB') ? $this->Misc->navbarItem('Bank Accounts', '/bank/account', false) : ''),
+							(benv('FEATURE_BANKWEB') && benv('BANKWEB_PUBLIC_APIINFO') ? $this->Misc->navbarItem('Bank API', '/bank/info', false) : ''),
+						]);
+					}
 
 					if ( $this->Auth->isStaff() ) {
 						echo $this->Misc->navbarDropdown('Competition Central', isset($at_staff), [
