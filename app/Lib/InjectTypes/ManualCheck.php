@@ -68,6 +68,15 @@ $(document).ready(function() {
 });
 </script>
 
+<div class="alert alert-info">
+    <strong>FYI!</strong>
+    <p>
+        When you deny an inject, any dependencies other injects have on this inject will be considered "met".
+        That is, even though you "deny" this inject, it will still count as "sucessful" for inject dependency resolution.
+        <strong>Only deny if you know what you're doing!</strong>
+    </p>
+</div>
+
 <form method="post">
     <input type="hidden" name="comments" value="N/A" />
     <input type="hidden" name="grade" value="0" />
