@@ -48,9 +48,13 @@
 	<?php if ( $inject->hasAttachments() ): ?>
 	<h4>Attachments</h4>
 
-	<?php foreach ( $inject->getAttachments() AS $a ): ?>
-	- <?= $this->Html->link($a['name'], '/attachment/view/'.$a['id'].'/'.md5($a['id'].env('SECURITY_CIPHER_SEED'))) ?>
-	<?php endforeach; ?>
+	<ul>
+		<?php foreach ( $inject->getAttachments() AS $a ): ?>
+		<li>
+			<?= $this->Html->link($a['name'], '/attachment/view/'.$a['id'].'/'.md5($a['id'].env('SECURITY_CIPHER_SEED'))) ?>
+		</li>
+		<?php endforeach; ?>
+	</ul>
 
 	<hr />
 	<?php endif ?>
