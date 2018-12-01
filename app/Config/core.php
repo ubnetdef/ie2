@@ -121,7 +121,7 @@ if (!env('APP_NAME')) {
  * thus not recommended for production applications.
  */
     //Configure::write('App.baseUrl', env('SCRIPT_NAME'));
-    Configure::write('App.fullBaseUrl', benv('COMPETITION_URL'));
+    Configure::write('App.fullBaseUrl', env('COMPETITION_URL'));
 
 /**
  * Uncomment the define below to use CakePHP prefix routes.
