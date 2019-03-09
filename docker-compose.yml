@@ -1,0 +1,17 @@
+version: "3"
+services:
+  db:
+    image: mariadb:10.3
+    environment:
+      MYSQL_ROOT_PASSWORD: changeme
+      MYSQL_DATABASE: injectengine
+    volumes:
+      - ./db-data:/var/lib/mysql
+  ie2:
+    build: .
+    ports:
+      - 8080:80
+    depends_on:
+      - db
+    volumes:
+      - .env:/srv/ie2/.env
