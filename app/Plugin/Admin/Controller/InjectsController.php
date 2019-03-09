@@ -75,6 +75,9 @@ class InjectsController extends AdminAppController {
             $res = $this->_validate();
 
             if (empty($res['errors'])) {
+                $this->Inject->create();
+                $this->Inject->save($res['data']);
+
                 // Upload the new attachments
                 if (isset($this->request->data['new_attachments'])) {
                     foreach ($this->request->data['new_attachments'] as $new) {
@@ -87,15 +90,12 @@ class InjectsController extends AdminAppController {
 
                         $this->Attachment->create();
                         $this->Attachment->save([
-                            'inject_id' => $inject['Inject']['id'],
+                            'inject_id' => $this->Inject->id,
                             'name'      => $new['name'],
                             'data'      => $data,
                         ]);
                     }
                 }
-
-                $this->Inject->create();
-                $this->Inject->save($res['data']);
 
                 $this->logMessage(
                     'injects',
