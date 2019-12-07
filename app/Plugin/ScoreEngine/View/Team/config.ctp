@@ -21,13 +21,13 @@
 					<div class="col-sm-4">
 						<div class="input-group">
 							<div class="input-group-addon">USER</div>
-							<input type="text" name="opt<?= $opt['id']; ?>[user]" class="form-control" value="<?= $user; ?>" />
+							<input type="text" name="opt<?= $opt['id']; ?>[user]" class="form-control" value="<?= $user; ?>"<?= $opt['edit'] == 0 ? ' disabled="disabled"' : ''; ?> />
 						</div>
 					</div>
 					<div class="col-sm-4">
 						<div class="input-group">
 							<div class="input-group-addon">PASS</div>
-							<input type="text" name="opt<?= $opt['id']; ?>[pass]" class="form-control" value="<?= $pass; ?>" />
+							<input type="text" name="opt<?= $opt['id']; ?>[pass]" class="form-control" value="<?= $pass; ?>"<?= $opt['edit'] == 0 ? ' disabled="disabled"' : ''; ?> />
 						</div>
 					</div>
 					<?php else: ?>
